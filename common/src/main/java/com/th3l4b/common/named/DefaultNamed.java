@@ -9,6 +9,7 @@ public class DefaultNamed extends DefaultPropertied implements INamed {
 		return getProperties().get(PROPERTY_NAME);
 	}
 	
+	@Override
 	public void setName (String name) throws Exception {
 		getProperties().put(PROPERTY_NAME, name);
 	}

@@ -4,4 +4,5 @@ import com.th3l4b.common.propertied.IPropertied;
 
 public interface INamed extends IPropertied, INamedConstants {
 	String getName() throws Exception;
+	void setName (String name) throws Exception;
 }
