@@ -14,6 +14,12 @@ options {
 
     import java.util.HashMap;
     import java.util.ArrayList;
+    
+    import com.th3l4b.srm.base.original.IModel;
+    import com.th3l4b.srm.base.original.DefaultModel;
+	import com.th3l4b.srm.base.original.IEntity;
+	import com.th3l4b.srm.base.original.IRelationship;
+	import com.th3l4b.srm.parser.ParserUtils;
 }
 
 // http://www.jguru.com/faq/view.jsp?EID=16185
@@ -22,6 +28,12 @@ options {
 }
 
 @members {
+
+	IModel _model = new DefaultModel();
+
+	protected IModel getModel () {
+		return _model;
+	}
 
     public static void main(String[] args) throws Exception {
         SRMGrammarLexer lex = new SRMGrammarLexer(new ANTLRInputStream(System.in));
@@ -41,19 +53,19 @@ document :
     entity+
 ;
 
-entity returns [ HashMap<String, Object> r = new HashMap<String, Object>(); ]:
+entity returns [ IEntity r = null; ]:
     'entity' id = IDENTIFIER '{'
-        (f = field { r.put("_field_" + f.get("name"), f); })*
-        e = enumeration { r.put("_enum", e); }
+        (f = field {  })*
+        e = enumeration {  }
         ('query' code = CODE_LITERAL ';' {
-            r.put("_query", code.getText());
+            code.getText();
         })?
         ('validation' code = CODE_LITERAL ';' {
-            r.put("_code", code.getText());
+            code.getText();
         })?
     '}'
     {
-        r.put("name", id.getText());
+    	ParserUtils.addEntity(id.getText(), getModel());
     }
 ;
 

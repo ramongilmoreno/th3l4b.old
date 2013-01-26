@@ -6,8 +6,17 @@ import com.th3l4b.common.named.DefaultNamed;
 import com.th3l4b.common.named.DefaultNamedContainer;
 import com.th3l4b.srm.base.IField;
 
-public class DefaultEntity extends DefaultNamedContainer<IField> implements IEntity {
+public class DefaultEntity extends DefaultNamedContainer<IField> implements
+		IEntity {
+
 	DefaultNamed _delegated = new DefaultNamed();
+
+	public DefaultEntity() {
+	}
+
+	public DefaultEntity(String name) throws Exception {
+		setName(name);
+	}
 
 	public String getName() throws Exception {
 		return _delegated.getName();

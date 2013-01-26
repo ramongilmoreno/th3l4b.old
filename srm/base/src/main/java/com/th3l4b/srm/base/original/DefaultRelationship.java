@@ -6,6 +6,11 @@ import com.th3l4b.srm.base.IModelConstants;
 
 public class DefaultRelationship extends DefaultNamed implements IRelationship,
 		IModelConstants {
+	
+	public DefaultRelationship(String name, RelationshipType type) throws Exception {
+		setName(name);
+		setType(type);
+	}
 
 	@Override
 	public String getFrom() throws Exception {
