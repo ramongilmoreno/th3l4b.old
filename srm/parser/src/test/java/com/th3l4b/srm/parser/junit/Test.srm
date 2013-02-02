@@ -1,0 +1,17 @@
+#
+# Sample model for testing...
+#
+
+name "Test";
+
+context "";
+
+# include "";
+
+model "Sample"
+	properties {
+	};
+	
+entity "Entity A" {
+	
+};

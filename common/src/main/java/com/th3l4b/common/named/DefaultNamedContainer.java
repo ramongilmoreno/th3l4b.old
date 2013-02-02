@@ -22,4 +22,15 @@ public class DefaultNamedContainer<T extends INamed> implements
 		return _items.get(name);
 	}
 
+	@Override
+	public boolean contains(T item) throws Exception {
+		return false;
+	}
+
+	@Override
+	public void remove(T item) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

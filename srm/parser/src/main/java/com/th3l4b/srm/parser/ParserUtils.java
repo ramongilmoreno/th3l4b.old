@@ -1,5 +1,7 @@
 package com.th3l4b.srm.parser;
 
+import java.util.Map;
+
 import com.th3l4b.srm.base.ModelUtils;
 import com.th3l4b.srm.base.original.DefaultEntity;
 import com.th3l4b.srm.base.original.DefaultRelationship;
@@ -15,6 +17,15 @@ public class ParserUtils {
 			DefaultEntity item = new DefaultEntity(name);
 			model.entities().add(item);
 			return item;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static void addProperties(IEntity entity,
+			Map<String, String> properties) {
+		try {
+			entity.getProperties().putAll(properties);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

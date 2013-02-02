@@ -4,4 +4,6 @@ public interface INamedContainer<T extends INamed> {
 	Iterable<T> items () throws Exception;
 	void add (T item) throws Exception;
 	T get (String name) throws Exception;
+	boolean contains (T item) throws Exception;
+	void remove (T item) throws Exception;
 }

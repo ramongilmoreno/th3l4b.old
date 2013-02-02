@@ -53,6 +53,12 @@ document :
     entity+
 ;
 
+properties returns [ HashMap<String, String> r = new HashMap(); ]:
+	'{'
+	(key = STRING_LITERAL '=' value = STRING_LITERAL ';' { r.put(key.getText(), value.getText()); })*
+	'}'
+;
+
 entity returns [ IEntity r = null; ]:
     'entity' id = IDENTIFIER '{'
         (f = field {  })*
@@ -64,6 +70,7 @@ entity returns [ IEntity r = null; ]:
             code.getText();
         })?
     '}'
+    (p = properties { ParserUtils.addProperties(r, p); })?
     {
     	ParserUtils.addEntity(id.getText(), getModel());
     }

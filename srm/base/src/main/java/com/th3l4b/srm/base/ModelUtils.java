@@ -8,6 +8,10 @@ import java.io.Writer;
 
 public class ModelUtils {
 
+	public static String mergeWithContext(String item, String context) {
+		return context + "." + item;
+	}
+
 	public static void encode(Reader input, Writer out) throws IOException {
 		int c = -1;
 		while ((c = input.read()) != -1) {
