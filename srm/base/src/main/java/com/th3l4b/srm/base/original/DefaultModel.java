@@ -5,8 +5,10 @@ import java.util.List;
 import com.th3l4b.common.named.DefaultNamed;
 import com.th3l4b.common.named.DefaultNamedContainer;
 import com.th3l4b.common.named.INamedContainer;
+import com.th3l4b.srm.base.ModelUtils;
 
-public class DefaultModel extends DefaultNamed implements IModel {
+public class DefaultModel extends DefaultNamed implements IModel,
+		IModelConstants {
 
 	DefaultNamedContainer<IEntity> _entities = new DefaultNamedContainer<IEntity>();
 	DefaultNamedContainer<IRelationship> _relationships = new DefaultNamedContainer<IRelationship>();
@@ -23,14 +25,24 @@ public class DefaultModel extends DefaultNamed implements IModel {
 
 	@Override
 	public String getContext() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		return getProperties().get(PROPERTY_CONTEXT);
 	}
 
 	@Override
-	public List<String> imports() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	public void setContext(String context) throws Exception {
+		getProperties().put(PROPERTY_CONTEXT, context);
+
+	}
+
+	@Override
+	public List<String> getImports() throws Exception {
+		return ModelUtils.stringAsList(getProperties().get(PROPERTY_IMPORTS));
+	}
+
+	@Override
+	public void setImports(List<String> imports) throws Exception {
+		getProperties().put(PROPERTY_IMPORTS, ModelUtils.listAsString(imports));
+
 	}
 
 }

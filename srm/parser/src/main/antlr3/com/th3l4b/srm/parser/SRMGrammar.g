@@ -50,7 +50,18 @@ options {
 }
 
 document :
+	name
+	context
     entity+
+;
+
+name:
+	'name' n = STRING_LITERAL { ParserUtils.setName(n.getText(), getModel()); }
+	(p = properties { ParserUtils.addProperties(p, getModel()); })?
+;
+
+context:
+	'context' n = STRING_LITERAL { ParserUtils.setContext(n.getText(), getModel()); }
 ;
 
 properties returns [ HashMap<String, String> r = new HashMap(); ]:
@@ -70,9 +81,9 @@ entity returns [ IEntity r = null; ]:
             code.getText();
         })?
     '}'
-    (p = properties { ParserUtils.addProperties(r, p); })?
+    (p = properties { ParserUtils.addProperties(p, r); })?
     {
-    	ParserUtils.addEntity(id.getText(), getModel());
+    	ParserUtils.addEntity(r, getModel());
     }
 ;
 
@@ -123,6 +134,6 @@ COMMENT
     ;
 
 LINE_COMMENT
-    : '//' ~('\n'|'\r')* '\r'? '\n' {$channel = HIDDEN;}
+    : ('//'|'#') ~('\n'|'\r')* '\r'? '\n' {$channel = HIDDEN;}
     ;
 

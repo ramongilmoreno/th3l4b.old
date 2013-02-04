@@ -4,7 +4,7 @@
 
 name "Test";
 
-context "";
+context "com.th3l4b.srm.parser.junit";
 
 # include "";
 

@@ -5,6 +5,11 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import com.th3l4b.common.text.ITextConstants;
 
 public class ModelUtils {
 
@@ -109,4 +114,39 @@ public class ModelUtils {
 		}
 		return sw.getBuffer().toString();
 	}
+
+	public static List<String> stringAsList(String input) throws Exception {
+		if (input == null) {
+			return Collections.<String> emptyList();
+		}
+		ArrayList<String> r = new ArrayList<String>();
+		StringWriter sw = new StringWriter();
+		for (String s : input.split(";")) {
+			sw.getBuffer().setLength(0);
+			decode(new StringReader(s), sw);
+			sw.flush();
+			r.add(sw.getBuffer().toString());
+		}
+		return r;
+	}
+	
+	public static String listAsString (List<String> input) throws Exception {
+		if (input.size() == 0) {
+			return ITextConstants.EMPTY_STRING;
+		}
+		
+		boolean first = true;
+		StringWriter out = new StringWriter();
+		for (String s: input) {
+			if (first) {
+				first = false;
+			} else {
+				out.write(';');
+			}
+			encode(new StringReader(s), out);
+		}
+		out.flush();
+		return out.getBuffer().toString();
+	}
+
 }
