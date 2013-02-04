@@ -13,5 +13,10 @@ model "Sample"
 	};
 	
 entity "Entity A" {
-	
+	field "Field 1" "Integer";
+	field "Field 2" "Boolean";
+};
+
+entity "Entity B" {
+	field "B Field 1" "Decimal";
 };

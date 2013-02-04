@@ -15,6 +15,7 @@ options {
     import java.util.HashMap;
     import java.util.ArrayList;
     
+    import com.th3l4b.srm.base.DefaultField;
     import com.th3l4b.srm.base.original.IModel;
     import com.th3l4b.srm.base.original.DefaultModel;
 	import com.th3l4b.srm.base.original.IEntity;
@@ -66,32 +67,22 @@ properties returns [ HashMap<String, String> r = new HashMap(); ]:
 ;
 
 entity returns [ IEntity r = null; ]:
-    'entity' id = IDENTIFIER '{'
-        (f = field {  })*
-        e = enumeration {  }
-        ('query' code = CODE_LITERAL ';' {
-            code.getText();
-        })?
-        ('validation' code = CODE_LITERAL ';' {
-            code.getText();
-        })?
+    'entity' n = STRING_LITERAL { ParserUtils.setName(n.getText(), r); } '{'
+        (f = field { ParserUtils.addField(f, r); })*
     '}'
     (p = properties { ParserUtils.addProperties(p, r); })?
+    ';'
     {
     	ParserUtils.addEntity(r, getModel());
     }
 ;
 
-field returns [ HashMap<String, String> r = new HashMap(); ]:
-    'field' id = IDENTIFIER { r.put("name", id.getText()); }
-        (s = STRING_LITERAL { r.put("text", s.getText()); })?
+field returns [ DefaultField r = new DefaultField(); ]:
+    'field'
+    n = STRING_LITERAL { ParserUtils.setName(n.getText(), r); }
+    t = STRING_LITERAL { ParserUtils.setType(t.getText(), r); }
+    (p = properties { ParserUtils.addProperties(p, r); })?
     ';'
-;
-
-enumeration returns [ ArrayList<String> r = null; ]:
-    'enumeration' '{'
-        r2 = identifier_list { r = r2; }
-    '}'
 ;
 
 identifier_list returns [ ArrayList<String> r = new ArrayList<String>(); ]:

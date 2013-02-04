@@ -8,6 +8,7 @@ import org.antlr.runtime.CommonTokenStream;
 
 import com.th3l4b.common.named.INamed;
 import com.th3l4b.common.propertied.IPropertied;
+import com.th3l4b.srm.base.IField;
 import com.th3l4b.srm.base.ModelUtils;
 import com.th3l4b.srm.base.original.DefaultRelationship;
 import com.th3l4b.srm.base.original.IEntity;
@@ -50,6 +51,22 @@ public class ParserUtils {
 					type);
 			model.relationships().add(item);
 			return item;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static void setType(String type, IField field) {
+		try {
+			field.setType(type);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static void addField(IField field, IEntity entity) {
+		try {
+			entity.add(field);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
