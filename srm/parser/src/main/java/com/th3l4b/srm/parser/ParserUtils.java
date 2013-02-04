@@ -25,14 +25,6 @@ public class ParserUtils {
 		}
 	}
 
-	public static void setContext(String context, IModel model) {
-		try {
-			model.setContext(context);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
 	public static void addProperties(Map<String, String> properties,
 			IPropertied propertied) {
 		try {
