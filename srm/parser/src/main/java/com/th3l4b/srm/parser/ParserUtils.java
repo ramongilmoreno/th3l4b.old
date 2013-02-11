@@ -9,15 +9,12 @@ import org.antlr.runtime.CommonTokenStream;
 import com.th3l4b.common.named.INamed;
 import com.th3l4b.common.propertied.IPropertied;
 import com.th3l4b.srm.base.IField;
-import com.th3l4b.srm.base.ModelUtils;
-import com.th3l4b.srm.base.original.DefaultRelationship;
 import com.th3l4b.srm.base.original.IEntity;
 import com.th3l4b.srm.base.original.IModel;
 import com.th3l4b.srm.base.original.IRelationship;
-import com.th3l4b.srm.base.original.RelationshipType;
 
 public class ParserUtils {
-
+	
 	public static void setName(String name, INamed named) {
 		try {
 			named.setName(name);
@@ -43,14 +40,33 @@ public class ParserUtils {
 		}
 	}
 
-	public static IRelationship addRelationship(String from, String to,
-			String direct, String reverse, RelationshipType type, IModel model) {
+	public static void setFrom(String from, IRelationship relationship) {
 		try {
-			DefaultRelationship item = new DefaultRelationship(
-					ModelUtils.relationshipName(from, to, direct, reverse),
-					type);
-			model.relationships().add(item);
-			return item;
+			relationship.setFrom(from);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static void setTo(String to, IRelationship relationship) {
+		try {
+			relationship.setTo(to);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static void setDirectName(String directName, IRelationship relationship) {
+		try {
+			relationship.setName(directName);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static void setReverseName (String reverseName, IRelationship relationship) {
+		try {
+			relationship.setReverseName(reverseName);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

@@ -16,6 +16,8 @@ options {
     import java.util.ArrayList;
     
     import com.th3l4b.srm.base.DefaultField;
+    import com.th3l4b.srm.base.original.DefaultEntity;
+    import com.th3l4b.srm.base.original.DefaultRelationship;
     import com.th3l4b.srm.base.original.IModel;
     import com.th3l4b.srm.base.original.DefaultModel;
 	import com.th3l4b.srm.base.original.IEntity;
@@ -52,7 +54,7 @@ options {
 
 document :
 	name
-    entity+
+    (entity | relationship)+
 ;
 
 name:
@@ -66,7 +68,7 @@ properties returns [ HashMap<String, String> r = new HashMap(); ]:
 	'}'
 ;
 
-entity returns [ IEntity r = null; ]:
+entity returns [ DefaultEntity r = new DefaultEntity(); ]:
     'entity' n = STRING_LITERAL { ParserUtils.setName(n.getText(), r); } '{'
         (f = field { ParserUtils.addField(f, r); })*
     '}'
@@ -84,6 +86,17 @@ field returns [ DefaultField r = new DefaultField(); ]:
     (p = properties { ParserUtils.addProperties(p, r); })?
     ';'
 ;
+
+relationship returns [ DefaultRelationship r = new DefaultRelationship(); ]:
+    'relationship'
+    from = STRING_LITERAL { ParserUtils.setFrom(from.getText(), r); }
+    to = STRING_LITERAL { ParserUtils.setTo(to.getText(), r); }
+    ('direct' direct = STRING_LITERAL { ParserUtils.setDirectName(direct.getText(), r); })+
+    ('reverse' reverse = STRING_LITERAL { ParserUtils.setReverseName(reverse.getText(), r); })+
+    (p = properties { ParserUtils.addProperties(p, r); })?
+    ';'
+;
+
 
 identifier_list returns [ ArrayList<String> r = new ArrayList<String>(); ]:
     (() | (i = IDENTIFIER { r.add(i.getText()); } (',' i=IDENTIFIER { r.add(i.getText()); })*))

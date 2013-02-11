@@ -7,9 +7,8 @@ import com.th3l4b.srm.base.IModelConstants;
 public class DefaultRelationship extends DefaultNamed implements IRelationship,
 		IModelConstants {
 	
-	public DefaultRelationship(String name, RelationshipType type) throws Exception {
-		setName(name);
-		setType(type);
+	public DefaultRelationship(){
+		super();
 	}
 
 	@Override
@@ -30,6 +29,16 @@ public class DefaultRelationship extends DefaultNamed implements IRelationship,
 	@Override
 	public void setTo(String to) throws Exception {
 		getProperties().put(PROPERTY_RELATIONSHIP_TO, to);
+	}
+
+	@Override
+	public String getDirectName() throws Exception {
+		return getProperties().get(PROPERTY_RELATIONSHIP_DIRECT_NAME);
+	}
+
+	@Override
+	public void setDirectName(String directName) throws Exception {
+		getProperties().put(PROPERTY_RELATIONSHIP_DIRECT_NAME, directName);
 	}
 
 	@Override
