@@ -62,4 +62,14 @@ public class DefaultRelationship extends DefaultNamed implements IRelationship,
 	public void setType(RelationshipType type) throws Exception {
 		getProperties().put(PROPERTY_RELATIONSHIP_TYPE, type.name());
 	}
+	
+	@Override
+	public String getEntity() throws Exception {
+		return getProperties().get(PROPERTY_RELATIONSHIP_ENTITY);
+	}
+	
+	@Override
+	public void setEntity(String entity) throws Exception {
+		getProperties().put(PROPERTY_RELATIONSHIP_ENTITY, entity);
+	}
 }

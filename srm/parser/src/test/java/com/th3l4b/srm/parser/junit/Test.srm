@@ -2,13 +2,7 @@
 # Sample model for testing...
 #
 
-name "Test";
-
-context "com.th3l4b.srm.parser.junit";
-
-# include "";
-
-model "Sample"
+model "Test"
 	properties {
 	};
 	
@@ -20,3 +14,11 @@ entity "Entity A" {
 entity "Entity B" {
 	field "B Field 1" "Decimal";
 };
+
+entity "Entity C" {
+	field "C Field 1" "String";
+};
+
+relationship "Entity A" "Entity B" many-to-one;
+
+relationship "Entity A" "Entity B" many-to-many "Entity C";

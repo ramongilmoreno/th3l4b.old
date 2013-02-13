@@ -10,7 +10,7 @@ options {
 }
 
 @header {
-    package com.th3l4b.srm.parser;
+    package com.th3l4b.srm.parser.grammar;
 
     import java.util.HashMap;
     import java.util.ArrayList;
@@ -18,23 +18,24 @@ options {
     import com.th3l4b.srm.base.DefaultField;
     import com.th3l4b.srm.base.original.DefaultEntity;
     import com.th3l4b.srm.base.original.DefaultRelationship;
-    import com.th3l4b.srm.base.original.IModel;
     import com.th3l4b.srm.base.original.DefaultModel;
 	import com.th3l4b.srm.base.original.IEntity;
+    import com.th3l4b.srm.base.original.IModel;
 	import com.th3l4b.srm.base.original.IRelationship;
+	import com.th3l4b.srm.base.original.RelationshipType;
 	import com.th3l4b.srm.parser.ParserUtils;
 }
 
 // http://www.jguru.com/faq/view.jsp?EID=16185
 @lexer::header {
-    package com.th3l4b.srm.parser;
+    package com.th3l4b.srm.parser.grammar;
 }
 
 @members {
 
 	IModel _model = new DefaultModel();
 
-	protected IModel getModel () {
+	public IModel getModel () {
 		return _model;
 	}
 
@@ -53,17 +54,18 @@ options {
 }
 
 document :
-	name
+	model
     (entity | relationship)+
 ;
 
-name:
-	'name' n = STRING_LITERAL { ParserUtils.setName(n.getText(), getModel()); }
+model:
+	'model' n = STRING_LITERAL { ParserUtils.setName(n.getText(), getModel()); }
 	(p = properties { ParserUtils.addProperties(p, getModel()); })?
+	';'
 ;
 
 properties returns [ HashMap<String, String> r = new HashMap(); ]:
-	'{'
+	'properties' '{'
 	(key = STRING_LITERAL '=' value = STRING_LITERAL ';' { r.put(key.getText(), value.getText()); })*
 	'}'
 ;
@@ -91,10 +93,20 @@ relationship returns [ DefaultRelationship r = new DefaultRelationship(); ]:
     'relationship'
     from = STRING_LITERAL { ParserUtils.setFrom(from.getText(), r); }
     to = STRING_LITERAL { ParserUtils.setTo(to.getText(), r); }
-    ('direct' direct = STRING_LITERAL { ParserUtils.setDirectName(direct.getText(), r); })+
-    ('reverse' reverse = STRING_LITERAL { ParserUtils.setReverseName(reverse.getText(), r); })+
+    (
+	    ( 'many-to-one' { ParserUtils.setType(RelationshipType.manyToOne, r); } ) |
+		(
+			'many-to-many' { ParserUtils.setType(RelationshipType.manyToMany, r); }
+			( based = STRING_LITERAL { ParserUtils.setEntity(based.getText(), r); } )?
+		)
+	)
+    ('direct' direct = STRING_LITERAL { ParserUtils.setDirectName(direct.getText(), r); })?
+    ('reverse' reverse = STRING_LITERAL { ParserUtils.setReverseName(reverse.getText(), r); })?
     (p = properties { ParserUtils.addProperties(p, r); })?
     ';'
+    {
+    	ParserUtils.applyRelationshipName(r);
+    }
 ;
 
 

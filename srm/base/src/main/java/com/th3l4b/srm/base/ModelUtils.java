@@ -6,10 +6,12 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import com.th3l4b.common.text.ITextConstants;
+import com.th3l4b.srm.base.original.DefaultRelationship;
 
 public class ModelUtils {
 
@@ -101,18 +103,49 @@ public class ModelUtils {
 		}
 	}
 
-	public static String relationshipName(String from, String to,
-			String direct, String reverse) {
+	public static void toStringList(Iterable<? extends Reader> list, Writer out)
+			throws Exception {
+		boolean first = true;
+		for (Reader s : list) {
+			if (first) {
+				first = false;
+			} else {
+				out.write(";");
+			}
+			encode(s, out);
+		}
+	}
+
+	public static Iterable<String> fromStringList(Reader input)
+			throws Exception {
+		throw new UnsupportedOperationException("Not yet implemented");
+	}
+
+	protected static String notNull(String s) {
+		return s != null ? s : ITextConstants.EMPTY_STRING;
+	}
+
+	public static void relationshipName(String from, String to, String direct,
+			String reverse, Writer out) throws Exception {
 		StringWriter sw = new StringWriter();
 		try {
-			encode(new StringReader(from), sw);
-			encode(new StringReader(to), sw);
-			encode(new StringReader(direct), sw);
-			encode(new StringReader(reverse), sw);
+			Reader[] r = { new StringReader(notNull(from)),
+					new StringReader(notNull(to)),
+					new StringReader(notNull(direct)),
+					new StringReader(notNull(reverse)) };
+			toStringList(Arrays.asList(r), sw);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-		return sw.getBuffer().toString();
+	}
+
+	public static void applyRelationshipName(DefaultRelationship relationship)
+			throws Exception {
+		StringWriter sw = new StringWriter();
+		relationshipName(relationship.getFrom(), relationship.getTo(),
+				relationship.getDirectName(), relationship.getReverseName(), sw);
+		sw.flush();
+		relationship.setName(sw.getBuffer().toString());
 	}
 
 	public static List<String> stringAsList(String input) throws Exception {
@@ -129,15 +162,15 @@ public class ModelUtils {
 		}
 		return r;
 	}
-	
-	public static String listAsString (List<String> input) throws Exception {
+
+	public static String listAsString(List<String> input) throws Exception {
 		if (input.size() == 0) {
 			return ITextConstants.EMPTY_STRING;
 		}
-		
+
 		boolean first = true;
 		StringWriter out = new StringWriter();
-		for (String s: input) {
+		for (String s : input) {
 			if (first) {
 				first = false;
 			} else {

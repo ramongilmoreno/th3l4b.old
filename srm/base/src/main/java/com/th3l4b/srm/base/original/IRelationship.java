@@ -13,4 +13,6 @@ public interface IRelationship extends INamed {
 	void setReverseName (String reverseName) throws Exception;
 	RelationshipType getType () throws Exception;
 	void setType (RelationshipType type) throws Exception;
+	String getEntity () throws Exception;
+	void setEntity (String entity) throws Exception;
 }
