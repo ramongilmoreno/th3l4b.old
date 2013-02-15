@@ -65,10 +65,16 @@ model:
 ;
 
 properties returns [ HashMap<String, String> r = new HashMap(); ]:
-	'properties' '{'
+	'properties' 
+	p = propertiesList { r = p; } 
+;
+
+propertiesList returns [ HashMap<String, String> r = new HashMap(); ]:
+	'{'
 	(key = STRING_LITERAL '=' value = STRING_LITERAL ';' { r.put(key.getText(), value.getText()); })*
 	'}'
 ;
+
 
 entity returns [ DefaultEntity r = new DefaultEntity(); ]:
     'entity' n = STRING_LITERAL { ParserUtils.setName(n.getText(), r); } '{'
@@ -100,15 +106,22 @@ relationship returns [ DefaultRelationship r = new DefaultRelationship(); ]:
 			( based = STRING_LITERAL { ParserUtils.setEntity(based.getText(), r); } )?
 		)
 	)
-    ('direct' direct = STRING_LITERAL { ParserUtils.setDirectName(direct.getText(), r); })?
-    ('reverse' reverse = STRING_LITERAL { ParserUtils.setReverseName(reverse.getText(), r); })?
+    (
+    	'direct'
+    	direct = STRING_LITERAL { ParserUtils.setDirectName(direct.getText(), r); }
+    	(directProperties = propertiesList { ParserUtils.addDirectProperties(directProperties, r); })?
+	)?
+    (
+    	'reverse'
+    	reverse = STRING_LITERAL { ParserUtils.setReverseName(reverse.getText(), r); }
+    	(reverseProperties = propertiesList { ParserUtils.addReverseProperties(reverseProperties, r); })?
+	)?
     (p = properties { ParserUtils.addProperties(p, r); })?
     ';'
     {
     	ParserUtils.applyRelationshipName(r);
     }
 ;
-
 
 identifier_list returns [ ArrayList<String> r = new ArrayList<String>(); ]:
     (() | (i = IDENTIFIER { r.add(i.getText()); } (',' i=IDENTIFIER { r.add(i.getText()); })*))

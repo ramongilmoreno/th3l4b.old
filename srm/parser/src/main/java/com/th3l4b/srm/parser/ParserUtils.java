@@ -6,6 +6,7 @@ import java.util.Map;
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.CommonTokenStream;
 
+import com.th3l4b.common.named.DefaultNamed;
 import com.th3l4b.common.named.INamed;
 import com.th3l4b.common.propertied.IPropertied;
 import com.th3l4b.srm.base.IField;
@@ -64,7 +65,7 @@ public class ParserUtils {
 	public static void setDirectName(String directName,
 			IRelationship relationship) {
 		try {
-			relationship.setName(directName);
+			relationship.setDirect(new DefaultNamed(directName));
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -73,7 +74,25 @@ public class ParserUtils {
 	public static void setReverseName(String reverseName,
 			IRelationship relationship) {
 		try {
-			relationship.setReverseName(reverseName);
+			relationship.setReverse(new DefaultNamed(reverseName));
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static void addDirectProperties(Map<String, String> properties,
+			IRelationship relationship) {
+		try {
+			addProperties(properties, relationship.getDirect());
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static void addReverseProperties(Map<String, String> properties,
+			IRelationship relationship) {
+		try {
+			addProperties(properties, relationship.getReverse());
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

@@ -22,3 +22,14 @@ entity "Entity C" {
 relationship "Entity A" "Entity B" many-to-one;
 
 relationship "Entity A" "Entity B" many-to-many "Entity C";
+
+relationship "Entity A" "Entity B" many-to-one
+	direct "Other B" {
+		"A" = "1";
+	}
+	reverse "Other A" {
+		"a" = "I";
+	}
+	properties {
+		"x" = "y";
+	};

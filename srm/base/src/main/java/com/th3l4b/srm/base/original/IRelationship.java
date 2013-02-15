@@ -7,10 +7,10 @@ public interface IRelationship extends INamed {
 	void setFrom (String from) throws Exception;
 	String getTo () throws Exception;
 	void setTo (String to) throws Exception;
-	String getDirectName () throws Exception;
-	void setDirectName (String directName) throws Exception;
-	String getReverseName () throws Exception;
-	void setReverseName (String reverseName) throws Exception;
+	INamed getDirect () throws Exception;
+	void setDirect (INamed direct) throws Exception;
+	INamed getReverse () throws Exception;
+	void setReverse (INamed reverse) throws Exception;
 	RelationshipType getType () throws Exception;
 	void setType (RelationshipType type) throws Exception;
 	String getEntity () throws Exception;

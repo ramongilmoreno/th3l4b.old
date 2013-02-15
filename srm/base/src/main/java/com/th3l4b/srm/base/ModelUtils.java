@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import com.th3l4b.common.named.NamedUtils;
 import com.th3l4b.common.text.ITextConstants;
 import com.th3l4b.srm.base.original.DefaultRelationship;
 
@@ -143,7 +144,8 @@ public class ModelUtils {
 			throws Exception {
 		StringWriter sw = new StringWriter();
 		relationshipName(relationship.getFrom(), relationship.getTo(),
-				relationship.getDirectName(), relationship.getReverseName(), sw);
+				NamedUtils.NAME_GETTER.get(relationship.getDirect()),
+				NamedUtils.NAME_GETTER.get(relationship.getReverse()), sw);
 		sw.flush();
 		relationship.setName(sw.getBuffer().toString());
 	}

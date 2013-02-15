@@ -42,7 +42,7 @@ public class NullSafe {
 	}
 
 	public static <R, S> R get(S source, IGetter<R, S> getter) throws Exception {
-		if (source == null) {
+		if (source != null) {
 			return getter.get(source);
 		} else {
 			return null;

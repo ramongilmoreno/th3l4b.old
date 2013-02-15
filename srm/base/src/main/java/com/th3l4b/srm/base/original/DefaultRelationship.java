@@ -2,10 +2,14 @@ package com.th3l4b.srm.base.original;
 
 import com.th3l4b.common.java.EnumUtils;
 import com.th3l4b.common.named.DefaultNamed;
+import com.th3l4b.common.named.INamed;
 import com.th3l4b.srm.base.IModelConstants;
 
 public class DefaultRelationship extends DefaultNamed implements IRelationship,
 		IModelConstants {
+	
+	protected INamed _direct;
+	protected INamed _reverse;
 	
 	public DefaultRelationship(){
 		super();
@@ -32,26 +36,6 @@ public class DefaultRelationship extends DefaultNamed implements IRelationship,
 	}
 
 	@Override
-	public String getDirectName() throws Exception {
-		return getProperties().get(PROPERTY_RELATIONSHIP_DIRECT_NAME);
-	}
-
-	@Override
-	public void setDirectName(String directName) throws Exception {
-		getProperties().put(PROPERTY_RELATIONSHIP_DIRECT_NAME, directName);
-	}
-
-	@Override
-	public String getReverseName() throws Exception {
-		return getProperties().get(PROPERTY_RELATIONSHIP_REVERSE_NAME);
-	}
-
-	@Override
-	public void setReverseName(String reverseName) throws Exception {
-		getProperties().put(PROPERTY_RELATIONSHIP_REVERSE_NAME, reverseName);
-	}
-
-	@Override
 	public RelationshipType getType() throws Exception {
 		return EnumUtils.fromString(
 				getProperties().get(PROPERTY_RELATIONSHIP_TYPE),
@@ -71,5 +55,25 @@ public class DefaultRelationship extends DefaultNamed implements IRelationship,
 	@Override
 	public void setEntity(String entity) throws Exception {
 		getProperties().put(PROPERTY_RELATIONSHIP_ENTITY, entity);
+	}
+
+	@Override
+	public INamed getDirect() throws Exception {
+		return _direct;
+	}
+	
+	@Override
+	public void setDirect(INamed direct) throws Exception {
+		_direct = direct;
+	}
+
+	@Override
+	public INamed getReverse() throws Exception {
+		return _reverse;
+	}
+	
+	@Override
+	public void setReverse(INamed reverse) throws Exception {
+		_reverse = reverse;
 	}
 }
