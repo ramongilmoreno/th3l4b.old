@@ -12,7 +12,7 @@ import java.util.List;
 
 import com.th3l4b.common.named.NamedUtils;
 import com.th3l4b.common.text.ITextConstants;
-import com.th3l4b.srm.base.original.DefaultRelationship;
+import com.th3l4b.srm.base.original.IRelationship;
 
 public class ModelUtils {
 
@@ -140,14 +140,19 @@ public class ModelUtils {
 		}
 	}
 
-	public static void applyRelationshipName(DefaultRelationship relationship)
+	public static String getRelationshipName(IRelationship relationship)
 			throws Exception {
 		StringWriter sw = new StringWriter();
 		relationshipName(relationship.getFrom(), relationship.getTo(),
 				NamedUtils.NAME_GETTER.get(relationship.getDirect()),
 				NamedUtils.NAME_GETTER.get(relationship.getReverse()), sw);
 		sw.flush();
-		relationship.setName(sw.getBuffer().toString());
+		return sw.getBuffer().toString();
+	}
+
+	public static void applyRelationshipName(IRelationship relationship)
+			throws Exception {
+		relationship.setName(getRelationshipName(relationship));
 	}
 
 	public static List<String> stringAsList(String input) throws Exception {

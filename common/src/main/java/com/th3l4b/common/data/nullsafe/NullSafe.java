@@ -59,4 +59,12 @@ public class NullSafe {
 		};
 
 	}
+
+	public static int hashCode (Object o) {
+		if (o == null) {
+			return 0;
+		} else {
+			return o.hashCode();
+		}
+	}
 }

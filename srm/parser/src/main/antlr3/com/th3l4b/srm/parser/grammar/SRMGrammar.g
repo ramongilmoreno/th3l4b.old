@@ -59,7 +59,7 @@ document :
 ;
 
 model:
-	'model' n = STRING_LITERAL { ParserUtils.setName(n.getText(), getModel()); }
+	'model' n = string { ParserUtils.setName(n, getModel()); }
 	(p = properties { ParserUtils.addProperties(p, getModel()); })?
 	';'
 ;
@@ -71,13 +71,13 @@ properties returns [ HashMap<String, String> r = new HashMap(); ]:
 
 propertiesList returns [ HashMap<String, String> r = new HashMap(); ]:
 	'{'
-	(key = STRING_LITERAL '=' value = STRING_LITERAL ';' { r.put(key.getText(), value.getText()); })*
+	(key = string '=' value = string ';' { r.put(key, value); })*
 	'}'
 ;
 
 
 entity returns [ DefaultEntity r = new DefaultEntity(); ]:
-    'entity' n = STRING_LITERAL { ParserUtils.setName(n.getText(), r); } '{'
+    'entity' n = string { ParserUtils.setName(n, r); } '{'
         (f = field { ParserUtils.addField(f, r); })*
     '}'
     (p = properties { ParserUtils.addProperties(p, r); })?
@@ -89,31 +89,31 @@ entity returns [ DefaultEntity r = new DefaultEntity(); ]:
 
 field returns [ DefaultField r = new DefaultField(); ]:
     'field'
-    n = STRING_LITERAL { ParserUtils.setName(n.getText(), r); }
-    t = STRING_LITERAL { ParserUtils.setType(t.getText(), r); }
+    n = string { ParserUtils.setName(n, r); }
+    t = string { ParserUtils.setType(t, r); }
     (p = properties { ParserUtils.addProperties(p, r); })?
     ';'
 ;
 
 relationship returns [ DefaultRelationship r = new DefaultRelationship(); ]:
     'relationship'
-    from = STRING_LITERAL { ParserUtils.setFrom(from.getText(), r); }
-    to = STRING_LITERAL { ParserUtils.setTo(to.getText(), r); }
+    from = string { ParserUtils.setFrom(from, r); }
+    to = string { ParserUtils.setTo(to, r); }
     (
 	    ( 'many-to-one' { ParserUtils.setType(RelationshipType.manyToOne, r); } ) |
 		(
 			'many-to-many' { ParserUtils.setType(RelationshipType.manyToMany, r); }
-			( based = STRING_LITERAL { ParserUtils.setEntity(based.getText(), r); } )?
+			( based = string { ParserUtils.setEntity(based, r); } )?
 		)
 	)
     (
     	'direct'
-    	direct = STRING_LITERAL { ParserUtils.setDirectName(direct.getText(), r); }
+    	direct = string { ParserUtils.setDirectName(direct, r); }
     	(directProperties = propertiesList { ParserUtils.addDirectProperties(directProperties, r); })?
 	)?
     (
     	'reverse'
-    	reverse = STRING_LITERAL { ParserUtils.setReverseName(reverse.getText(), r); }
+    	reverse = string { ParserUtils.setReverseName(reverse, r); }
     	(reverseProperties = propertiesList { ParserUtils.addReverseProperties(reverseProperties, r); })?
 	)?
     (p = properties { ParserUtils.addProperties(p, r); })?
@@ -121,6 +121,10 @@ relationship returns [ DefaultRelationship r = new DefaultRelationship(); ]:
     {
     	ParserUtils.applyRelationshipName(r);
     }
+;
+
+string returns [ String r = null; ]:
+	s = STRING_LITERAL { r = s.getText().substring(1, s.getText().length() - 1); }
 ;
 
 identifier_list returns [ ArrayList<String> r = new ArrayList<String>(); ]:

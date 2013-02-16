@@ -1,9 +1,14 @@
 package com.th3l4b.common.named;
 
+import java.io.PrintWriter;
 import java.util.LinkedHashMap;
+import java.util.Map.Entry;
+
+import com.th3l4b.common.text.IPrintable;
+import com.th3l4b.common.text.TextUtils;
 
 public class DefaultNamedContainer<T extends INamed> implements
-		INamedContainer<T> {
+		INamedContainer<T>, IPrintable {
 
 	private LinkedHashMap<String, T> _items = new LinkedHashMap<String, T>();
 
@@ -29,8 +34,16 @@ public class DefaultNamedContainer<T extends INamed> implements
 
 	@Override
 	public void remove(T item) throws Exception {
-		// TODO Auto-generated method stub
-		
+		_items.remove(item);
 	}
 
+	@Override
+	public void print(PrintWriter out) {
+		int i = 0;
+		for (Entry<String, T> e : _items.entrySet()) {
+			out.println("#" + (i++) + " " + e.getKey());
+			TextUtils.print(e.getValue(), out);
+		}
+
+	}
 }
