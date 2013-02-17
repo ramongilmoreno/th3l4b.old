@@ -46,6 +46,14 @@ public class ParserUtils {
 		}
 	}
 
+	public static void addRelationship(IRelationship relationship, IModel model) {
+		try {
+			model.relationships().add(relationship);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	public static void setFrom(String from, IRelationship relationship) {
 		try {
 			relationship.setFrom(from);
@@ -62,10 +70,26 @@ public class ParserUtils {
 		}
 	}
 
+	public static void setDirect(IRelationship relationship) {
+		try {
+			relationship.setDirect(new DefaultNamed());
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	public static void setDirectName(String directName,
 			IRelationship relationship) {
 		try {
-			relationship.setDirect(new DefaultNamed(directName));
+			relationship.getDirect().setName(directName);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static void setReverse(IRelationship relationship) {
+		try {
+			relationship.setReverse(new DefaultNamed());
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -74,7 +98,7 @@ public class ParserUtils {
 	public static void setReverseName(String reverseName,
 			IRelationship relationship) {
 		try {
-			relationship.setReverse(new DefaultNamed(reverseName));
+			relationship.getReverse().setName(reverseName);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -130,8 +154,31 @@ public class ParserUtils {
 		}
 	}
 
-	public static void applyRelationshipName(DefaultRelationship relationship) {
+	public static void applyRelationshipNames(DefaultRelationship relationship) {
 		try {
+			// If direct does not exist, create it and use the to name
+			{
+				INamed d = relationship.getDirect();
+				if (d == null) {
+					d = new DefaultNamed();
+					relationship.setDirect(d);
+				}
+				if (d.getName() == null) {
+					d.setName(relationship.getTo());
+				}
+			}
+
+			// Same for reverse.
+			{
+				INamed r = relationship.getReverse();
+				if (r == null) {
+					r = new DefaultNamed();
+					relationship.setReverse(r);
+				}
+				if (r.getName() == null) {
+					r.setName(relationship.getFrom());
+				}
+			}
 			ModelUtils.applyRelationshipName(relationship);
 		} catch (Exception e) {
 			throw new RuntimeException(e);

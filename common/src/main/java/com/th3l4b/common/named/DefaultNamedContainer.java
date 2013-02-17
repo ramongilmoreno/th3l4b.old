@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
 import com.th3l4b.common.text.IPrintable;
+import com.th3l4b.common.text.IndentedWriter;
 import com.th3l4b.common.text.TextUtils;
 
 public class DefaultNamedContainer<T extends INamed> implements
@@ -19,7 +20,16 @@ public class DefaultNamedContainer<T extends INamed> implements
 
 	@Override
 	public void add(T item) throws Exception {
+		String name = item.getName();
+		if (_items.containsKey(name)) {
+			throwExceptionWhenNameExists(item);
+		}
+
 		_items.put(item.getName(), item);
+	}
+
+	protected void throwExceptionWhenNameExists(T item) throws Exception {
+		throw new IllegalArgumentException("Duplicated name: " + item);
 	}
 
 	@Override
@@ -40,10 +50,11 @@ public class DefaultNamedContainer<T extends INamed> implements
 	@Override
 	public void print(PrintWriter out) {
 		int i = 0;
+		PrintWriter iout = IndentedWriter.get(out);
 		for (Entry<String, T> e : _items.entrySet()) {
-			out.println("#" + (i++) + " " + e.getKey());
-			TextUtils.print(e.getValue(), out);
+			out.println("#" + (i++) + " key: " + e.getKey() + ", value:");
+			TextUtils.print(e.getValue(), iout);
 		}
-
+		iout.flush();
 	}
 }

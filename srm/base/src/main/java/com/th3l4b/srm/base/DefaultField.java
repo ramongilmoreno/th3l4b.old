@@ -13,7 +13,15 @@ public class DefaultField extends DefaultNamed implements IField,
 	@Override
 	public void setType(String type) throws Exception {
 		getProperties().put(PROPERTY_FIELD_TYPE, type);
+	}
 
+	@Override
+	public String toString() {
+		try {
+			return "" + getName() + " - " + getType();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }

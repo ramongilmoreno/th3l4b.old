@@ -2,7 +2,10 @@ package com.th3l4b.srm.base.normalized;
 
 import com.th3l4b.common.named.DefaultNamed;
 import com.th3l4b.common.named.INamed;
+import com.th3l4b.common.named.NamedUtils;
 import com.th3l4b.common.propertied.IPropertied;
+import com.th3l4b.srm.base.DefaultField;
+import com.th3l4b.srm.base.IField;
 import com.th3l4b.srm.base.ModelUtils;
 import com.th3l4b.srm.base.original.IEntity;
 import com.th3l4b.srm.base.original.IModel;
@@ -23,6 +26,13 @@ public class Normalizer {
 		for (IEntity e : original.entities().items()) {
 			DefaultNormalizedEntity ne = new DefaultNormalizedEntity();
 			transferProperties(e, ne);
+			
+			// Transfer fields
+			for (IField f: e.items()) {
+				DefaultField nf = new DefaultField();
+				transferProperties(f,  nf);
+				ne.add(nf);
+			}
 			normal.add(ne);
 		}
 
@@ -76,6 +86,13 @@ public class Normalizer {
 			transferProperties(reverse, n);
 			nr.setReverse(n);
 		}
+		
+		// Compute name, either name from di
+		String name = NamedUtils.NAME_GETTER.get(direct);
+		if (name == null) {
+			name = nr.getTo();
+		}
+		nr.setName(name);
 		e.relationships().add(nr);
 	}
 }

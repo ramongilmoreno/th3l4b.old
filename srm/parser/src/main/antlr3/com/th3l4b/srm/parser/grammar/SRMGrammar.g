@@ -55,7 +55,7 @@ options {
 
 document :
 	model
-    (entity | relationship)+
+    (entity | relationship)*
 ;
 
 model:
@@ -107,19 +107,20 @@ relationship returns [ DefaultRelationship r = new DefaultRelationship(); ]:
 		)
 	)
     (
-    	'direct'
-    	direct = string { ParserUtils.setDirectName(direct, r); }
+    	'direct' { ParserUtils.setDirect(r); }
+    	(direct = string { ParserUtils.setDirectName(direct, r); })?
     	(directProperties = propertiesList { ParserUtils.addDirectProperties(directProperties, r); })?
 	)?
     (
-    	'reverse'
-    	reverse = string { ParserUtils.setReverseName(reverse, r); }
+    	'reverse' { ParserUtils.setReverse(r); }
+    	(reverse = string { ParserUtils.setReverseName(reverse, r); })?
     	(reverseProperties = propertiesList { ParserUtils.addReverseProperties(reverseProperties, r); })?
 	)?
     (p = properties { ParserUtils.addProperties(p, r); })?
     ';'
     {
-    	ParserUtils.applyRelationshipName(r);
+    	ParserUtils.applyRelationshipNames(r);
+    	ParserUtils.addRelationship(r, getModel());
     }
 ;
 

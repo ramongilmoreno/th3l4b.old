@@ -10,9 +10,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import com.th3l4b.common.named.INamed;
 import com.th3l4b.common.named.NamedUtils;
 import com.th3l4b.common.text.ITextConstants;
 import com.th3l4b.srm.base.original.IRelationship;
+import com.th3l4b.srm.base.original.RelationshipType;
 
 public class ModelUtils {
 
@@ -48,7 +50,7 @@ public class ModelUtils {
 
 			if (v != -1) {
 				out.write("\\u");
-				out.write(Integer.toString(v, Character.MAX_RADIX));
+				out.write(Integer.toString(v, 16));
 				out.write(';');
 			}
 		}
@@ -111,13 +113,13 @@ public class ModelUtils {
 			if (first) {
 				first = false;
 			} else {
-				out.write(";");
+				out.write(" ");
 			}
 			encode(s, out);
 		}
 	}
 
-	public static Iterable<String> fromStringList(Reader input)
+	public static Iterable<Reader> fromStringList(final Reader input)
 			throws Exception {
 		throw new UnsupportedOperationException("Not yet implemented");
 	}
@@ -128,13 +130,12 @@ public class ModelUtils {
 
 	public static void relationshipName(String from, String to, String direct,
 			String reverse, Writer out) throws Exception {
-		StringWriter sw = new StringWriter();
 		try {
 			Reader[] r = { new StringReader(notNull(from)),
 					new StringReader(notNull(to)),
 					new StringReader(notNull(direct)),
 					new StringReader(notNull(reverse)) };
-			toStringList(Arrays.asList(r), sw);
+			toStringList(Arrays.asList(r), out);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -143,9 +144,28 @@ public class ModelUtils {
 	public static String getRelationshipName(IRelationship relationship)
 			throws Exception {
 		StringWriter sw = new StringWriter();
-		relationshipName(relationship.getFrom(), relationship.getTo(),
-				NamedUtils.NAME_GETTER.get(relationship.getDirect()),
-				NamedUtils.NAME_GETTER.get(relationship.getReverse()), sw);
+		String from = relationship.getFrom();
+		String to = relationship.getTo();
+		INamed direct = relationship.getDirect();
+		INamed reverse = relationship.getReverse();
+
+		// Check that the name is unique for many-to-many relationships.
+		boolean direction = to.compareTo(from) <= 0;
+		if ((relationship.getType() == RelationshipType.manyToMany)
+				&& !direction) {
+			{
+				String aux = from;
+				from = to;
+				to = aux;
+			}
+			{
+				INamed aux = direct;
+				direct = reverse;
+				reverse = aux;
+			}
+		}
+		relationshipName(from, to, NamedUtils.NAME_GETTER.get(direct),
+				NamedUtils.NAME_GETTER.get(reverse), sw);
 		sw.flush();
 		return sw.getBuffer().toString();
 	}
@@ -161,7 +181,7 @@ public class ModelUtils {
 		}
 		ArrayList<String> r = new ArrayList<String>();
 		StringWriter sw = new StringWriter();
-		for (String s : input.split(";")) {
+		for (String s : input.split(" ")) {
 			sw.getBuffer().setLength(0);
 			decode(new StringReader(s), sw);
 			sw.flush();
