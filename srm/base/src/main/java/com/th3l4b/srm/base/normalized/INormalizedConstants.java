@@ -1,6 +1,9 @@
 package com.th3l4b.srm.base.normalized;
 
+import com.th3l4b.srm.base.IModelConstants;
+
+/**
+ * @deprecated Use {@link IModelConstants} instead.
+ */
 public interface INormalizedConstants {
-	public static final String PROPERTY_RELATIONSHIP_TARGET = "target";
-	public static final String PROPERTY_RELATIONSHIP_REVERSE_NAME = "reverse";
 }

@@ -1,5 +1,7 @@
 package com.th3l4b.srm.base.normalized;
 
+import com.th3l4b.common.named.DefaultNamed;
+import com.th3l4b.common.named.INamed;
 import com.th3l4b.common.propertied.IPropertied;
 import com.th3l4b.srm.base.ModelUtils;
 import com.th3l4b.srm.base.original.IEntity;
@@ -38,15 +40,42 @@ public class Normalizer {
 					}
 				}
 
-				if (normal.get(entity) == null) {
-					// Create a new entity
-					DefaultNormalizedEntity ne = new DefaultNormalizedEntity();
-					ne.setName(entity);
-					normal.add(ne);
+				// Find entity for this many-to-many relationship
+				INormalizedEntity e = normal.get(entity);
+				if (e == null) {
+					// If many-to-many entity does not exist, create a new entity
+					e = new DefaultNormalizedEntity();
+					e.setName(entity);
+					normal.add(e);
 				}
+				
+				// Attach many-to-one relationships to sources
+				addNormalizedRelationshipFromRelationsip(r, e, true);
+				addNormalizedRelationshipFromRelationsip(r, e, false);
+				
 			}
 		}
 
 		return normal;
+	}
+
+	private static void addNormalizedRelationshipFromRelationsip(
+			IRelationship r, INormalizedEntity e, boolean from) throws Exception {
+		DefaultNormalizedManyToOneRelationship nr = new DefaultNormalizedManyToOneRelationship();
+		nr.setTo(from ? r.getFrom() : r.getTo());
+		INamed direct = from ? r.getReverse() : r.getDirect();
+		if (direct != null) {
+			DefaultNamed n = new DefaultNamed();
+			transferProperties(direct, n);
+			nr.setDirect(n);
+		}
+		
+		INamed reverse = from ? r.getDirect() : r.getReverse();
+		if (reverse != null) {
+			DefaultNamed n = new DefaultNamed();
+			transferProperties(reverse, n);
+			nr.setReverse(n);
+		}
+		e.relationships().add(nr);
 	}
 }
