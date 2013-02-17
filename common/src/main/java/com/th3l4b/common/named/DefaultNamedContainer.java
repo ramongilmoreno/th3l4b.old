@@ -29,17 +29,24 @@ public class DefaultNamedContainer<T extends INamed> implements
 	}
 
 	protected void throwExceptionWhenNameExists(T item) throws Exception {
-		throw new IllegalArgumentException("Duplicated name: " + item);
+		throw new IllegalArgumentException("Duplicated name: " + item  + " on container: " + this);
 	}
 
 	@Override
 	public T get(String name) throws Exception {
+		if (!_items.containsKey(name)) {
+			throwExceptionWhenNameDoesNotExists(name);
+		}
 		return _items.get(name);
 	}
 
+	protected void throwExceptionWhenNameDoesNotExists(String name) throws Exception {
+		throw new IllegalArgumentException("Unexisting name: " + name + " on container: " + this);
+	}
+
 	@Override
-	public boolean contains(T item) throws Exception {
-		return false;
+	public T contains(String name) throws Exception {
+		return _items.get(name);
 	}
 
 	@Override

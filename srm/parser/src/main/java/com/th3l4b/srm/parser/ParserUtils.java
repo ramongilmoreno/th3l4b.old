@@ -156,7 +156,7 @@ public class ParserUtils {
 
 	public static void applyRelationshipNames(DefaultRelationship relationship) {
 		try {
-			// If direct does not exist, create it and use the to name
+			// If direct does not exist, create it and use the 'to' name
 			{
 				INamed d = relationship.getDirect();
 				if (d == null) {
@@ -179,7 +179,7 @@ public class ParserUtils {
 					r.setName(relationship.getFrom());
 				}
 			}
-			ModelUtils.applyRelationshipName(relationship);
+			relationship.setName(ModelUtils.getRelationshipName(relationship));
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

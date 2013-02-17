@@ -10,7 +10,11 @@ import com.th3l4b.srm.base.original.DefaultEntity;
 public class DefaultNormalizedEntity extends DefaultEntity implements
 		INormalizedEntity {
 
-	protected DefaultNamedContainer<INormalizedManyToOneRelationship> _relationships = new DefaultNamedContainer<INormalizedManyToOneRelationship>();
+	protected DefaultNamedContainer<INormalizedManyToOneRelationship> _relationships = new DefaultNamedContainer<INormalizedManyToOneRelationship>() {
+		public String toString() {
+			return "Relationships of " + DefaultNormalizedEntity.this;
+		}
+	};
 
 	@Override
 	public INamedContainer<INormalizedManyToOneRelationship> relationships()

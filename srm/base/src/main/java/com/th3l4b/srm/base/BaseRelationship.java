@@ -50,18 +50,20 @@ public class BaseRelationship extends DefaultNamed implements IModelConstants,
 	@Override
 	public void print(PrintWriter out) {
 		out.println("" + toString());
+		PrintWriter iout = IndentedWriter.get(out);
 		try {
-			print("Direct", getDirect(), out);
-			print("Reverse", getReverse(), out);
+			print("Direct", getDirect(), iout);
+			print("Reverse", getReverse(), iout);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+		iout.flush();
 
 	}
 
 	private void print(String title, INamed direct, PrintWriter out) {
 		if (direct != null) {
-			out.println(title);
+			out.println(title + ":");
 			PrintWriter iout = IndentedWriter.get(out);
 			TextUtils.print(direct, iout);
 			iout.flush();

@@ -6,7 +6,6 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -128,19 +127,6 @@ public class ModelUtils {
 		return s != null ? s : ITextConstants.EMPTY_STRING;
 	}
 
-	public static void relationshipName(String from, String to, String direct,
-			String reverse, Writer out) throws Exception {
-		try {
-			Reader[] r = { new StringReader(notNull(from)),
-					new StringReader(notNull(to)),
-					new StringReader(notNull(direct)),
-					new StringReader(notNull(reverse)) };
-			toStringList(Arrays.asList(r), out);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
 	public static String getRelationshipName(IRelationship relationship)
 			throws Exception {
 		StringWriter sw = new StringWriter();
@@ -150,7 +136,7 @@ public class ModelUtils {
 		INamed reverse = relationship.getReverse();
 
 		// Check that the name is unique for many-to-many relationships.
-		boolean direction = to.compareTo(from) <= 0;
+		boolean direction = from.compareTo(to) <= 0;
 		if ((relationship.getType() == RelationshipType.manyToMany)
 				&& !direction) {
 			{
@@ -164,15 +150,23 @@ public class ModelUtils {
 				reverse = aux;
 			}
 		}
-		relationshipName(from, to, NamedUtils.NAME_GETTER.get(direct),
-				NamedUtils.NAME_GETTER.get(reverse), sw);
+
+		ArrayList<Reader> r = new ArrayList<Reader>();
+		if (relationship.getType() == RelationshipType.manyToMany) {
+			r.add(new StringReader(notNull(from)));
+			r.add(new StringReader(notNull(to)));
+			r.add(new StringReader(notNull(NamedUtils.NAME_GETTER.get(direct))));
+			r.add(new StringReader(notNull(NamedUtils.NAME_GETTER.get(reverse))));
+			r.add(new StringReader(notNull(relationship.getEntity())));
+		} else {
+			r.add(new StringReader(notNull(from)));
+			r.add(new StringReader(notNull(to)));
+			r.add(new StringReader(notNull(NamedUtils.NAME_GETTER.get(direct))));
+			r.add(new StringReader(notNull(NamedUtils.NAME_GETTER.get(reverse))));
+		}
+		toStringList(r, sw);
 		sw.flush();
 		return sw.getBuffer().toString();
-	}
-
-	public static void applyRelationshipName(IRelationship relationship)
-			throws Exception {
-		relationship.setName(getRelationshipName(relationship));
 	}
 
 	public static List<String> stringAsList(String input) throws Exception {

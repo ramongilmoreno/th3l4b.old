@@ -13,8 +13,9 @@ import com.th3l4b.srm.base.original.IRelationship;
 import com.th3l4b.srm.base.original.RelationshipType;
 
 public class Normalizer {
-	
-	protected static void transferProperties(IPropertied source, IPropertied target) throws Exception {
+
+	protected static void transferProperties(IPropertied source,
+			IPropertied target) throws Exception {
 		target.getProperties().putAll(source.getProperties());
 	}
 
@@ -26,11 +27,11 @@ public class Normalizer {
 		for (IEntity e : original.entities().items()) {
 			DefaultNormalizedEntity ne = new DefaultNormalizedEntity();
 			transferProperties(e, ne);
-			
+
 			// Transfer fields
-			for (IField f: e.items()) {
+			for (IField f : e.items()) {
 				DefaultField nf = new DefaultField();
-				transferProperties(f,  nf);
+				transferProperties(f, nf);
 				ne.add(nf);
 			}
 			normal.add(ne);
@@ -43,7 +44,7 @@ public class Normalizer {
 				String entity = r.getEntity();
 				if (entity == null) {
 					entity = ModelUtils.getRelationshipName(r);
-					if (normal.get(entity) != null) {
+					if (normal.contains(entity) != null) {
 						throw new IllegalArgumentException(
 								"There is already an entity in the model with the same name as the automatic entity for the many-to-many relationship: "
 										+ entity);
@@ -53,46 +54,75 @@ public class Normalizer {
 				// Find entity for this many-to-many relationship
 				INormalizedEntity e = normal.get(entity);
 				if (e == null) {
-					// If many-to-many entity does not exist, create a new entity
+					// If many-to-many entity does not exist, create a new
+					// entity
 					e = new DefaultNormalizedEntity();
 					e.setName(entity);
 					normal.add(e);
 				}
-				
+
 				// Attach many-to-one relationships to sources
 				addNormalizedRelationshipFromRelationsip(r, e, true);
 				addNormalizedRelationshipFromRelationsip(r, e, false);
-				
+
+			} else {
+				// Locate source
+				INormalizedEntity e = normal.get(r.getFrom());
+
+				// It is a many to one
+				DefaultNormalizedManyToOneRelationship nr = new DefaultNormalizedManyToOneRelationship();
+				transferProperties(r, nr);
+				nr.setTo(r.getTo());
+
+				// Clone direct and reverse
+				nr.setDirect(cloneINamed(r.getDirect()));
+				nr.setReverse(cloneINamed(r.getReverse()));
+
+				applyName(nr);
+				e.relationships().add(nr);
 			}
 		}
 
 		return normal;
 	}
 
+	private static INamed cloneINamed(INamed src) throws Exception {
+		if (src == null) {
+			return src;
+		} else {
+			DefaultNamed r = new DefaultNamed();
+			transferProperties(src, r);
+			return r;
+		}
+	}
+
 	private static void addNormalizedRelationshipFromRelationsip(
-			IRelationship r, INormalizedEntity e, boolean from) throws Exception {
+			IRelationship r, INormalizedEntity e, boolean from)
+			throws Exception {
 		DefaultNormalizedManyToOneRelationship nr = new DefaultNormalizedManyToOneRelationship();
 		nr.setTo(from ? r.getFrom() : r.getTo());
 		INamed direct = from ? r.getReverse() : r.getDirect();
 		if (direct != null) {
-			DefaultNamed n = new DefaultNamed();
-			transferProperties(direct, n);
-			nr.setDirect(n);
+			nr.setDirect(cloneINamed(direct));
 		}
-		
+
 		INamed reverse = from ? r.getDirect() : r.getReverse();
 		if (reverse != null) {
-			DefaultNamed n = new DefaultNamed();
-			transferProperties(reverse, n);
-			nr.setReverse(n);
+			nr.setReverse(cloneINamed(reverse));
 		}
-		
-		// Compute name, either name from di
+
+		applyName(nr);
+		e.relationships().add(nr);
+	}
+
+	private static void applyName(INormalizedManyToOneRelationship relationship)
+			throws Exception {
+		// Compute name, either name or from direct
+		INamed direct = relationship.getDirect();
 		String name = NamedUtils.NAME_GETTER.get(direct);
 		if (name == null) {
-			name = nr.getTo();
+			name = relationship.getTo();
 		}
-		nr.setName(name);
-		e.relationships().add(nr);
+		relationship.setName(name);
 	}
 }
