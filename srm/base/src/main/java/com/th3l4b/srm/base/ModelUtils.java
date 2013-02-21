@@ -12,6 +12,7 @@ import java.util.List;
 import com.th3l4b.common.named.INamed;
 import com.th3l4b.common.named.NamedUtils;
 import com.th3l4b.common.text.ITextConstants;
+import com.th3l4b.common.text.TextUtils;
 import com.th3l4b.srm.base.original.IRelationship;
 import com.th3l4b.srm.base.original.RelationshipType;
 
@@ -22,35 +23,15 @@ public class ModelUtils {
 	}
 
 	public static void encode(Reader input, Writer out) throws IOException {
-		int c = -1;
-		while ((c = input.read()) != -1) {
-			// Check surrogates
-			char ch = (char) c;
-			int v = -1;
-			if (Character.isHighSurrogate(ch)) {
-				char low = (char) input.read();
-				if (!Character.isLowSurrogate(low)) {
-					throw new IllegalArgumentException(
-							"Found low surrogate without high. High: " + ch
-									+ ", candidate low: " + low);
-				}
-				if (!Character.isSurrogatePair(ch, low)) {
-					throw new IllegalArgumentException(
-							"Candidate surrogates were not surrogates: " + ch
-									+ ", candidate low: " + low);
-				}
-				v = Character.toCodePoint(ch, low);
-			} else if ((c < 33) || (c > 127) || (c == '\\') || (c == '\"')
+		for (Integer i : TextUtils.unicodeIterable(input)) {
+			int c = i.intValue();
+			if ((c < 33) || (c > 127) || (c == '\\') || (c == '\"')
 					|| (c == ';')) {
-				v = c;
-			} else {
-				out.write(ch);
-			}
-
-			if (v != -1) {
 				out.write("\\u");
-				out.write(Integer.toString(v, 16));
+				out.write(Integer.toString(c, 16));
 				out.write(';');
+			} else {
+				out.write(c);
 			}
 		}
 	}

@@ -12,6 +12,7 @@
     <module>common</module>
     <module>diary7</module>
     <module>srm</module>
+    <module>types</module>
   </modules>
     
       <properties>
