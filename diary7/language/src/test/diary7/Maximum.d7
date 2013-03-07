@@ -1,0 +1,79 @@
+module "Maximum";
+
+context "com.th3l4b.diary7.language.test";
+
+import "com.th3l4b.diary.basic.List";
+
+requires "com.th3l4b.diary.basic.Math";
+
+model {
+
+    model "Maximum";
+
+    entity "Valued" {
+         field "Value" "Integer"; 
+    }
+
+    entity "Candidate" {
+         field "Value" "Integer";
+         field "Who" "Reference";
+    }
+
+};
+
+function Maximum {
+
+    input list "Valued" v;
+    output unique "Candidate" c;
+
+    body {
+	"Valued" current;
+        for (i in v) {
+	    if (current is undefined) {
+                current = i;
+            } else {
+                if (call "Math" "Greater" i.Value current.Value) {
+                    current = i;
+                }
+            }
+        }
+
+	if (current) {
+            c = new "Candidate";
+            c.Value = current.Value;
+            c.Who = current;
+        }
+    };
+};
+
+function MaximumAlternatives {
+
+    input list "Valued" v;
+    input unique "Integer" max;
+    output list "Candidate" c;
+
+    body {
+        for (i in v) {
+	    "Integer" minInList;
+	    if (call "Math" "Smaller" (length c) max)) {
+	        add i c;
+		minInList = 
+	    } else {
+	        function Smaller {
+		    input "Valued" v;
+		    output "Boolean" r;
+		    body {
+		    	if (call "Math" "Smaller" v.Value minInList) {
+			    r = v;
+			    return;
+			}
+		    }
+		} with minInList;
+	        "Valued" r = call "List" "Find" c "Smaller"; 
+		if (r) {
+		    remove r c;
+		}
+            }
+        }
+    }
+}

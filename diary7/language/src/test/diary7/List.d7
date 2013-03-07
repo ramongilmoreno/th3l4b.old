@@ -1,0 +1,31 @@
+module "List";
+
+context "com.th3l4b.diary7.language.test";
+
+requires "com.th3l4b.diary.basic.Math";
+
+function Size {
+    input list any items;
+    output unit "Integer" size; 
+    body {
+        size = "0";
+        for (i in items) {
+            size = call "Math" "addIntegers" size "1";
+	}
+    };
+};
+
+function Find {
+    input list any items;
+    input function predicate;
+    input any argument;
+    output any item;
+    body {
+        for (i in items) {
+	    if (call predicate i argument) {
+	        item = i;
+	        return;
+	    }
+	}
+    }
+};
