@@ -18,6 +18,8 @@ import com.th3l4b.srm.base.original.RelationshipType;
 
 public class ModelUtils {
 
+	public static final String SEPARATOR = " ";
+
 	public static String mergeWithContext(String item, String context) {
 		return context + "." + item;
 	}
@@ -93,7 +95,7 @@ public class ModelUtils {
 			if (first) {
 				first = false;
 			} else {
-				out.write(" ");
+				out.write(SEPARATOR);
 			}
 			encode(s, out);
 		}
@@ -110,27 +112,72 @@ public class ModelUtils {
 
 	public static String getRelationshipName(IRelationship relationship)
 			throws Exception {
+		String name = relationship.getName();
+		if (name != null) {
+			return name;
+		}
+
+		if (relationship.getType() == RelationshipType.manyToMany) {
+			name = relationship.getEntity();
+			if (name != null) {
+				return name;
+			} else {
+				String a = null;
+				{
+					INamed direction = relationship.getReverse();
+					if (direction != null) {
+						a = direction.getName();
+					} else {
+						a = relationship.getFrom();
+					}
+				}
+				String b = null;
+				{
+					INamed direction = relationship.getDirect();
+					if (direction != null) {
+						b = direction.getName();
+					} else {
+						b = relationship.getTo();
+					}
+				}
+
+				return "" + a + " " + b;
+			}
+		} else {
+			INamed direct = relationship.getDirect();
+			return ""
+					+ relationship.getFrom()
+					+ " "
+					+ (direct != null ? direct.getName() : relationship.getTo());
+		}
+	}
+
+	/**
+	 * @deprecated
+	 */
+	public static String getRelationshipNameOld(IRelationship relationship)
+			throws Exception {
 		StringWriter sw = new StringWriter();
 		String from = relationship.getFrom();
 		String to = relationship.getTo();
 		INamed direct = relationship.getDirect();
 		INamed reverse = relationship.getReverse();
 
-		// Check that the name is unique for many-to-many relationships.
-		boolean direction = from.compareTo(to) <= 0;
-		if ((relationship.getType() == RelationshipType.manyToMany)
-				&& !direction) {
-			{
-				String aux = from;
-				from = to;
-				to = aux;
-			}
-			{
-				INamed aux = direct;
-				direct = reverse;
-				reverse = aux;
-			}
-		}
+		// // Check that the name is unique for many-to-many relationships.
+		// boolean direction = from.compareTo(to) <= 0;
+		// if ((relationship.getType() == RelationshipType.manyToMany)
+		// && !direction) {
+		// {
+		// String aux = from;
+		// from = to;
+		// to = aux;
+		// }
+		// {
+		// INamed aux = direct;
+		// direct = reverse;
+		// reverse = aux;
+		// }
+		// }
 
 		ArrayList<Reader> r = new ArrayList<Reader>();
 		if (relationship.getType() == RelationshipType.manyToMany) {
@@ -156,7 +203,7 @@ public class ModelUtils {
 		}
 		ArrayList<String> r = new ArrayList<String>();
 		StringWriter sw = new StringWriter();
-		for (String s : input.split(" ")) {
+		for (String s : input.split(SEPARATOR)) {
 			sw.getBuffer().setLength(0);
 			decode(new StringReader(s), sw);
 			sw.flush();

@@ -6,34 +6,38 @@ import java.io.PrintWriter;
 import java.io.Writer;
 
 public class IndentedWriter extends FilterWriter {
-	
-	public static PrintWriter get (Writer writer) {
+
+	public static PrintWriter get(Writer writer) {
 		return new PrintWriter(new IndentedWriter(writer), true);
 	}
-	
+
+	public static PrintWriter get(Writer writer, String indent) {
+		return new PrintWriter(new IndentedWriter(writer, indent), true);
+	}
+
 	public static final String DEFAULT_INDENTATION = "    ";
-	
+
 	protected boolean _indentationPending = true;
 	protected char[] _indentation;
-	
-	public IndentedWriter (Writer out) {
+
+	public IndentedWriter(Writer out) {
 		this(out, DEFAULT_INDENTATION);
 	}
 
-	public IndentedWriter (Writer out, String indentation) {
+	public IndentedWriter(Writer out, String indentation) {
 		super(out);
 		_indentation = indentation.toCharArray();
 		reset();
 	}
-	
-	protected void reset () {
+
+	protected void reset() {
 		_indentationPending = true;
 	}
-	
-	protected boolean isNewLine (int c) {
+
+	protected boolean isNewLine(int c) {
 		return (c == '\r') || (c == '\n');
 	}
-	
+
 	@Override
 	public void close() throws IOException {
 		super.close();
@@ -44,8 +48,8 @@ public class IndentedWriter extends FilterWriter {
 	public void flush() throws IOException {
 		super.flush();
 	}
-	
-	protected char[] handle (char[] input, int off, int len) {
+
+	protected char[] handle(char[] input, int off, int len) {
 		StringBuffer sb = new StringBuffer();
 		for (int i = off; i < (off + len); i++) {
 			char c = input[i];
@@ -60,7 +64,7 @@ public class IndentedWriter extends FilterWriter {
 			sb.append(c);
 		}
 		return sb.toString().toCharArray();
-		
+
 	}
 
 	@Override
@@ -77,13 +81,13 @@ public class IndentedWriter extends FilterWriter {
 		} else {
 			// Not new line, check if indentation needed.
 			if (_indentationPending) {
-				for (char i: _indentation)
+				for (char i : _indentation)
 					super.write(i);
 				_indentationPending = false;
 			}
 			super.write(c);
 		}
-		
+
 	}
 
 	@Override

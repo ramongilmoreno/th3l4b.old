@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<!-- http://stackoverflow.com/questions/1429048/does-int-have-a-max-and-min-value-in-a-soap-web-service -->
+	<xs:simpleType name="integer">
+		<xs:restriction base="xs:long">
+			<!-- 2^60 negative -->
+			<xs:minInclusive value="-1152921504606846976" />
+			<!-- 2^60 positive -->
+			<xs:maxInclusive value="1152921504606846976" />
+		</xs:restriction>
+	</xs:simpleType>
+
+
+	<!-- http://www.w3.org/TR/xsd-precisionDecimal/#rf-minScale -->
+	<xs:simpleType name='decimal'>
+		<xs:restriction base='xs:precisionDecimal'>
+			<xs:totalDigits value='15' />
+			<xs:minScale value='0' />
+			<xs:maxScale value='14' />
+		</xs:restriction>
+	</xs:simpleType>
+
+
+	<!-- http://lists.w3.org/Archives/Public/xmlschema-dev/2003May/0063.html -->
+	<xs:simpleType name="empty-string">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="" />
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

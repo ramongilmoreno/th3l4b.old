@@ -7,21 +7,27 @@ model "Test"
 	};
 	
 entity "Entity A" {
-	field "Field 1" "Integer";
-	field "Field 2" "Boolean";
+	field "Field 1" "integer";
+	field "Field 2" "boolean";
 };
 
 entity "Entity B" {
-	field "B Field 1" "Decimal";
+	field "B Field 1" "decimal";
 };
 
 entity "Entity C" {
-	field "C Field 1" "String";
+	field "C Field 1" "string";
 };
 
 relationship "Entity A" "Entity B" many-to-one;
 
 relationship "Entity A" "Entity B" many-to-many "Entity C";
+
+relationship "Entity A" "Entity B" many-to-many 
+	direct "To B" {
+	}
+	reverse "To A" {
+	};
 
 relationship "Entity A" "Entity B" many-to-one
 	direct "Other B" {

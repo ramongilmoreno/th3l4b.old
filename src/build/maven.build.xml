@@ -1,0 +1,68 @@
+<project>
+
+    <target
+        name="maven-properties"
+        depends="properties"
+    >
+    </target>
+    
+    <macrodef name="maven">
+        <!--
+        
+            See $MAVEN_HOME/bin/mvn and mvn.bat scripts to undestand these attributes
+
+            CLASSWORLDS_LAUNCHER=org.codehaus.plexus.classworlds.launcher.Launcher
+
+            ...
+
+            exec "$JAVACMD" \
+              $MAVEN_OPTS \
+              -classpath "${M2_HOME}"/boot/plexus-classworlds-*.jar \
+              "-Dclassworlds.conf=${M2_HOME}/bin/m2.conf" \
+              "-Dmaven.home=${M2_HOME}"  \
+              ${CLASSWORLDS_LAUNCHER} "$@"
+
+        -->
+        <attribute name="dir" default="${basedir}"/>
+        <attribute name="target"/>
+        <element name="args" optional="yes"/>
+        <element name="jvmargs" optional="yes"/>
+        <sequential>
+            <java
+                classname="org.codehaus.plexus.classworlds.launcher.Launcher"
+                fork="true"
+                dir="@{dir}"
+            >
+                <arg value="@{target}"/>
+                <args/>
+                <jvmargs/>
+                <jvmarg value="-Dclassworlds.conf=${maven.home}/bin/m2.conf"/>
+                <jvmarg value="-Dmaven.home=${maven.home}"/>
+                <classpath>
+                    <fileset dir="${maven.home}/boot">
+                        <include name="plexus-classworlds-*.jar"/>
+                    </fileset>
+                </classpath>
+            </java>
+        </sequential>
+    </macrodef>
+
+    <target
+        name="maven-eclipse-projects"
+        depends="maven-properties"
+    >
+        <maven target="eclipse:eclipse"/>
+    </target>
+    
+    <target
+        name="maven-eclipse-workspace"
+        depends="maven-properties"
+    >
+        <maven target="eclipse:configure-workspace">
+            <jvmargs>
+                <jvmarg value="-Declipse.workspace=workspace"/>
+            </jvmargs>
+        </maven>
+    </target>
+    
+</project>

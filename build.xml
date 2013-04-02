@@ -1,0 +1,17 @@
+<project>
+
+    <property environment="env"/>
+    <property name="src.dir" value="src"/>
+    <property name="build.src.dir" value="${src.dir}/build"/>
+
+
+    <target
+        name="properties"
+    >
+        <property file="build.properties"/>
+        <property file="${build.src.dir}/default.properties"/>
+    </target>
+    
+    <import file="${build.src.dir}/maven.build.xml"/>
+    
+</project>

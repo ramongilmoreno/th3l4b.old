@@ -17,6 +17,8 @@
     <modules>
     <module>base</module>
     <module>java</module>
+    <module>mojo</module>
+    <module>testbed</module>
   </modules>
 
 </project>

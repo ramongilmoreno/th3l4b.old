@@ -52,7 +52,7 @@ public class Normalizer {
 				}
 
 				// Find entity for this many-to-many relationship
-				INormalizedEntity e = normal.get(entity);
+				INormalizedEntity e = normal.contains(entity);
 				if (e == null) {
 					// If many-to-many entity does not exist, create a new
 					// entity
@@ -104,11 +104,19 @@ public class Normalizer {
 		INamed direct = from ? r.getReverse() : r.getDirect();
 		if (direct != null) {
 			nr.setDirect(cloneINamed(direct));
+		} else {
+			nr.setDirect(new DefaultNamed(nr.getTo()));
 		}
-
+		
 		INamed reverse = from ? r.getDirect() : r.getReverse();
 		if (reverse != null) {
 			nr.setReverse(cloneINamed(reverse));
+		} else {
+			nr.setDirect(new DefaultNamed(r.getEntity()));
+		}
+		if (nr.getReverse() == null) {
+			String to = from ? r.getTo() : r.getFrom();
+			nr.setReverse(new DefaultNamed(to));
 		}
 
 		applyName(nr);

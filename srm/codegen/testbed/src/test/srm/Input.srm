@@ -1,0 +1,37 @@
+#
+# Sample model for testing...
+#
+
+model "Test"
+	properties {
+	};
+	
+entity "Entity A" {
+	field "Field 1" "integer";
+	field "Field 2" "boolean";
+};
+
+entity "Entity B" {
+	field "B Field 1" "decimal";
+};
+
+entity "Entity C" {
+	field "C Field 1" "string";
+};
+
+relationship "Entity A" "Entity B" many-to-many
+	direct "Other B"
+	reverse "Other A";
+
+relationship "Entity A" "Entity B" many-to-many "Entity C";
+
+relationship "Entity A" "Entity B" many-to-one
+	direct "Another B" {
+		"A" = "1";
+	}
+	reverse "Another A" {
+		"a" = "I";
+	}
+	properties {
+		"x" = "y";
+	};

@@ -6,9 +6,14 @@ import java.util.Map;
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.CommonTokenStream;
 
+import com.th3l4b.common.log.AbstractLog;
+import com.th3l4b.common.log.ILogger;
+import com.th3l4b.common.log.ILogLevel;
 import com.th3l4b.common.named.DefaultNamed;
 import com.th3l4b.common.named.INamed;
 import com.th3l4b.common.propertied.IPropertied;
+import com.th3l4b.common.text.IPrintable;
+import com.th3l4b.common.text.TextUtils;
 import com.th3l4b.srm.base.IField;
 import com.th3l4b.srm.base.ModelUtils;
 import com.th3l4b.srm.base.original.DefaultRelationship;
@@ -16,6 +21,7 @@ import com.th3l4b.srm.base.original.IEntity;
 import com.th3l4b.srm.base.original.IModel;
 import com.th3l4b.srm.base.original.IRelationship;
 import com.th3l4b.srm.base.original.RelationshipType;
+import com.th3l4b.srm.base.original.Validator;
 import com.th3l4b.srm.parser.grammar.SRMGrammarLexer;
 import com.th3l4b.srm.parser.grammar.SRMGrammarParser;
 
@@ -186,17 +192,33 @@ public class ParserUtils {
 	}
 
 	public static IModel parse(InputStream is) throws Exception {
+		return parse(is, new AbstractLog() {
+			@Override
+			public void log(IPrintable item, ILogLevel level) throws Exception {
+				// Fail at first error.
+				if (level == ILogLevel.error) {
+					throw new IllegalArgumentException(TextUtils.toString(item));
+				}
+			}
+		});
+
+	}
+
+	public static IModel parse(InputStream is, ILogger logger) throws Exception {
 		SRMGrammarLexer lex = new SRMGrammarLexer(new ANTLRInputStream(is));
 		CommonTokenStream tokens = new CommonTokenStream(lex);
 		SRMGrammarParser parser = new SRMGrammarParser(tokens);
 		parser.document();
 		int errors = parser.getNumberOfSyntaxErrors();
 		if (errors > 0) {
-			throw new IllegalArgumentException("Syntax errors in input: "
-					+ errors + " errors found");
+			logger.error(TextUtils.toPrintable("Syntax errors in input: "
+					+ errors + " errors found"));
 		}
-
-		return parser.getModel();
+		
+		// Check the validation of the model.
+		IModel model = parser.getModel();
+		Validator.validate(model, logger);
+		return model;
 	}
 
 }

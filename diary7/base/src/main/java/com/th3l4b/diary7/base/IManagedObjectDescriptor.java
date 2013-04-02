@@ -1,5 +1,8 @@
 package com.th3l4b.diary7.base;
 
+/**
+ * @deprecated see srm
+ */
 public interface IManagedObjectDescriptor extends IIdentified {
 	ManagedObjectStatus getStatus () throws Exception;
 	void setStatus (ManagedObjectStatus status) throws Exception;

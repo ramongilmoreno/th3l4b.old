@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.text.Normalizer;
 import java.util.Iterator;
@@ -145,5 +146,28 @@ public class TextUtils {
 		// http://stackoverflow.com/questions/3322152/java-getting-rid-of-accents-and-converting-them-to-regular-letters
 		return Normalizer.normalize(input, Normalizer.Form.NFD).replaceAll(
 				"[^\\p{ASCII}]", "");
+	}
+
+	public static String cIdentifier(String input) {
+		return ASCII(input).replaceAll("[^A-Za-z0-9]", "");
+	}
+
+	public static String toString(IPrintable printable) {
+		StringWriter out = new StringWriter();
+		PrintWriter pw = new PrintWriter(out);
+		printable.print(pw);
+		pw.flush();
+		out.flush();
+		return out.getBuffer().toString();
+	}
+
+	public static IPrintable toPrintable(final String string) {
+		return new IPrintable() {
+			@Override
+			public void print(PrintWriter out) {
+				out.println(string);
+			}
+
+		};
 	}
 }

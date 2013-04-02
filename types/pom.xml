@@ -16,6 +16,6 @@
     
   <modules>
     <module>base</module>
-    <module>java</module>
+    <module>runtime</module>
   </modules>
 </project>

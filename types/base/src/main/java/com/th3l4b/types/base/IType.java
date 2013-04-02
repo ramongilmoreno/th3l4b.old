@@ -1,5 +1,6 @@
 package com.th3l4b.types.base;
 
-public interface IType {
+import com.th3l4b.common.named.INamed;
 
+public interface IType extends INamed {
 }
