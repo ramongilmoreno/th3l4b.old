@@ -27,7 +27,8 @@ public class JavaCodeGenerator {
 						out.println("package " + context.getPackage() + ";");
 						out.println();
 						out.println("public interface " + clazz + " extends "
-								+ IRuntimeEntity.class.getName() + " {");
+								+ IRuntimeEntity.class.getName() + "<" + clazz
+								+ "> {");
 
 						// Fill attributes
 						for (IField field : entity.items()) {
