@@ -3,12 +3,20 @@ package com.th3l4b.srm.codegen.java.basicruntime.update;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.ibm.gsk.ikeyman.util.Pair;
 import com.th3l4b.srm.runtime.ICoordinates;
 import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
 
 public abstract class AbstractUpdateTool {
+ 
+	public static class Pair<A, B> {
+		A _a;
+		B _b;
+		public Pair(A a, B b) {
+			_a = a;
+			_b = b;
+		}
+	}
 
 	public static class Update<T extends IRuntimeEntity<?>> extends Pair<T, T> {
 		public Update(T first, T second) {
@@ -58,8 +66,7 @@ public abstract class AbstractUpdateTool {
 			}
 		}
 
-		beforeChanges(updates.values(), context);
-		afterChanges(updates.values(), context);
+		//beforeChanges(updates.values(), context);
+		//afterChanges(updates.values(), context);
 	}
-
 }
