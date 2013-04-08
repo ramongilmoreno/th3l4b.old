@@ -16,6 +16,11 @@ public abstract class AbstractModelUtils implements IModelUtils {
 
 	@Override
 	public boolean compare(IIdentifier a, IIdentifier b) throws Exception {
-		return UUIDIdentifier.eq((UUIDIdentifier) a, (UUIDIdentifier) b); 
+		return compareStatic(a, b);
+	}
+
+	public static boolean compareStatic(IIdentifier a, IIdentifier b)
+			throws Exception {
+		return UUIDIdentifier.eq((UUIDIdentifier) a, (UUIDIdentifier) b);
 	}
 }

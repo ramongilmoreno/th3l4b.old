@@ -6,7 +6,7 @@ import java.util.Map;
 import com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory.AbstractModelUtils;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
 
-public class TestModelUtils extends AbstractModelUtils {
+public class Test_ModelUtils extends AbstractModelUtils {
 	
 	private interface Creator {
 		Object create () throws Exception;
@@ -14,11 +14,11 @@ public class TestModelUtils extends AbstractModelUtils {
 	
 	Map<String, Creator> _creators = new LinkedHashMap<String, Creator>();
 	
-	public TestModelUtils () {
-		_creators.put(ITestEntityA.class.getName(), new Creator() {
+	public Test_ModelUtils () {
+		_creators.put(EntityA.class.getName(), new Creator() {
 			@Override
 			public Object create() throws Exception {
-				return new TestEntityA();
+				return new Default_EntityA();
 			}
 		});
 	}
