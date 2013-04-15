@@ -7,4 +7,6 @@ public interface IModelUtils {
 	boolean compare(IIdentifier a, IIdentifier b) throws Exception;
 
 	<T2 extends IRuntimeEntity<T2>> T2 create(Class<T2> clazz) throws Exception;
+	
+	<T2 extends IRuntimeEntity<T2>> void copy(T2 source, T2 target, Class<T2> clazz) throws Exception;
 }

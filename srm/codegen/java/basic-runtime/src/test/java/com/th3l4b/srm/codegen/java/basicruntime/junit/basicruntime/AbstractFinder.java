@@ -1,21 +1,23 @@
-package com.th3l4b.srm.codegen.java.basicruntime.junit;
+package com.th3l4b.srm.codegen.java.basicruntime.junit.basicruntime;
 
+import com.th3l4b.srm.codegen.java.basicruntime.junit.IEntityA;
+import com.th3l4b.srm.codegen.java.basicruntime.junit.ITestFinder;
 import com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory.AbstractInMemoryContainer;
 import com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory.IPredicate;
 import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
 
-public abstract class AbstractTest_Finder extends AbstractInMemoryContainer implements ITest_Finder {
+public abstract class AbstractFinder extends AbstractInMemoryContainer implements ITestFinder {
 		
 	@Override
 	public <T extends IRuntimeEntity<T>> Iterable<T> find(Class<T> clazz,
 			IIdentifier identifier, String relationship) throws Exception {
 		Predicate<?> p = null;
-		if (clazz.isAssignableFrom(EntityA.class)) {
+		if (clazz.isAssignableFrom(IEntityA.class)) {
 			if (relationship.equals("Relationship a")) {
-				p = new Predicate<EntityA>(identifier) {
+				p = new Predicate<IEntityA>(identifier) {
 					@Override
-					protected IIdentifier getTarget(EntityA src)
+					protected IIdentifier getTarget(IEntityA src)
 							throws Exception {
 						return null;
 					}
@@ -44,14 +46,14 @@ public abstract class AbstractTest_Finder extends AbstractInMemoryContainer impl
 	}
 
 	@Override
-	public EntityA getEntityA(IIdentifier identifier) throws Exception {
-		return find(EntityA.class, identifier);
+	public IEntityA getEntityA(IIdentifier identifier) throws Exception {
+		return find(IEntityA.class, identifier);
 	}
 
 	@Override
-	public Iterable<EntityA> findEntityA(IIdentifier from)
+	public Iterable<IEntityA> findEntityA(IIdentifier from)
 			throws Exception {
-		return find(EntityA.class, from, "Entity A");
+		return find(IEntityA.class, from, "Entity A");
 	}
 
 }
