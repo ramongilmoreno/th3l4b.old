@@ -21,7 +21,7 @@ import com.th3l4b.srm.codegen.base.FileUtils;
 import com.th3l4b.srm.codegen.java.basic.JavaCodeGenerator;
 import com.th3l4b.srm.codegen.java.basic.JavaCodeGeneratorContext;
 import com.th3l4b.srm.parser.ParserUtils;
-import com.th3l4b.types.base.basicset.TypesSet;
+import com.th3l4b.types.base.basicset.BasicSetTypesContext;
 
 /**
  * Generates all sources
@@ -102,7 +102,7 @@ public class AllMojo extends AbstractMojo {
 			context.setOutput(_output);
 			context.setTimestamp(ts);
 			context.setOverwrite(_overwrite);
-			context.setTypes(TypesSet.get());
+			context.setTypes(BasicSetTypesContext.get());
 			context.setLog(new AbstractLog() {
 				@Override
 				public void log(IPrintable item, ILogLevel level)

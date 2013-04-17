@@ -13,14 +13,14 @@ import com.th3l4b.types.base.ITypesContext;
 /**
  * Implementation of the basi list of types.
  */
-public class TypesSet {
+public class BasicSetTypesContext {
 
 	private static ITypesContext _default;
 
 	public static ITypesContext get() {
 		if (_default == null) {
 			DefaultTypesContext d = new DefaultTypesContext();
-			InputStream is = TypesSet.class
+			InputStream is = BasicSetTypesContext.class
 					.getResourceAsStream(BasicSetTypesEnum.class
 							.getSimpleName() + ".properties");
 			Properties p = new Properties();
