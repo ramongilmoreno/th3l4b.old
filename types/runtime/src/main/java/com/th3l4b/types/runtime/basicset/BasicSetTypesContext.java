@@ -14,34 +14,54 @@ public class BasicSetTypesContext implements IJavaRuntimeTypesContext {
 		_types.put("integer", new IntegerType());
 		_types.put("decimal", new AbstractType<Double>(Double.class) {
 			double _min, _max;
-			
+
 			{
-				long l = 0;
-				for (int i = 1; i <= 15; i++) {
+				long l = 1;
+				for (int i = 0; i < 15; i++) {
 					l *= 10;
-					l += 9;
 				}
 				_max = (double) l;
-				for (int i = 1; i <= 15; i++) {
-					l += 9;
+				l = 1;
+				for (int i = 0; i < 15; i++) {
 					l /= 10;
 				}
-				_min = (double) l; 
+				_min = (double) l;
 			}
-			
+
 			@Override
 			public String toStringNotNull(Double value) throws ParseException {
-				Double v = value.doubleValue();
-				if (v.isNaN()) {
+				double v = value.doubleValue();
+				if (value.isNaN()) {
 					throw new IllegalArgumentException("Value is NaN: " + value);
-				} else if (v > _max) {
-					throw new IllegalArgumentException("Value greater than fifteen nines: " + value);
+				}
+				boolean negative = v < 0;
+				v = Math.abs(v);
+				if (v > _max) {
+					v = _max;
 				} else if (v < _min) {
-					throw new IllegalArgumentException("Value smaller than fifteen nines in decimal: " + value);
+					v = _min;
+				}
+				double l = Math.floor(Math.log10(v));
+				l = Math.abs(Math.max(-15, l - 15));
+				v = v * Math.pow(10, l);
+				long lon = (long) Math.round(v);
+				StringBuffer sb = new StringBuffer(Long.toString(lon));
+				int idx = sb.length() - ((int) l);
+				if (idx < 0) {
+					for (int j = idx; j < 0; j++) {
+						sb.insert(0, '0');
+					}
+					sb.insert(0, '.');
+				} else if ((idx >= 0) && (idx <= sb.length())) {
+					sb.insert(idx, '.');
+				}
+				String s = sb.toString().replaceAll("[0]*$", "")
+						.replaceFirst("\\.$", "").replaceFirst("^\\.", "0.")
+						.replaceFirst("^$", "0");
+				if (negative) {
+					return "-" + s;
 				} else {
-					String s = null;
-					// TODO: implement this
-					return "";
+					return s;
 				}
 			}
 
@@ -53,7 +73,7 @@ public class BasicSetTypesContext implements IJavaRuntimeTypesContext {
 					throw new ParseException(value, 0);
 				}
 			}
-			
+
 		});
 		_types.put("boolean", new AbstractType<Boolean>(Boolean.class) {
 			public static final String YES = "Y";
