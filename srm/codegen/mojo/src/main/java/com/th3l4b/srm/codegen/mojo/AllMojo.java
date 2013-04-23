@@ -165,10 +165,16 @@ public class AllMojo extends AbstractMojo {
 					TextUtils.toPrintable("Producing entities..."));
 			for (INormalizedEntity ne : normalized.items()) {
 				java.entity(ne, normalized, javaContext);
+				java.entityImpl(ne, normalized, javaContext);
 			}
 			javaContext.getLog().message(
-					TextUtils.toPrintable("Entities production finished..."));
-			java.accessor(normalized, javaContext);
+					TextUtils.toPrintable("Entities production finished."));
+			java.finder(normalized, javaContext);
+			javaContext.getLog().message(
+					TextUtils.toPrintable("Finder finished."));
+			javaContext.getLog().message(
+					TextUtils.toPrintable("Producing implementations..."));
+			
 
 		} catch (Exception e) {
 			throw new MojoExecutionException("Could not generate code", e);

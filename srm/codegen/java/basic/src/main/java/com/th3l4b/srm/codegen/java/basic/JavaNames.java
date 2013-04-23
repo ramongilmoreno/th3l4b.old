@@ -35,17 +35,29 @@ public class JavaNames {
 	public static String fqn (String clazz, JavaCodeGeneratorContext context) {
 		return context.getPackage() + "." + clazz;
 	}
-
-	public static String name(INormalizedEntity entity) throws Exception {
-		return valueOrProperty(javaIdentifier(entity.getName()), entity);
+	
+	public static String packageForImpl (JavaCodeGeneratorContext context) {
+		return context.getPackage() + ".basicruntime";
 	}
 
+	public static String fqnImpl (String clazz, JavaCodeGeneratorContext context) {
+		return packageForImpl(context) + clazz;
+	}
+	
+	public static String name(INormalizedEntity entity) throws Exception {
+		return "I" + valueOrProperty(javaIdentifier(entity.getName()), entity);
+	}
+
+	public static String nameImpl(INormalizedEntity entity) throws Exception {
+		return "Default" + valueOrProperty(javaIdentifier(entity.getName()), entity);
+	}
+	
 	public static String name(IField field) throws Exception {
 		return valueOrProperty(javaIdentifier(field.getName()), field);
 	}
 
-	public static String accessor(INormalizedModel model) throws Exception {
-		return valueOrProperty(javaIdentifier(model.getName()) + "_Accessor",
+	public static String finder(INormalizedModel model) throws Exception {
+		return "I" + valueOrProperty(javaIdentifier(model.getName()) + "Finder",
 				model);
 	}
 
