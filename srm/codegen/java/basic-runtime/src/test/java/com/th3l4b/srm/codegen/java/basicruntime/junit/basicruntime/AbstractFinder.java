@@ -34,20 +34,15 @@ public abstract class AbstractFinder extends AbstractInMemoryContainer implement
 		});
 	}
 
-	@Override
-	public <T extends IRuntimeEntity<T>> Iterable<T> all(Class<T> clazz)
-			throws Exception {
-		return find(clazz, new IPredicate<T>() {
-			@Override
-			public boolean accept(T arg) throws Exception {
-				return true;
-			}
-		});
-	}
 
 	@Override
 	public IEntityA getEntityA(IIdentifier identifier) throws Exception {
 		return find(IEntityA.class, identifier);
+	}
+	
+	@Override
+	public Iterable<IEntityA> allEntityA() throws Exception {
+		return all(IEntityA.class);
 	}
 
 	@Override

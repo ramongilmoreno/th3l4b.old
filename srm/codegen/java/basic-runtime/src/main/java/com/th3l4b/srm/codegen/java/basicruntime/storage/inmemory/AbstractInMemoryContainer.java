@@ -57,4 +57,15 @@ public abstract class AbstractInMemoryContainer {
 				});
 		return (Iterable<T>) r;
 	}
+	
+	public <T extends IRuntimeEntity<T>> Iterable<T> all(Class<T> clazz)
+			throws Exception {
+		return find(clazz, new IPredicate<T>() {
+			@Override
+			public boolean accept(T arg) throws Exception {
+				return true;
+			}
+		});
+	}
+
 }

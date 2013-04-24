@@ -41,7 +41,7 @@ public class JavaNames {
 	}
 
 	public static String fqnImpl (String clazz, JavaCodeGeneratorContext context) {
-		return packageForImpl(context) + clazz;
+		return packageForImpl(context) + "." + clazz;
 	}
 	
 	public static String name(INormalizedEntity entity) throws Exception {
@@ -58,6 +58,11 @@ public class JavaNames {
 
 	public static String finder(INormalizedModel model) throws Exception {
 		return "I" + valueOrProperty(javaIdentifier(model.getName()) + "Finder",
+				model);
+	}
+
+	public static String finderInMemory(INormalizedModel model) throws Exception {
+		return "Abstract" + valueOrProperty(javaIdentifier(model.getName()) + "InMemoryFinder",
 				model);
 	}
 

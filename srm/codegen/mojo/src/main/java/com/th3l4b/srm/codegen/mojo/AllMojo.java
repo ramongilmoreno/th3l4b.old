@@ -169,11 +169,12 @@ public class AllMojo extends AbstractMojo {
 			}
 			javaContext.getLog().message(
 					TextUtils.toPrintable("Entities production finished."));
+			javaContext.getLog().message(
+					TextUtils.toPrintable("Producing finder..."));
 			java.finder(normalized, javaContext);
+			java.finderInMemory(normalized, javaContext);
 			javaContext.getLog().message(
 					TextUtils.toPrintable("Finder finished."));
-			javaContext.getLog().message(
-					TextUtils.toPrintable("Producing implementations..."));
 			
 
 		} catch (Exception e) {

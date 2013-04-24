@@ -9,6 +9,7 @@ import com.th3l4b.srm.base.normalized.INormalizedEntity;
 import com.th3l4b.srm.base.normalized.INormalizedManyToOneRelationship;
 import com.th3l4b.srm.base.normalized.INormalizedModel;
 import com.th3l4b.srm.codegen.base.FileUtils;
+import com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory.AbstractInMemoryContainer;
 import com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory.AbstractRuntimeEntity;
 import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
@@ -48,14 +49,15 @@ public class JavaCodeGenerator {
 						// Fill relationships
 						for (INormalizedManyToOneRelationship rel : entity
 								.relationships().items()) {
-							String name = JavaNames.javaIdentifier(rel.getDirect()
-									.getName());
+							String name = JavaNames.javaIdentifier(rel
+									.getDirect().getName());
 							String getter = "get" + name;
 							String setter = "set" + name;
 							String clazz = JavaNames.fqn(
 									JavaNames.name(model.get(rel.getTo())),
 									context);
-							iout.println("public " + IIdentifier.class.getName() + " "
+							iout.println("public "
+									+ IIdentifier.class.getName() + " "
 									+ getter + " () throws "
 									+ Exception.class.getName() + ";");
 							iout.println("public "
@@ -96,9 +98,10 @@ public class JavaCodeGenerator {
 				PrintWriter iout = IndentedWriter.get(out);
 				out.println("package " + pkg + ";");
 				out.println();
-				out.println("public abstract class " + clazz + " extends "
+				out.println("public class " + clazz + " extends "
 						+ AbstractRuntimeEntity.class.getName() + "<" + iclazz
 						+ "> implements " + iclazz + " {");
+				iout.println();
 
 				// Create attributes
 				for (IField field : entity.items()) {
@@ -117,7 +120,7 @@ public class JavaCodeGenerator {
 					iout.println("protected " + clazz + " _value_" + name + ";");
 					iout.println("protected boolean _isSet_" + name + ";");
 				}
-
+				iout.println();
 
 				// Implement accessors
 				for (IField field : entity.items()) {
@@ -172,7 +175,10 @@ public class JavaCodeGenerator {
 							+ "() throws Exception { return _isSet_" + name
 							+ "; }");
 				}
-
+				iout.println();
+				iout.println("@Override");
+				iout.println("public Class<" + iclazz + "> clazz() { return "
+						+ iclazz + ".class; }");
 				out.println("}");
 				iout.flush();
 			}
@@ -236,4 +242,51 @@ public class JavaCodeGenerator {
 
 	}
 
+	public void finderInMemory(final INormalizedModel model,
+			final JavaCodeGeneratorContext context) throws Exception {
+		final String clazz = JavaNames.finderInMemory(model);
+		final String pkg = JavaNames.packageForImpl(context);
+		FileUtils.java(context, pkg, clazz, new AbstractPrintable() {
+			@Override
+			protected void printWithException(PrintWriter out) throws Exception {
+				PrintWriter iout = IndentedWriter.get(out);
+				PrintWriter iiout = IndentedWriter.get(iout);
+				PrintWriter iiiout = IndentedWriter.get(iiout);
+				out.println("package " + pkg + ";");
+				out.println();
+				out.println("public abstract class " + clazz + " extends "
+						+ AbstractInMemoryContainer.class.getName()
+						+ " implements "
+						+ JavaNames.fqn(JavaNames.finder(model), context)
+						+ " {");
+
+				// Get the entities (individually or all)
+				for (INormalizedEntity ne : model.items()) {
+					String clazz = JavaNames.name(ne);
+					String fqn = JavaNames.fqn(clazz, context);
+					iout.println("public " + fqn + " get" + clazz + "("
+							+ IIdentifier.class.getName()
+							+ " id) throws Exception {");
+					iiout.println("return find(" + fqn + ".class, id);");
+					iout.println("}");
+				}
+
+				for (INormalizedEntity ne : model.items()) {
+					String clazz = JavaNames.name(ne);
+					String fqn = JavaNames.fqn(clazz, context);
+					iout.println("public " + Iterable.class.getName() + "<" + fqn + "> all"
+							+ clazz + "() throws Exception {");
+
+					iiout.println("return all(" + fqn + ".class);");
+					iout.println("}");
+				}
+
+				out.println("}");
+				iiiout.flush();
+				iiout.flush();
+				iout.flush();
+			}
+		});
+
+	}
 }
