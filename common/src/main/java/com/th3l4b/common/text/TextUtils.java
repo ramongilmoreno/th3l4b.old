@@ -170,4 +170,23 @@ public class TextUtils {
 
 		};
 	}
+
+	public static String escapeJavaString(String src) {
+		int l = src.length();
+		StringBuffer sb = new StringBuffer(l);
+		for (int i = 0; i < l; i++) {
+			char c = src.charAt(i);
+			if (c < ' ' || c > 127 || c == '\\' || c == '\"') {
+				sb.append("\\u");
+				String s = Integer.toHexString((int) c);
+				for (int j = s.length(); j < 4; j++) {
+					sb.append('0');
+				}
+				sb.append(s);
+			} else {
+				sb.append(c);
+			}
+		}
+		return sb.toString();
+	}
 }

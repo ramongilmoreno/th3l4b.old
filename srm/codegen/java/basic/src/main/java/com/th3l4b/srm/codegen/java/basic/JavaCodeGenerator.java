@@ -4,13 +4,16 @@ import java.io.PrintWriter;
 
 import com.th3l4b.common.text.AbstractPrintable;
 import com.th3l4b.common.text.IndentedWriter;
+import com.th3l4b.common.text.TextUtils;
 import com.th3l4b.srm.base.IField;
 import com.th3l4b.srm.base.normalized.INormalizedEntity;
 import com.th3l4b.srm.base.normalized.INormalizedManyToOneRelationship;
 import com.th3l4b.srm.base.normalized.INormalizedModel;
 import com.th3l4b.srm.codegen.base.FileUtils;
 import com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory.AbstractInMemoryContainer;
+import com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory.AbstractPredicateOfRelationship;
 import com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory.AbstractRuntimeEntity;
+import com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory.Pair;
 import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
 import com.th3l4b.types.base.ITypesConstants;
@@ -224,8 +227,8 @@ public class JavaCodeGenerator {
 								String leading = Iterable.class.getName() + "<"
 										+ JavaNames.fqn(clazzMany, context)
 										+ "> findAll"
-										+ JavaNames.name(rel, model) + "From"
-										+ clazzOne + "(";
+										+ JavaNames.nameOfReverse(rel, model)
+										+ "From" + clazzOne + "(";
 								iout.println(leading
 										+ JavaNames.fqn(clazzOne, context)
 										+ " from) throws Exception;");
@@ -260,6 +263,41 @@ public class JavaCodeGenerator {
 						+ JavaNames.fqn(JavaNames.finder(model), context)
 						+ " {");
 
+				// Setup finders in constructor
+				iout.println("public " + clazz + " () {");
+				// And the relationships
+				for (INormalizedEntity ne : model.items()) {
+					for (INormalizedManyToOneRelationship rel : ne
+							.relationships().items()) {
+						String clazzMany = JavaNames.fqn(JavaNames.name(ne),
+								context);
+						String clazzOne = JavaNames.fqn(
+								JavaNames.name(model.get(rel.getTo())), context);
+						String name = TextUtils.escapeJavaString(rel
+								.getReverse().getName());
+						iiout.println("_map.put(new "
+								+ Pair.class.getName()
+								+ "("
+								+ clazzOne
+								+ ".class.getName(), \""
+								+ name
+								+ "\"), new "
+								+ AbstractPredicateOfRelationship.class
+										.getName() + "<" + clazzMany + ", "
+								+ clazzOne + ">(" + clazzMany + ".class, "
+								+ clazzOne + ".class) {");
+						iiiout.println("protected "
+								+ IIdentifier.class.getName()
+								+ " getSource ("
+								+ clazzMany
+								+ " candidateResult) throws Exception { return candidateResult.get"
+								+ JavaNames.nameOfDirect(rel, model) + "(); }");
+						iiout.println("});");
+					}
+				}
+				iout.println("}");
+				iout.println();
+
 				// Get the entities (individually or all)
 				for (INormalizedEntity ne : model.items()) {
 					String clazz = JavaNames.name(ne);
@@ -274,11 +312,42 @@ public class JavaCodeGenerator {
 				for (INormalizedEntity ne : model.items()) {
 					String clazz = JavaNames.name(ne);
 					String fqn = JavaNames.fqn(clazz, context);
-					iout.println("public " + Iterable.class.getName() + "<" + fqn + "> all"
-							+ clazz + "() throws Exception {");
+					iout.println("public " + Iterable.class.getName() + "<"
+							+ fqn + "> all" + clazz + "() throws Exception {");
 
 					iiout.println("return all(" + fqn + ".class);");
 					iout.println("}");
+				}
+
+				// And the relationships
+				for (INormalizedEntity ne : model.items()) {
+					for (INormalizedManyToOneRelationship rel : ne
+							.relationships().items()) {
+						String clazzMany = JavaNames.name(ne);
+						String clazzOne = JavaNames.name(model.get(rel.getTo()));
+						String methodName = "findAll"
+								+ JavaNames.nameOfReverse(rel, model) + "From"
+								+ clazzOne;
+						String leading = "public " + Iterable.class.getName()
+								+ "<" + JavaNames.fqn(clazzMany, context)
+								+ "> " + methodName + "(";
+						iout.println(leading + JavaNames.fqn(clazzOne, context)
+								+ " from) throws Exception {");
+						iiout.println(" return "
+								+ methodName
+								+ "(from == null ? null : from.coordinates().getIdentifier());");
+						iout.println("}");
+						iout.println(leading + IIdentifier.class.getName()
+								+ " from) throws Exception {");
+						iiout.println("return find("
+								+ JavaNames.fqn(clazzMany, context)
+								+ ".class, "
+								+ JavaNames.fqn(clazzOne, context)
+								+ ".class, from, \""
+								+ TextUtils.escapeJavaString(rel.getReverse()
+										.getName()) + "\");");
+						iout.println("}");
+					}
 				}
 
 				out.println("}");

@@ -66,10 +66,16 @@ public class JavaNames {
 				model);
 	}
 
-	public static String name(INormalizedManyToOneRelationship relationship,
+	public static String nameOfReverse(INormalizedManyToOneRelationship relationship,
 			INormalizedModel model) throws Exception {
 		INamed reverse = relationship.getReverse();
 		return valueOrProperty(javaIdentifier(reverse.getName()), reverse);
+	}
+
+	public static String nameOfDirect(INormalizedManyToOneRelationship relationship,
+			INormalizedModel model) throws Exception {
+		INamed direct = relationship.getDirect();
+		return valueOrProperty(javaIdentifier(direct.getName()), direct);
 	}
 
 }

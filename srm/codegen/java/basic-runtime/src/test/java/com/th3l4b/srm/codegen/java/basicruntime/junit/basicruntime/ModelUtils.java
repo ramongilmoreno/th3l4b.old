@@ -17,7 +17,9 @@ public class ModelUtils extends AbstractModelUtils {
 			@Override
 			protected void copyEntity(IEntityA source, IEntityA target)
 					throws Exception {
-				target.setEntityA(source.getEntityA());
+				if (source.isSetEntityB()) {
+					target.setEntityB(source.getEntityB());
+				}
 			}
 			
 		});

@@ -3,48 +3,57 @@ package com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory;
 import java.util.Iterator;
 
 public class PredicateUtils {
-	public static <T> Iterator<T> filter(final Iterator<T> iterator,
-			final IPredicate<T> filter) throws Exception {
-		return new Iterator<T>() {
+
+	public static <S, R> Iterator<R> filter(
+			final Iterator<S> iterator, final IPredicate<R> filter)
+			throws Exception {
+		return new Iterator<R>() {
 
 			int _next = 0;
-			T _value = null;
+			R _value = null;
 
+			@SuppressWarnings("unchecked")
 			@Override
 			public boolean hasNext() {
-				if (_next == -1) {
-					return false;
-				} else if (_next == 0) {
-					_value = null;
-					while (iterator.hasNext()) {
-						_value = iterator.next();
-						try {
-							if (filter.accept(_value)) {
+				try {
+					if (_next == -1) {
+						return false;
+					} else if (_next == 0) {
+						_value = null;
+						while (iterator.hasNext()) {
+							S next = iterator.next();
+							if ((next != null)
+									&& filter.clazz().isAssignableFrom(
+											next.getClass())) {
+								_value = (R) next;
+							}
+							if ((_value != null) && filter.accept(_value)) {
 								_next = 1;
 								return true;
 							} else {
 								_next = 0;
 								_value = null;
 							}
-						} catch (Exception e) {
-							throw new RuntimeException(e);
 						}
-					}
 
-					// If this point is reached, we have found the end of the
-					// iterator.
-					_value = null;
-					_next = -1;
-					return false;
-				} else { // A 1 value means that a data is ready
-					return true;
+						// If this point is reached, we have found the end of
+						// the
+						// iterator.
+						_value = null;
+						_next = -1;
+						return false;
+					} else { // A 1 value means that a data is ready
+						return true;
+					}
+				} catch (Exception e) {
+					throw new RuntimeException(e);
 				}
 			}
 
 			@Override
-			public T next() {
+			public R next() {
 				if (hasNext()) {
-					T r = _value;
+					R r = _value;
 					_next = 0;
 					_value = null;
 					return r;
@@ -80,6 +89,11 @@ public class PredicateUtils {
 			@Override
 			public boolean accept(T t) throws Exception {
 				return !src.accept(t);
+			}
+
+			@Override
+			public Class<T> clazz() throws Exception {
+				return src.clazz();
 			}
 
 		};

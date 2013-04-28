@@ -4,8 +4,9 @@ import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
 
 public interface IEntityA extends IRuntimeEntity<IEntityA> {
-	IIdentifier getEntityA () throws Exception;
-	IEntityA getEntityA (ITestFinder finder) throws Exception;
-	void setEntityA (IIdentifier identifier) throws Exception;
-	void setEntityA(IEntityA value) throws Exception;
+	boolean isSetEntityB () throws Exception;
+	IIdentifier getEntityB () throws Exception;
+	IEntityB getEntityB (ITestFinder finder) throws Exception;
+	void setEntityB (IIdentifier identifier) throws Exception;
+	void setEntityB(IEntityB value) throws Exception;
 }
