@@ -10,8 +10,6 @@
   <groupId>com.th3l4b.diary7</groupId>
   <artifactId>store</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <name>store</name>
-  <url>http://maven.apache.org</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>

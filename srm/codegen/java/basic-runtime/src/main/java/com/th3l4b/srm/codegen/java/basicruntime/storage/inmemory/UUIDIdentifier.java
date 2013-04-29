@@ -50,9 +50,14 @@ public class UUIDIdentifier implements IIdentifier {
 	}
 
 	protected static boolean eq(UUIDIdentifier a, UUIDIdentifier b) {
-		return b._clazz.getName().equals(a._clazz.getName())
-				&& (b._msb == a._msb) && (b._lsb == a._lsb);
-
+		if (a == b) {
+			return true;
+		} else if ((a == null) || (b == null)) {
+			return false;
+		} else {
+			return b._clazz.getName().equals(a._clazz.getName())
+					&& (b._msb == a._msb) && (b._lsb == a._lsb);
+		}
 	}
 
 	public static boolean equals(Object a, Object b) {

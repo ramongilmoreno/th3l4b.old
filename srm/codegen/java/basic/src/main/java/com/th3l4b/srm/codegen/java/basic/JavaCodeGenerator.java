@@ -1,6 +1,7 @@
 package com.th3l4b.srm.codegen.java.basic;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
 
 import com.th3l4b.common.text.AbstractPrintable;
 import com.th3l4b.common.text.IndentedWriter;
@@ -11,6 +12,7 @@ import com.th3l4b.srm.base.normalized.INormalizedManyToOneRelationship;
 import com.th3l4b.srm.base.normalized.INormalizedModel;
 import com.th3l4b.srm.codegen.base.FileUtils;
 import com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory.AbstractInMemoryContainer;
+import com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory.AbstractModelUtils;
 import com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory.AbstractPredicateOfRelationship;
 import com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory.AbstractRuntimeEntity;
 import com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory.Pair;
@@ -52,8 +54,7 @@ public class JavaCodeGenerator {
 						// Fill relationships
 						for (INormalizedManyToOneRelationship rel : entity
 								.relationships().items()) {
-							String name = JavaNames.javaIdentifier(rel
-									.getDirect().getName());
+							String name = JavaNames.nameOfDirect(rel, model);
 							String getter = "get" + name;
 							String setter = "set" + name;
 							String clazz = JavaNames.fqn(
@@ -117,8 +118,7 @@ public class JavaCodeGenerator {
 				}
 				for (INormalizedManyToOneRelationship rel : entity
 						.relationships().items()) {
-					String name = JavaNames.javaIdentifier(rel.getDirect()
-							.getName());
+					String name = JavaNames.nameOfDirect(rel, model);
 					String clazz = IIdentifier.class.getName();
 					iout.println("protected " + clazz + " _value_" + name + ";");
 					iout.println("protected boolean _isSet_" + name + ";");
@@ -145,8 +145,7 @@ public class JavaCodeGenerator {
 				// Fill relationships
 				for (INormalizedManyToOneRelationship rel : entity
 						.relationships().items()) {
-					String name = JavaNames.javaIdentifier(rel.getDirect()
-							.getName());
+					String name = JavaNames.nameOfDirect(rel, model);
 					String getter = "get" + name;
 					String setter = "set" + name;
 					String clazz = JavaNames.name(model.get(rel.getTo()));
@@ -356,6 +355,70 @@ public class JavaCodeGenerator {
 				iout.flush();
 			}
 		});
-
 	}
+
+	public void modelUtils(final INormalizedModel model,
+			final JavaCodeGeneratorContext context) throws Exception {
+		final String clazz = JavaNames.modelUtils(model);
+		final String pkg = JavaNames.packageForImpl(context);
+		FileUtils.java(context, pkg, clazz,
+				new AbstractPrintable() {
+					@Override
+					protected void printWithException(PrintWriter out)
+							throws Exception {
+						PrintWriter iout = IndentedWriter.get(out);
+						PrintWriter iiout = IndentedWriter.get(iout);
+						PrintWriter iiiout = IndentedWriter.get(iiout);
+						out.println("package " + pkg + ";");
+						out.println();
+						out.println("public class " + clazz + " extends "
+								+ AbstractModelUtils.class.getName() + " {");
+						iout.println("public " + clazz + "() {");
+						for (INormalizedEntity ne : model.items()) {
+							String clazz = JavaNames.name(ne);
+							String fqn = JavaNames.fqn(clazz, context);
+							iiout.println("_creators.put("
+									+ fqn
+									+ ".class.getName(), new "
+									+ AbstractModelUtils.class.getName()
+									+ ".Creator() { public Object create() throws Exception { return initialize("
+									+ fqn
+									+ ".class, new "
+									+ JavaNames.fqnImpl(JavaNames.nameImpl(ne),
+											context) + "());}});");
+							iiout.println("_copiers.put(" + fqn
+									+ ".class.getName(), new "
+									+ AbstractModelUtils.class.getName()
+									+ ".Copier<" + fqn
+									+ ">() { protected void copyEntity(" + fqn
+									+ " source, " + fqn
+									+ " target) throws Exception {");
+							ArrayList<String> attributes = new ArrayList<String>();
+							for (IField f : ne.items()) {
+								attributes.add(JavaNames.name(f));
+							}
+
+							for (INormalizedManyToOneRelationship rel : ne
+									.relationships().items()) {
+								attributes.add(JavaNames.nameOfDirect(rel, model));
+
+							}
+							for (String attribute : attributes) {
+								iiiout.println("if (source.isSet" + attribute
+										+ "()) { target.set" + attribute
+										+ "(source.get" + attribute + "()); }");
+							}
+							iiiout.println("source.coordinates().setIdentifier(source.coordinates().getIdentifier());");
+							iiiout.println("source.coordinates().setStatus(source.coordinates().getStatus());");
+							iiout.println("}});");
+						}
+						iout.println("}");
+						out.println("}");
+						iiiout.flush();
+						iiout.flush();
+						iout.flush();
+					}
+				});
+	}
+
 }

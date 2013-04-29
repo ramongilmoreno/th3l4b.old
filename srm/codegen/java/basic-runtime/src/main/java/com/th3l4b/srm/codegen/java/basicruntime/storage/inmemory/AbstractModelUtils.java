@@ -3,6 +3,8 @@ package com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import com.th3l4b.srm.runtime.EntityStatus;
+import com.th3l4b.srm.runtime.ICoordinates;
 import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.srm.runtime.IModelUtils;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
@@ -20,6 +22,14 @@ public abstract class AbstractModelUtils implements IModelUtils {
 		}
 
 		protected abstract void copyEntity(T source, T target) throws Exception;
+	}
+
+	protected static <T extends IRuntimeEntity<T>> T initialize(Class<T> clazz,
+			T entity) throws Exception {
+		ICoordinates coordinates = entity.coordinates();
+		coordinates.setIdentifier(new UUIDIdentifier(clazz));
+		coordinates.setStatus(EntityStatus.New);
+		return entity;
 	}
 
 	protected Map<String, Creator> _creators = new LinkedHashMap<String, Creator>();
@@ -42,4 +52,23 @@ public abstract class AbstractModelUtils implements IModelUtils {
 			throws Exception {
 		return UUIDIdentifier.eq((UUIDIdentifier) a, (UUIDIdentifier) b);
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T2 extends IRuntimeEntity<T2>> T2 create(Class<T2> clazz)
+			throws Exception {
+		Creator creator = _creators.get(clazz.getName());
+		if (creator == null) {
+			throw new IllegalArgumentException("Unknown class: "
+					+ clazz.getName());
+		}
+		return (T2) creator.create();
+	}
+
+	@Override
+	public <T2 extends IRuntimeEntity<T2>> void copy(T2 source, T2 target,
+			Class<T2> clazz) throws Exception {
+		_copiers.get(clazz.getName()).copy(source, target);
+	}
+
 }

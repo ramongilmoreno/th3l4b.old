@@ -175,7 +175,11 @@ public class AllMojo extends AbstractMojo {
 			java.finderInMemory(normalized, javaContext);
 			javaContext.getLog().message(
 					TextUtils.toPrintable("Finder finished."));
-			
+			javaContext.getLog().message(
+					TextUtils.toPrintable("Producing model utils..."));
+			java.modelUtils(normalized, javaContext);
+			javaContext.getLog().message(
+					TextUtils.toPrintable("Model utils finished."));
 
 		} catch (Exception e) {
 			throw new MojoExecutionException("Could not generate code", e);
