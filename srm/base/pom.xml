@@ -10,7 +10,6 @@
   <groupId>com.th3l4b.srm</groupId>
   <artifactId>base</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <url>http://maven.apache.org</url>
   <dependencies>
     <dependency>
         <groupId>com.th3l4b</groupId>
