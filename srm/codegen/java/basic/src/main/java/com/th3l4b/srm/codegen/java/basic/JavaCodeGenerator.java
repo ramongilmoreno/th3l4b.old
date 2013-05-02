@@ -24,7 +24,8 @@ public class JavaCodeGenerator {
 	public void entity(final INormalizedEntity entity,
 			final INormalizedModel model, final JavaCodeGeneratorContext context)
 			throws Exception {
-		final String clazz = JavaNames.name(entity);
+		final JavaNames javaNames = context.getJavaNames();
+		final String clazz = javaNames.name(entity);
 		FileUtils.java(context, context.getPackage(), clazz,
 				new AbstractPrintable() {
 					@Override
@@ -39,7 +40,7 @@ public class JavaCodeGenerator {
 
 						// Fill attributes
 						for (IField field : entity.items()) {
-							String name = JavaNames.name(field);
+							String name = javaNames.name(field);
 							String clazz = context.getTypes()
 									.get(field.getType()).getProperties()
 									.get(ITypesConstants.PROPERTY_JAVA_CLASS);
@@ -54,11 +55,11 @@ public class JavaCodeGenerator {
 						// Fill relationships
 						for (INormalizedManyToOneRelationship rel : entity
 								.relationships().items()) {
-							String name = JavaNames.nameOfDirect(rel, model);
+							String name = javaNames.nameOfDirect(rel, model);
 							String getter = "get" + name;
 							String setter = "set" + name;
-							String clazz = JavaNames.fqn(
-									JavaNames.name(model.get(rel.getTo())),
+							String clazz = javaNames.fqn(
+									javaNames.name(model.get(rel.getTo())),
 									context);
 							iout.println("public "
 									+ IIdentifier.class.getName() + " "
@@ -69,7 +70,7 @@ public class JavaCodeGenerator {
 									+ " "
 									+ getter
 									+ " ("
-									+ JavaNames.fqn(JavaNames.finder(model),
+									+ javaNames.fqn(javaNames.finder(model),
 											context) + " accessor) throws "
 									+ Exception.class.getName() + ";");
 							iout.println("void " + setter + " ("
@@ -93,9 +94,10 @@ public class JavaCodeGenerator {
 	public void entityImpl(final INormalizedEntity entity,
 			final INormalizedModel model, final JavaCodeGeneratorContext context)
 			throws Exception {
-		final String clazz = JavaNames.nameImpl(entity);
-		final String iclazz = JavaNames.fqn(JavaNames.name(entity), context);
-		final String pkg = JavaNames.packageForImpl(context);
+		final JavaNames javaNames = context.getJavaNames();
+		final String clazz = javaNames.nameImpl(entity);
+		final String iclazz = javaNames.fqn(javaNames.name(entity), context);
+		final String pkg = javaNames.packageForImpl(context);
 		FileUtils.java(context, pkg, clazz, new AbstractPrintable() {
 			@Override
 			protected void printWithException(PrintWriter out) throws Exception {
@@ -109,7 +111,7 @@ public class JavaCodeGenerator {
 
 				// Create attributes
 				for (IField field : entity.items()) {
-					String name = JavaNames.name(field);
+					String name = javaNames.name(field);
 					String clazz = context.getTypes().get(field.getType())
 							.getProperties()
 							.get(ITypesConstants.PROPERTY_JAVA_CLASS);
@@ -118,7 +120,7 @@ public class JavaCodeGenerator {
 				}
 				for (INormalizedManyToOneRelationship rel : entity
 						.relationships().items()) {
-					String name = JavaNames.nameOfDirect(rel, model);
+					String name = javaNames.nameOfDirect(rel, model);
 					String clazz = IIdentifier.class.getName();
 					iout.println("protected " + clazz + " _value_" + name + ";");
 					iout.println("protected boolean _isSet_" + name + ";");
@@ -127,7 +129,7 @@ public class JavaCodeGenerator {
 
 				// Implement accessors
 				for (IField field : entity.items()) {
-					String name = JavaNames.name(field);
+					String name = javaNames.name(field);
 					String clazz = context.getTypes().get(field.getType())
 							.getProperties()
 							.get(ITypesConstants.PROPERTY_JAVA_CLASS);
@@ -145,17 +147,17 @@ public class JavaCodeGenerator {
 				// Fill relationships
 				for (INormalizedManyToOneRelationship rel : entity
 						.relationships().items()) {
-					String name = JavaNames.nameOfDirect(rel, model);
+					String name = javaNames.nameOfDirect(rel, model);
 					String getter = "get" + name;
 					String setter = "set" + name;
-					String clazz = JavaNames.name(model.get(rel.getTo()));
-					String fqn = JavaNames.fqn(clazz, context);
+					String clazz = javaNames.name(model.get(rel.getTo()));
+					String fqn = javaNames.fqn(clazz, context);
 					iout.println("public " + IIdentifier.class.getName() + " "
 							+ getter + " () throws "
 							+ Exception.class.getName() + " { return _value_"
 							+ name + "; }");
 					iout.println("public " + fqn + " " + getter + " ("
-							+ JavaNames.fqn(JavaNames.finder(model), context)
+							+ javaNames.fqn(javaNames.finder(model), context)
 							+ " accessor) throws " + Exception.class.getName()
 							+ " { return _value_" + name
 							+ " != null ? accessor.get" + clazz + "(_value_"
@@ -190,7 +192,8 @@ public class JavaCodeGenerator {
 
 	public void finder(final INormalizedModel model,
 			final JavaCodeGeneratorContext context) throws Exception {
-		final String clazz = JavaNames.finder(model);
+		final JavaNames javaNames = context.getJavaNames();
+		final String clazz = javaNames.finder(model);
 		FileUtils.java(context, context.getPackage(), clazz,
 				new AbstractPrintable() {
 					@Override
@@ -203,16 +206,16 @@ public class JavaCodeGenerator {
 
 						// Get the entities (individually or all)
 						for (INormalizedEntity ne : model.items()) {
-							String clazz = JavaNames.name(ne);
-							iout.println(JavaNames.fqn(clazz, context) + " get"
+							String clazz = javaNames.name(ne);
+							iout.println(javaNames.fqn(clazz, context) + " get"
 									+ clazz + "(" + IIdentifier.class.getName()
 									+ " id) throws Exception;");
 						}
 
 						for (INormalizedEntity ne : model.items()) {
-							String clazz = JavaNames.name(ne);
+							String clazz = javaNames.name(ne);
 							iout.println(Iterable.class.getName() + "<"
-									+ JavaNames.fqn(clazz, context) + "> all"
+									+ javaNames.fqn(clazz, context) + "> all"
 									+ clazz + "() throws Exception;");
 						}
 
@@ -220,16 +223,16 @@ public class JavaCodeGenerator {
 						for (INormalizedEntity ne : model.items()) {
 							for (INormalizedManyToOneRelationship rel : ne
 									.relationships().items()) {
-								String clazzMany = JavaNames.name(ne);
-								String clazzOne = JavaNames.name(model.get(rel
+								String clazzMany = javaNames.name(ne);
+								String clazzOne = javaNames.name(model.get(rel
 										.getTo()));
 								String leading = Iterable.class.getName() + "<"
-										+ JavaNames.fqn(clazzMany, context)
+										+ javaNames.fqn(clazzMany, context)
 										+ "> findAll"
-										+ JavaNames.nameOfReverse(rel, model)
+										+ javaNames.nameOfReverse(rel, model)
 										+ "From" + clazzOne + "(";
 								iout.println(leading
-										+ JavaNames.fqn(clazzOne, context)
+										+ javaNames.fqn(clazzOne, context)
 										+ " from) throws Exception;");
 								iout.println(leading
 										+ IIdentifier.class.getName()
@@ -246,8 +249,9 @@ public class JavaCodeGenerator {
 
 	public void finderInMemory(final INormalizedModel model,
 			final JavaCodeGeneratorContext context) throws Exception {
-		final String clazz = JavaNames.finderInMemory(model);
-		final String pkg = JavaNames.packageForImpl(context);
+		final JavaNames javaNames = context.getJavaNames();
+		final String clazz = javaNames.finderInMemory(model);
+		final String pkg = javaNames.packageForImpl(context);
 		FileUtils.java(context, pkg, clazz, new AbstractPrintable() {
 			@Override
 			protected void printWithException(PrintWriter out) throws Exception {
@@ -259,7 +263,7 @@ public class JavaCodeGenerator {
 				out.println("public abstract class " + clazz + " extends "
 						+ AbstractInMemoryContainer.class.getName()
 						+ " implements "
-						+ JavaNames.fqn(JavaNames.finder(model), context)
+						+ javaNames.fqn(javaNames.finder(model), context)
 						+ " {");
 
 				// Setup finders in constructor
@@ -268,10 +272,10 @@ public class JavaCodeGenerator {
 				for (INormalizedEntity ne : model.items()) {
 					for (INormalizedManyToOneRelationship rel : ne
 							.relationships().items()) {
-						String clazzMany = JavaNames.fqn(JavaNames.name(ne),
+						String clazzMany = javaNames.fqn(javaNames.name(ne),
 								context);
-						String clazzOne = JavaNames.fqn(
-								JavaNames.name(model.get(rel.getTo())), context);
+						String clazzOne = javaNames.fqn(
+								javaNames.name(model.get(rel.getTo())), context);
 						String name = TextUtils.escapeJavaString(rel
 								.getReverse().getName());
 						iiout.println("_map.put(new "
@@ -290,7 +294,7 @@ public class JavaCodeGenerator {
 								+ " getSource ("
 								+ clazzMany
 								+ " candidateResult) throws Exception { return candidateResult.get"
-								+ JavaNames.nameOfDirect(rel, model) + "(); }");
+								+ javaNames.nameOfDirect(rel, model) + "(); }");
 						iiout.println("});");
 					}
 				}
@@ -299,8 +303,8 @@ public class JavaCodeGenerator {
 
 				// Get the entities (individually or all)
 				for (INormalizedEntity ne : model.items()) {
-					String clazz = JavaNames.name(ne);
-					String fqn = JavaNames.fqn(clazz, context);
+					String clazz = javaNames.name(ne);
+					String fqn = javaNames.fqn(clazz, context);
 					iout.println("public " + fqn + " get" + clazz + "("
 							+ IIdentifier.class.getName()
 							+ " id) throws Exception {");
@@ -309,8 +313,8 @@ public class JavaCodeGenerator {
 				}
 
 				for (INormalizedEntity ne : model.items()) {
-					String clazz = JavaNames.name(ne);
-					String fqn = JavaNames.fqn(clazz, context);
+					String clazz = javaNames.name(ne);
+					String fqn = javaNames.fqn(clazz, context);
 					iout.println("public " + Iterable.class.getName() + "<"
 							+ fqn + "> all" + clazz + "() throws Exception {");
 
@@ -322,15 +326,15 @@ public class JavaCodeGenerator {
 				for (INormalizedEntity ne : model.items()) {
 					for (INormalizedManyToOneRelationship rel : ne
 							.relationships().items()) {
-						String clazzMany = JavaNames.name(ne);
-						String clazzOne = JavaNames.name(model.get(rel.getTo()));
+						String clazzMany = javaNames.name(ne);
+						String clazzOne = javaNames.name(model.get(rel.getTo()));
 						String methodName = "findAll"
-								+ JavaNames.nameOfReverse(rel, model) + "From"
+								+ javaNames.nameOfReverse(rel, model) + "From"
 								+ clazzOne;
 						String leading = "public " + Iterable.class.getName()
-								+ "<" + JavaNames.fqn(clazzMany, context)
+								+ "<" + javaNames.fqn(clazzMany, context)
 								+ "> " + methodName + "(";
-						iout.println(leading + JavaNames.fqn(clazzOne, context)
+						iout.println(leading + javaNames.fqn(clazzOne, context)
 								+ " from) throws Exception {");
 						iiout.println(" return "
 								+ methodName
@@ -339,9 +343,9 @@ public class JavaCodeGenerator {
 						iout.println(leading + IIdentifier.class.getName()
 								+ " from) throws Exception {");
 						iiout.println("return find("
-								+ JavaNames.fqn(clazzMany, context)
+								+ javaNames.fqn(clazzMany, context)
 								+ ".class, "
-								+ JavaNames.fqn(clazzOne, context)
+								+ javaNames.fqn(clazzOne, context)
 								+ ".class, from, \""
 								+ TextUtils.escapeJavaString(rel.getReverse()
 										.getName()) + "\");");
@@ -359,8 +363,9 @@ public class JavaCodeGenerator {
 
 	public void modelUtils(final INormalizedModel model,
 			final JavaCodeGeneratorContext context) throws Exception {
-		final String clazz = JavaNames.modelUtils(model);
-		final String pkg = JavaNames.packageForImpl(context);
+		final JavaNames javaNames = context.getJavaNames();
+		final String clazz = javaNames.modelUtils(model);
+		final String pkg = javaNames.packageForImpl(context);
 		FileUtils.java(context, pkg, clazz,
 				new AbstractPrintable() {
 					@Override
@@ -375,8 +380,8 @@ public class JavaCodeGenerator {
 								+ AbstractModelUtils.class.getName() + " {");
 						iout.println("public " + clazz + "() {");
 						for (INormalizedEntity ne : model.items()) {
-							String clazz = JavaNames.name(ne);
-							String fqn = JavaNames.fqn(clazz, context);
+							String clazz = javaNames.name(ne);
+							String fqn = javaNames.fqn(clazz, context);
 							iiout.println("_creators.put("
 									+ fqn
 									+ ".class.getName(), new "
@@ -384,7 +389,7 @@ public class JavaCodeGenerator {
 									+ ".Creator() { public Object create() throws Exception { return initialize("
 									+ fqn
 									+ ".class, new "
-									+ JavaNames.fqnImpl(JavaNames.nameImpl(ne),
+									+ javaNames.fqnImpl(javaNames.nameImpl(ne),
 											context) + "());}});");
 							iiout.println("_copiers.put(" + fqn
 									+ ".class.getName(), new "
@@ -395,12 +400,12 @@ public class JavaCodeGenerator {
 									+ " target) throws Exception {");
 							ArrayList<String> attributes = new ArrayList<String>();
 							for (IField f : ne.items()) {
-								attributes.add(JavaNames.name(f));
+								attributes.add(javaNames.name(f));
 							}
 
 							for (INormalizedManyToOneRelationship rel : ne
 									.relationships().items()) {
-								attributes.add(JavaNames.nameOfDirect(rel, model));
+								attributes.add(javaNames.nameOfDirect(rel, model));
 
 							}
 							for (String attribute : attributes) {

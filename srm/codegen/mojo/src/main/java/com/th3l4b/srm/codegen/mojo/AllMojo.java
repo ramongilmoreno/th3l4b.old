@@ -20,6 +20,7 @@ import com.th3l4b.srm.codegen.base.CodeGeneratorContext;
 import com.th3l4b.srm.codegen.base.FileUtils;
 import com.th3l4b.srm.codegen.java.basic.JavaCodeGenerator;
 import com.th3l4b.srm.codegen.java.basic.JavaCodeGeneratorContext;
+import com.th3l4b.srm.codegen.java.basic.JavaNames;
 import com.th3l4b.srm.parser.ParserUtils;
 import com.th3l4b.types.base.basicset.BasicSetTypesContext;
 
@@ -159,6 +160,7 @@ public class AllMojo extends AbstractMojo {
 			// Produce code.
 			JavaCodeGeneratorContext javaContext = new JavaCodeGeneratorContext();
 			context.copyTo(javaContext);
+			javaContext.setJavaNames(new JavaNames());
 			javaContext.setPackage(_package);
 			JavaCodeGenerator java = new JavaCodeGenerator();
 			javaContext.getLog().message(

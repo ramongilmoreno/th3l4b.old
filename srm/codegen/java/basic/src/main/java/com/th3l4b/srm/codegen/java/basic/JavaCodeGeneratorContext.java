@@ -6,12 +6,25 @@ public class JavaCodeGeneratorContext extends CodeGeneratorContext {
 
 	private String _package;
 
+	private JavaNames _javaNames;
+
+	public JavaCodeGeneratorContext() {
+	}
+
 	public String getPackage() {
 		return _package;
 	}
 
 	public void setPackage(String pkg) {
 		_package = pkg;
+	}
+
+	public JavaNames getJavaNames() {
+		return _javaNames;
+	}
+
+	public void setJavaNames(JavaNames javaNames) {
+		_javaNames = javaNames;
 	}
 
 	public void copyTo(JavaCodeGeneratorContext to) throws Exception {

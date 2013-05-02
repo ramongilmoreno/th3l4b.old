@@ -16,11 +16,11 @@ public class JavaNames {
 	/**
 	 * Creates a Java identifier out of the given input name.
 	 */
-	public static String javaIdentifier(String name) {
+	public String javaIdentifier(String name) {
 		return TextUtils.cIdentifier(CamelUtils.toCamelCase(name));
 	}
 
-	protected static String valueOrProperty(String value, IPropertied propertied)
+	protected String valueOrProperty(String value, IPropertied propertied)
 			throws Exception {
 		Map<String, String> map = propertied.getProperties();
 		String property = JavaNames.class.getPackage().getName()
@@ -31,53 +31,57 @@ public class JavaNames {
 			return value;
 		}
 	}
-	
-	public static String fqn (String clazz, JavaCodeGeneratorContext context) {
+
+	public String fqn(String clazz, JavaCodeGeneratorContext context) {
 		return context.getPackage() + "." + clazz;
 	}
-	
-	public static String packageForImpl (JavaCodeGeneratorContext context) {
+
+	public String packageForImpl(JavaCodeGeneratorContext context) {
 		return context.getPackage() + ".basicruntime";
 	}
 
-	public static String fqnImpl (String clazz, JavaCodeGeneratorContext context) {
+	public String fqnImpl(String clazz, JavaCodeGeneratorContext context) {
 		return packageForImpl(context) + "." + clazz;
 	}
-	
-	public static String name(INormalizedEntity entity) throws Exception {
+
+	public String name(INormalizedEntity entity) throws Exception {
 		return "I" + valueOrProperty(javaIdentifier(entity.getName()), entity);
 	}
 
-	public static String nameImpl(INormalizedEntity entity) throws Exception {
-		return "Default" + valueOrProperty(javaIdentifier(entity.getName()), entity);
+	public String nameImpl(INormalizedEntity entity) throws Exception {
+		return "Default"
+				+ valueOrProperty(javaIdentifier(entity.getName()), entity);
 	}
-	
-	public static String name(IField field) throws Exception {
+
+	public String name(IField field) throws Exception {
 		return valueOrProperty(javaIdentifier(field.getName()), field);
 	}
 
-	public static String finder(INormalizedModel model) throws Exception {
-		return "I" + valueOrProperty(javaIdentifier(model.getName()) + "Finder",
-				model);
+	public String finder(INormalizedModel model) throws Exception {
+		return "I"
+				+ valueOrProperty(javaIdentifier(model.getName()) + "Finder",
+						model);
 	}
 
-	public static String finderInMemory(INormalizedModel model) throws Exception {
-		return "Abstract" + valueOrProperty(javaIdentifier(model.getName()) + "InMemoryFinder",
-				model);
+	public String finderInMemory(INormalizedModel model) throws Exception {
+		return "Abstract"
+				+ valueOrProperty(javaIdentifier(model.getName())
+						+ "InMemoryFinder", model);
 	}
 
-	public static String modelUtils(INormalizedModel model) throws Exception {
-		return "" + valueOrProperty(javaIdentifier(model.getName()) + "ModelUtils",
-				model);
+	public String modelUtils(INormalizedModel model) throws Exception {
+		return ""
+				+ valueOrProperty(javaIdentifier(model.getName())
+						+ "ModelUtils", model);
 	}
-	
-	public static String nameOfReverse(INormalizedManyToOneRelationship relationship,
+
+	public String nameOfReverse(INormalizedManyToOneRelationship relationship,
 			INormalizedModel model) throws Exception {
 		INamed reverse = relationship.getReverse();
 		return valueOrProperty(javaIdentifier(reverse.getName()), reverse);
 	}
 
-	public static String nameOfDirect(INormalizedManyToOneRelationship relationship,
+	public String nameOfDirect(INormalizedManyToOneRelationship relationship,
 			INormalizedModel model) throws Exception {
 		INamed direct = relationship.getDirect();
 		return valueOrProperty(javaIdentifier(direct.getName()), direct);
