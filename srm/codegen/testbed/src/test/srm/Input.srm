@@ -17,9 +17,8 @@ entity "Department" {
 };
 
 relationship "Department" "Department" many-to-one
-	direct "Parent" {}
-	reverse "Children" {}
-;
+	direct "Parent"
+	reverse "Children";
 
 entity "Task" {
 	field "Duration" "decimal";
