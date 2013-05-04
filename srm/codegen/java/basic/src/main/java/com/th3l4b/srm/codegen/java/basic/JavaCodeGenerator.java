@@ -35,7 +35,7 @@ public class JavaCodeGenerator {
 						out.println("package " + context.getPackage() + ";");
 						out.println();
 						out.println("public interface " + clazz + " extends "
-								+ IRuntimeEntity.class.getName() + "<" + clazz
+								+ javaNames.modelEntity(model) + "<" + clazz
 								+ "> {");
 
 						// Fill attributes
@@ -366,64 +366,77 @@ public class JavaCodeGenerator {
 		final JavaNames javaNames = context.getJavaNames();
 		final String clazz = javaNames.modelUtils(model);
 		final String pkg = javaNames.packageForImpl(context);
-		FileUtils.java(context, pkg, clazz,
-				new AbstractPrintable() {
-					@Override
-					protected void printWithException(PrintWriter out)
-							throws Exception {
-						PrintWriter iout = IndentedWriter.get(out);
-						PrintWriter iiout = IndentedWriter.get(iout);
-						PrintWriter iiiout = IndentedWriter.get(iiout);
-						out.println("package " + pkg + ";");
-						out.println();
-						out.println("public class " + clazz + " extends "
-								+ AbstractModelUtils.class.getName() + " {");
-						iout.println("public " + clazz + "() {");
-						for (INormalizedEntity ne : model.items()) {
-							String clazz = javaNames.name(ne);
-							String fqn = javaNames.fqn(clazz, context);
-							iiout.println("_creators.put("
-									+ fqn
-									+ ".class.getName(), new "
-									+ AbstractModelUtils.class.getName()
-									+ ".Creator() { public Object create() throws Exception { return initialize("
-									+ fqn
-									+ ".class, new "
-									+ javaNames.fqnImpl(javaNames.nameImpl(ne),
-											context) + "());}});");
-							iiout.println("_copiers.put(" + fqn
-									+ ".class.getName(), new "
-									+ AbstractModelUtils.class.getName()
-									+ ".Copier<" + fqn
-									+ ">() { protected void copyEntity(" + fqn
-									+ " source, " + fqn
-									+ " target) throws Exception {");
-							ArrayList<String> attributes = new ArrayList<String>();
-							for (IField f : ne.items()) {
-								attributes.add(javaNames.name(f));
-							}
-
-							for (INormalizedManyToOneRelationship rel : ne
-									.relationships().items()) {
-								attributes.add(javaNames.nameOfDirect(rel, model));
-
-							}
-							for (String attribute : attributes) {
-								iiiout.println("if (source.isSet" + attribute
-										+ "()) { target.set" + attribute
-										+ "(source.get" + attribute + "()); }");
-							}
-							iiiout.println("source.coordinates().setIdentifier(source.coordinates().getIdentifier());");
-							iiiout.println("source.coordinates().setStatus(source.coordinates().getStatus());");
-							iiout.println("}});");
-						}
-						iout.println("}");
-						out.println("}");
-						iiiout.flush();
-						iiout.flush();
-						iout.flush();
+		FileUtils.java(context, pkg, clazz, new AbstractPrintable() {
+			@Override
+			protected void printWithException(PrintWriter out) throws Exception {
+				PrintWriter iout = IndentedWriter.get(out);
+				PrintWriter iiout = IndentedWriter.get(iout);
+				PrintWriter iiiout = IndentedWriter.get(iiout);
+				out.println("package " + pkg + ";");
+				out.println();
+				out.println("public class " + clazz + " extends "
+						+ AbstractModelUtils.class.getName() + " {");
+				iout.println("public " + clazz + "() {");
+				for (INormalizedEntity ne : model.items()) {
+					String clazz = javaNames.name(ne);
+					String fqn = javaNames.fqn(clazz, context);
+					iiout.println("_creators.put("
+							+ fqn
+							+ ".class.getName(), new "
+							+ AbstractModelUtils.class.getName()
+							+ ".Creator() { public Object create() throws Exception { return initialize("
+							+ fqn
+							+ ".class, new "
+							+ javaNames.fqnImpl(javaNames.nameImpl(ne), context)
+							+ "());}});");
+					iiout.println("_copiers.put(" + fqn
+							+ ".class.getName(), new "
+							+ AbstractModelUtils.class.getName() + ".Copier<"
+							+ fqn + ">() { protected void copyEntity(" + fqn
+							+ " source, " + fqn + " target) throws Exception {");
+					ArrayList<String> attributes = new ArrayList<String>();
+					for (IField f : ne.items()) {
+						attributes.add(javaNames.name(f));
 					}
-				});
+
+					for (INormalizedManyToOneRelationship rel : ne
+							.relationships().items()) {
+						attributes.add(javaNames.nameOfDirect(rel, model));
+
+					}
+					for (String attribute : attributes) {
+						iiiout.println("if (source.isSet" + attribute
+								+ "()) { target.set" + attribute
+								+ "(source.get" + attribute + "()); }");
+					}
+					iiiout.println("source.coordinates().setIdentifier(source.coordinates().getIdentifier());");
+					iiiout.println("source.coordinates().setStatus(source.coordinates().getStatus());");
+					iiout.println("}});");
+				}
+				iout.println("}");
+				out.println("}");
+				iiiout.flush();
+				iiout.flush();
+				iout.flush();
+			}
+		});
 	}
 
+	public void modelEntity(final INormalizedModel model,
+			final JavaCodeGeneratorContext context) throws Exception {
+		final JavaNames javaNames = context.getJavaNames();
+		final String clazz = javaNames.modelEntity(model);
+		final String pkg = context.getPackage();
+		FileUtils.java(context, pkg, clazz, new AbstractPrintable() {
+			@Override
+			protected void printWithException(PrintWriter out) throws Exception {
+				out.println("package " + pkg + ";");
+				out.println();
+				out.println("public interface " + clazz + "<T extends " + clazz
+						+ "<T>> extends " + IRuntimeEntity.class.getName()
+						+ "<T> {");
+				out.println("}");
+			}
+		});
+	}
 }

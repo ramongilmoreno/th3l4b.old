@@ -15,13 +15,18 @@
   </properties>
   <dependencies>
     <dependency>
-        <groupId>com.th3l4b.srm.codegen</groupId>
-        <artifactId>mojo</artifactId>
+        <groupId>com.th3l4b.srm</groupId>
+        <artifactId>runtime</artifactId>
         <version>1.0-SNAPSHOT</version>
     </dependency>
     <dependency>
-        <groupId>com.th3l4b.srm</groupId>
+        <groupId>com.th3l4b.types</groupId>
         <artifactId>runtime</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+        <groupId>com.th3l4b.srm.codegen.java</groupId>
+        <artifactId>basic-runtime</artifactId>
         <version>1.0-SNAPSHOT</version>
     </dependency>
     <dependency>

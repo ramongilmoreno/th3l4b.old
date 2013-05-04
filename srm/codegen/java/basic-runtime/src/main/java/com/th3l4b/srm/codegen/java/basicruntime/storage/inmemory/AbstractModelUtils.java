@@ -66,8 +66,8 @@ public abstract class AbstractModelUtils implements IModelUtils {
 	}
 
 	@Override
-	public <T2 extends IRuntimeEntity<T2>> void copy(T2 source, T2 target,
-			Class<T2> clazz) throws Exception {
+	public <T2 extends IRuntimeEntity<T2>> void copy(Object source,
+			Object target, Class<T2> clazz) throws Exception {
 		_copiers.get(clazz.getName()).copy(source, target);
 	}
 

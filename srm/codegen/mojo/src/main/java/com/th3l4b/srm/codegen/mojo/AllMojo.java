@@ -165,6 +165,7 @@ public class AllMojo extends AbstractMojo {
 			JavaCodeGenerator java = new JavaCodeGenerator();
 			javaContext.getLog().message(
 					TextUtils.toPrintable("Producing entities..."));
+			java.modelEntity(normalized, javaContext);
 			for (INormalizedEntity ne : normalized.items()) {
 				java.entity(ne, normalized, javaContext);
 				java.entityImpl(ne, normalized, javaContext);

@@ -75,6 +75,12 @@ public class JavaNames {
 						+ "ModelUtils", model);
 	}
 
+	public String modelEntity(INormalizedModel model) throws Exception {
+		return "I"
+				+ valueOrProperty(javaIdentifier(model.getName()) + "Entity",
+						model);
+	}
+
 	public String nameOfReverse(INormalizedManyToOneRelationship relationship,
 			INormalizedModel model) throws Exception {
 		INamed reverse = relationship.getReverse();
