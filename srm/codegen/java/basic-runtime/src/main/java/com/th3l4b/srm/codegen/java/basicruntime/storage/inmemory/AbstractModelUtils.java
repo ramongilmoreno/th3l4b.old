@@ -36,8 +36,8 @@ public abstract class AbstractModelUtils implements IModelUtils {
 	protected Map<String, Copier<?>> _copiers = new LinkedHashMap<String, Copier<?>>();
 
 	@Override
-	public <T2 extends IRuntimeEntity<T2>> IIdentifier identifier(
-			Class<T2> clazz, Object... args) throws Exception {
+	public <T extends IRuntimeEntity<?>> IIdentifier identifier(Class<T> clazz,
+			Object... args) throws Exception {
 		Long msb = (Long) args[0];
 		Long lsb = (Long) args[1];
 		return new UUIDIdentifier(clazz, msb.longValue(), lsb.longValue());
@@ -55,20 +55,27 @@ public abstract class AbstractModelUtils implements IModelUtils {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T2 extends IRuntimeEntity<T2>> T2 create(Class<T2> clazz)
+	public <T extends IRuntimeEntity<?>> T create(Class<T> clazz)
 			throws Exception {
 		Creator creator = _creators.get(clazz.getName());
 		if (creator == null) {
 			throw new IllegalArgumentException("Unknown class: "
 					+ clazz.getName());
 		}
-		return (T2) creator.create();
+		return (T) creator.create();
 	}
 
 	@Override
-	public <T2 extends IRuntimeEntity<T2>> void copy(Object source,
-			Object target, Class<T2> clazz) throws Exception {
+	public <T extends IRuntimeEntity<?>> void copy(Object source,
+			Object target, Class<T> clazz) throws Exception {
 		_copiers.get(clazz.getName()).copy(source, target);
 	}
 
+	@Override
+	public <T extends IRuntimeEntity<?>> T clone(T source) throws Exception {
+		@SuppressWarnings("unchecked")
+		T r = (T) create(source.clazz());
+		_copiers.get(source.clazz().getName()).copy(source, r);
+		return r;
+	}
 }
