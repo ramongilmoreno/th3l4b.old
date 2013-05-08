@@ -17,6 +17,8 @@
     <modules>
     <module>basic</module>
     <module>basic-runtime</module>
+    <module>jdbc</module>
+    <module>jdbc-runtime</module>
   </modules>
 
 </project>
