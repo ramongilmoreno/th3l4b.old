@@ -12,4 +12,15 @@ public class DefaultScreenItem extends DefaultNamed implements IScreenItem, IScr
 	public void setValue(String value) throws Exception {
 		getProperties().put(VALUE, value);
 	}
+
+	@Override
+	public String getType() throws Exception {
+		return getProperties().get(TYPE);
+	}
+
+	@Override
+	public void setType(String type) throws Exception {
+		getProperties().put(TYPE, type);
+	}
+
 }
