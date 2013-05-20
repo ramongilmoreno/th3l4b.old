@@ -9,6 +9,10 @@ import com.th3l4b.common.propertied.IPropertied;
 
 public class PropertiesUtils {
 	
+	public static String getLocalizedProperty (String property, String localeDefinition) {
+		return property + "." + localeDefinition;
+	}
+	
 	public static String getValue(String property, String defaultValue,
 			Locale locale, IPropertied propertied) throws Exception {
 		return getValue(property, defaultValue,
@@ -22,7 +26,7 @@ public class PropertiesUtils {
 
 		// Find properties in the compatibility list
 		for (String s : compatibleLocaleDefinitions) {
-			String candidateProperty = property + "." + s;
+			String candidateProperty = getLocalizedProperty(property, s);
 			if (p.containsKey(candidateProperty)) {
 				return p.get(candidateProperty);
 			}

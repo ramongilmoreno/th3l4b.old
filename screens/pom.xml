@@ -16,5 +16,6 @@
   <modules>
     <module>base</module>
     <module>console</module>
+    <module>testbed</module>
   </modules>
 </project>

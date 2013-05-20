@@ -1,54 +1,39 @@
 package com.th3l4b.screens.base;
 
-import com.th3l4b.common.data.tree.DefaultTree;
-import com.th3l4b.common.data.tree.ITree;
+import java.util.Map;
+
 import com.th3l4b.common.named.DefaultNamed;
 import com.th3l4b.common.named.DefaultNamedContainer;
-import com.th3l4b.common.named.INamedContainer;
+import com.th3l4b.common.named.INamed;
 
-public class DefaultScreen extends DefaultNamed implements IScreen {
+public class DefaultScreen extends DefaultNamedContainer<IScreen> implements IScreen {
 
-	INamedContainer<IScreenItem> _fields = new DefaultNamedContainer<IScreenItem>();
-	ITree<IScreen> _tree = new DefaultTree<IScreen>();
+	private INamed _delegatedNamed = new DefaultNamed();
 
-	public IScreen getRoot() throws Exception {
-		return _tree.getRoot();
+	public Map<String, String> getProperties() throws Exception {
+		return _delegatedNamed.getProperties();
 	}
 
-	public void setRoot(IScreen root) throws Exception {
-		_tree.setRoot(root);
+	public String getName() throws Exception {
+		return _delegatedNamed.getName();
 	}
 
-	public Iterable<IScreen> getChildren(IScreen node) throws Exception {
-		return _tree.getChildren(node);
+	public Map<String, Object> getAttributes() throws Exception {
+		return _delegatedNamed.getAttributes();
 	}
 
-	public void addChild(IScreen child, IScreen node) throws Exception {
-		_tree.addChild(child, node);
+	public void setName(String name) throws Exception {
+		_delegatedNamed.setName(name);
 	}
 
-	public void removeChild(IScreen child) throws Exception {
-		_tree.removeChild(child);
+	@Override
+	public int hashCode() {
+		return _delegatedNamed.hashCode();
 	}
 
-	public Iterable<IScreenItem> items() throws Exception {
-		return _fields.items();
-	}
-
-	public void add(IScreenItem item) throws Exception {
-		_fields.add(item);
-	}
-
-	public IScreenItem get(String name) throws Exception {
-		return _fields.get(name);
-	}
-
-	public IScreenItem contains(String name) throws Exception {
-		return _fields.contains(name);
-	}
-
-	public void remove(IScreenItem item) throws Exception {
-		_fields.remove(item);
+	@Override
+	public boolean equals(Object obj) {
+		return _delegatedNamed.equals(obj);
 	}
 
 }

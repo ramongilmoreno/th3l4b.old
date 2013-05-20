@@ -1,8 +1,8 @@
 package com.th3l4b.screens.console.interaction;
 
-import com.th3l4b.screens.base.IScreenItem;
+import com.th3l4b.screens.base.IScreen;
 
 public interface IInteractionIdentifierGenerator {
-	String getIdentifier(IScreenItem source, String details)
+	String getIdentifier(IScreen source, String details)
 			throws Exception;
 }
