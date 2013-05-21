@@ -10,7 +10,6 @@ import com.th3l4b.screens.base.IScreen;
 public class DefaultInteractionContext extends DefaultPropertied implements
 		IInteractionContext {
 
-	protected IScreen _screen;
 	protected Locale _locale;
 	protected ITree<IScreen> _tree;
 	protected Map<IScreen, IInteractionListener> _interactions;
@@ -21,14 +20,6 @@ public class DefaultInteractionContext extends DefaultPropertied implements
 
 	public void setLocale(Locale locale) {
 		_locale = locale;
-	}
-
-	public IScreen getScreen() {
-		return _screen;
-	}
-
-	public void setScreen(IScreen screen) {
-		_screen = screen;
 	}
 
 	public ITree<IScreen> getTree() {

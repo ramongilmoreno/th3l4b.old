@@ -8,10 +8,6 @@ import com.th3l4b.common.propertied.IPropertied;
 import com.th3l4b.screens.base.IScreen;
 
 public interface IInteractionContext extends IPropertied {
-	IScreen getScreen() throws Exception;
-
-	void setScreen(IScreen screen) throws Exception;
-
 	ITree<IScreen> getTree() throws Exception;
 
 	void setTree(ITree<IScreen> tree) throws Exception;
