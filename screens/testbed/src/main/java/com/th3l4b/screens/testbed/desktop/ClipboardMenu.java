@@ -4,24 +4,27 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Random;
 
-import com.th3l4b.common.data.Pair;
 import com.th3l4b.common.data.tree.DefaultTree;
-import com.th3l4b.common.data.tree.ITree;
 import com.th3l4b.screens.base.DefaultScreen;
 import com.th3l4b.screens.base.IScreen;
 import com.th3l4b.screens.base.IScreensContants;
 import com.th3l4b.screens.base.interaction.IInteractionContext;
 import com.th3l4b.screens.base.interaction.IInteractionListener;
+import com.th3l4b.screens.base.utils.DefaultScreensConfiguration;
+import com.th3l4b.screens.base.utils.IScreensConfiguration;
 import com.th3l4b.screens.base.utils.PropertiesUtils;
 
 public class ClipboardMenu implements IScreensContants {
+
+	public static IScreensConfiguration create() throws Exception {
+		return new ClipboardMenu().createImpl();
+	}
 
 	protected String name(String name) {
 		return ClipboardMenu.class.getName() + "." + name;
 	}
 
-	public Pair<ITree<IScreen>, Map<IScreen, IInteractionListener>> create()
-			throws Exception {
+	protected IScreensConfiguration createImpl() throws Exception {
 
 		DefaultTree<IScreen> r = new DefaultTree<IScreen>();
 		DefaultScreen screen = new DefaultScreen();
@@ -86,7 +89,6 @@ public class ClipboardMenu implements IScreensContants {
 
 		}
 
-		return new Pair<ITree<IScreen>, Map<IScreen, IInteractionListener>>(r,
-				interactions);
+		return new DefaultScreensConfiguration(r, interactions);
 	}
 }

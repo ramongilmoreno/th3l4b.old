@@ -171,22 +171,30 @@ public class TextUtils {
 		};
 	}
 
-	public static String escapeJavaString(String src) {
-		int l = src.length();
-		StringBuffer sb = new StringBuffer(l);
-		for (int i = 0; i < l; i++) {
-			char c = src.charAt(i);
+	public static String escapeJavaString(String src) throws Exception {
+		StringWriter out = new StringWriter(src.length());
+		escapeJavaString(src, out);
+		return out.getBuffer().toString();
+	}
+	
+	public static void escapeJavaString(String src, Writer out) throws Exception {
+		StringReader in = new StringReader(src);
+		escapeJava(in, out);
+	}
+	
+	public static void escapeJava (Reader in, Writer out) throws Exception {
+		int c; 
+		while ((c = in.read()) != -1) {
 			if (c < ' ' || c > 127 || c == '\\' || c == '\"') {
-				sb.append("\\u");
+				out.write("\\u");
 				String s = Integer.toHexString((int) c);
 				for (int j = s.length(); j < 4; j++) {
-					sb.append('0');
+					out.write('0');
 				}
-				sb.append(s);
+				out.write(s);
 			} else {
-				sb.append(c);
+				out.write(c);
 			}
 		}
-		return sb.toString();
 	}
 }

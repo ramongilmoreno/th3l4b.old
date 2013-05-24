@@ -1,12 +1,14 @@
 package com.th3l4b.common.data.tree;
 
+import java.io.Serializable;
 import java.util.LinkedHashMap;
 
 import com.th3l4b.common.data.nullsafe.NullSafe;
 import com.th3l4b.common.data.predicate.IPredicate;
 import com.th3l4b.common.data.predicate.PredicateUtils;
 
-public class DefaultTree<T> implements ITree<T> {
+@SuppressWarnings("serial")
+public class DefaultTree<T> implements ITree<T>, Serializable {
 
 	private LinkedHashMap<T, T> _parents = new LinkedHashMap<T, T>();
 	private T _root;
