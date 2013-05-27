@@ -3,7 +3,6 @@ package com.th3l4b.screens.base.utils;
 import java.io.Serializable;
 import java.util.Map;
 
-import com.th3l4b.common.data.tree.ITree;
 import com.th3l4b.screens.base.IScreen;
 import com.th3l4b.screens.base.interaction.IInteractionListener;
 
@@ -11,11 +10,11 @@ import com.th3l4b.screens.base.interaction.IInteractionListener;
 public class DefaultScreensConfiguration implements IScreensConfiguration,
 		Serializable {
 
-	ITree<IScreen> _tree;
+	ITreeOfScreens _tree;
 
 	Map<IScreen, IInteractionListener> _interactions;
 
-	public DefaultScreensConfiguration(ITree<IScreen> tree,
+	public DefaultScreensConfiguration(ITreeOfScreens tree,
 
 	Map<IScreen, IInteractionListener> interactions) {
 		_tree = tree;
@@ -24,12 +23,12 @@ public class DefaultScreensConfiguration implements IScreensConfiguration,
 	}
 
 	@Override
-	public ITree<IScreen> getTree() throws Exception {
+	public ITreeOfScreens getTree() throws Exception {
 		return _tree;
 	}
 
 	@Override
-	public void setTree(ITree<IScreen> tree) throws Exception {
+	public void setTree(ITreeOfScreens tree) throws Exception {
 		_tree = tree;
 
 	}

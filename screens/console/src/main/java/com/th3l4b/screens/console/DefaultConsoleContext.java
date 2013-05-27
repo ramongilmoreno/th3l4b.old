@@ -4,7 +4,7 @@ import java.io.PrintWriter;
 
 import com.th3l4b.screens.base.interaction.DefaultInteractionContext;
 
-public class DefaultConsoleContext extends DefaultInteractionContext implements IConsoleContext {
+public class DefaultConsoleContext extends DefaultInteractionContext implements IConsoleInteractionContext {
 
 	private PrintWriter _writer;
 

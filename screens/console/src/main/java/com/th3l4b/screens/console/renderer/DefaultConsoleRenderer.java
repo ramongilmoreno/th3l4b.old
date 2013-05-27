@@ -4,7 +4,7 @@ import com.th3l4b.common.data.nullsafe.NullSafe;
 import com.th3l4b.screens.base.IScreen;
 import com.th3l4b.screens.base.IScreensContants;
 import com.th3l4b.screens.base.utils.PropertiesUtils;
-import com.th3l4b.screens.console.IConsoleContext;
+import com.th3l4b.screens.console.IConsoleInteractionContext;
 
 public class DefaultConsoleRenderer extends AbstractDelegatedConsoleRenderer
 		implements IScreensContants {
@@ -14,7 +14,7 @@ public class DefaultConsoleRenderer extends AbstractDelegatedConsoleRenderer
 	FieldConsoleRenderer _field = new FieldConsoleRenderer();
 
 	@Override
-	protected IConsoleRenderer getRenderer(IScreen item, IConsoleContext context)
+	protected IConsoleRenderer getRenderer(IScreen item, IConsoleInteractionContext context)
 			throws Exception {
 		IConsoleRenderer r = null;
 		String value = PropertiesUtils.getValue(TYPE, null,

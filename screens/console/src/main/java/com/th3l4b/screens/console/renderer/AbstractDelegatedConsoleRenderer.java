@@ -4,22 +4,22 @@ import com.th3l4b.common.text.IndentedWriter;
 import com.th3l4b.screens.base.IScreen;
 import com.th3l4b.screens.console.ConsoleContextUtils;
 import com.th3l4b.screens.console.DefaultConsoleContext;
-import com.th3l4b.screens.console.IConsoleContext;
+import com.th3l4b.screens.console.IConsoleInteractionContext;
 
 public abstract class AbstractDelegatedConsoleRenderer implements
 		IConsoleRenderer {
 
 	protected abstract IConsoleRenderer getRenderer(IScreen item,
-			IConsoleContext context) throws Exception;
+			IConsoleInteractionContext context) throws Exception;
 
 	@Override
-	public String getLabel(IScreen item, IConsoleContext context)
+	public String getLabel(IScreen item, IConsoleInteractionContext context)
 			throws Exception {
 		return getRenderer(item, context).getLabel(item, context);
 	}
 
 	@Override
-	public boolean render(IScreen item, IConsoleContext context)
+	public boolean render(IScreen item, IConsoleInteractionContext context)
 			throws Exception {
 
 		// Render item itself.
@@ -28,7 +28,7 @@ public abstract class AbstractDelegatedConsoleRenderer implements
 
 		// Render children if not rendered
 		if (!done) {
-			IConsoleContext childContext = new DefaultConsoleContext();
+			IConsoleInteractionContext childContext = new DefaultConsoleContext();
 			ConsoleContextUtils.copy(context, childContext);
 			childContext
 					.setWriter(IndentedWriter.get(childContext.getWriter()));

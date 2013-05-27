@@ -4,13 +4,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Random;
 
-import com.th3l4b.common.data.tree.DefaultTree;
 import com.th3l4b.screens.base.DefaultScreen;
 import com.th3l4b.screens.base.IScreen;
 import com.th3l4b.screens.base.IScreensContants;
 import com.th3l4b.screens.base.interaction.IInteractionContext;
 import com.th3l4b.screens.base.interaction.IInteractionListener;
 import com.th3l4b.screens.base.utils.DefaultScreensConfiguration;
+import com.th3l4b.screens.base.utils.DefaultTreeOfScreens;
 import com.th3l4b.screens.base.utils.IScreensConfiguration;
 import com.th3l4b.screens.base.utils.PropertiesUtils;
 
@@ -26,7 +26,7 @@ public class ClipboardMenu implements IScreensContants {
 
 	protected IScreensConfiguration createImpl() throws Exception {
 
-		DefaultTree<IScreen> r = new DefaultTree<IScreen>();
+		DefaultTreeOfScreens r = new DefaultTreeOfScreens();
 		DefaultScreen screen = new DefaultScreen();
 		screen.setName(name("Clipboard"));
 		{

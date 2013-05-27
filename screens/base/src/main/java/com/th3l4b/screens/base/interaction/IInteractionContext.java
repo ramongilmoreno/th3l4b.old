@@ -3,14 +3,14 @@ package com.th3l4b.screens.base.interaction;
 import java.util.Locale;
 import java.util.Map;
 
-import com.th3l4b.common.data.tree.ITree;
 import com.th3l4b.common.propertied.IPropertied;
 import com.th3l4b.screens.base.IScreen;
+import com.th3l4b.screens.base.utils.ITreeOfScreens;
 
 public interface IInteractionContext extends IPropertied {
-	ITree<IScreen> getTree() throws Exception;
+	ITreeOfScreens getTree() throws Exception;
 
-	void setTree(ITree<IScreen> tree) throws Exception;
+	void setTree(ITreeOfScreens tree) throws Exception;
 
 	Locale getLocale() throws Exception;
 

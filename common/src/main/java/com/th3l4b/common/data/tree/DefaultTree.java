@@ -10,8 +10,8 @@ import com.th3l4b.common.data.predicate.PredicateUtils;
 @SuppressWarnings("serial")
 public class DefaultTree<T> implements ITree<T>, Serializable {
 
-	private LinkedHashMap<T, T> _parents = new LinkedHashMap<T, T>();
-	private T _root;
+	protected LinkedHashMap<T, T> _parents = new LinkedHashMap<T, T>();
+	protected T _root;
 
 	@Override
 	public T getRoot() throws Exception {

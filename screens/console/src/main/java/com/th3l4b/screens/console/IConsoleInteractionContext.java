@@ -4,7 +4,7 @@ import java.io.PrintWriter;
 
 import com.th3l4b.screens.base.interaction.IInteractionContext;
 
-public interface IConsoleContext extends IInteractionContext {
+public interface IConsoleInteractionContext extends IInteractionContext {
 	
 	PrintWriter getWriter() throws Exception;
 	

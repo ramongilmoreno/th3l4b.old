@@ -25,13 +25,13 @@ public class ConsoleFacade {
 	}
 
 	public void handle(IScreen source, ICommandsInput input,
-			IConsoleContext context) throws Exception {
+			IConsoleInteractionContext context) throws Exception {
 
 		PrintWriter out = context.getWriter();
 		PrintWriter iout = IndentedWriter.get(out);
 
 		// Indent context
-		IConsoleContext target = new DefaultConsoleContext();
+		IConsoleInteractionContext target = new DefaultConsoleContext();
 		ConsoleContextUtils.copy(context, target);
 		target.setWriter(iout);
 		context = target;

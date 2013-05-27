@@ -3,15 +3,15 @@ package com.th3l4b.screens.base.interaction;
 import java.util.Locale;
 import java.util.Map;
 
-import com.th3l4b.common.data.tree.ITree;
 import com.th3l4b.common.propertied.DefaultPropertied;
 import com.th3l4b.screens.base.IScreen;
+import com.th3l4b.screens.base.utils.ITreeOfScreens;
 
 public class DefaultInteractionContext extends DefaultPropertied implements
 		IInteractionContext {
 
 	protected Locale _locale;
-	protected ITree<IScreen> _tree;
+	protected ITreeOfScreens _tree;
 	protected Map<IScreen, IInteractionListener> _interactions;
 
 	public Locale getLocale() {
@@ -22,11 +22,11 @@ public class DefaultInteractionContext extends DefaultPropertied implements
 		_locale = locale;
 	}
 
-	public ITree<IScreen> getTree() {
+	public ITreeOfScreens getTree() {
 		return _tree;
 	}
 
-	public void setTree(ITree<IScreen> tree) {
+	public void setTree(ITreeOfScreens tree) {
 		_tree = tree;
 	}
 

@@ -8,12 +8,12 @@ import com.th3l4b.screens.base.utils.IScreensConfiguration;
 import com.th3l4b.screens.console.ConsoleFacade;
 import com.th3l4b.screens.console.DefaultCommandsInput;
 import com.th3l4b.screens.console.DefaultConsoleContext;
-import com.th3l4b.screens.console.IConsoleContext;
+import com.th3l4b.screens.console.IConsoleInteractionContext;
 
 public class Main {
 	public static void main(String[] args) throws Exception {
 		IScreensConfiguration configuration = ClipboardMenu.create();
-		IConsoleContext context = new DefaultConsoleContext();
+		IConsoleInteractionContext context = new DefaultConsoleContext();
 		context.setTree(configuration.getTree());
 		context.setInteractions(configuration.getInteractions());
 		context.setLocale(new Locale("en"));
