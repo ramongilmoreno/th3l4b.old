@@ -7,7 +7,7 @@ import java.util.Map;
 import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
 
-public abstract class AbstractInMemoryContainer {
+public abstract class AbstractInMemoryFinder {
 
 	protected Map<Pair, AbstractPredicateOfRelationship<?, ?>> _map = new LinkedHashMap<Pair, AbstractPredicateOfRelationship<?, ?>>();
 

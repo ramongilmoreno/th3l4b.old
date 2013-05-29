@@ -11,7 +11,7 @@ import com.th3l4b.srm.base.normalized.INormalizedEntity;
 import com.th3l4b.srm.base.normalized.INormalizedManyToOneRelationship;
 import com.th3l4b.srm.base.normalized.INormalizedModel;
 import com.th3l4b.srm.codegen.base.FileUtils;
-import com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory.AbstractInMemoryContainer;
+import com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory.AbstractInMemoryFinder;
 import com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory.AbstractModelUtils;
 import com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory.AbstractPredicateOfRelationship;
 import com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory.AbstractRuntimeEntity;
@@ -261,7 +261,7 @@ public class JavaCodeGenerator {
 				out.println("package " + pkg + ";");
 				out.println();
 				out.println("public abstract class " + clazz + " extends "
-						+ AbstractInMemoryContainer.class.getName()
+						+ AbstractInMemoryFinder.class.getName()
 						+ " implements "
 						+ javaNames.fqn(javaNames.finder(model), context)
 						+ " {");

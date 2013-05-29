@@ -3,12 +3,12 @@ package com.th3l4b.srm.codegen.java.basicruntime.junit.basicruntime;
 import com.th3l4b.srm.codegen.java.basicruntime.junit.IEntityA;
 import com.th3l4b.srm.codegen.java.basicruntime.junit.IEntityB;
 import com.th3l4b.srm.codegen.java.basicruntime.junit.ITestFinder;
-import com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory.AbstractInMemoryContainer;
+import com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory.AbstractInMemoryFinder;
 import com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory.AbstractPredicateOfRelationship;
 import com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory.Pair;
 import com.th3l4b.srm.runtime.IIdentifier;
 
-public abstract class AbstractFinder extends AbstractInMemoryContainer
+public abstract class AbstractFinder extends AbstractInMemoryFinder
 		implements ITestFinder {
 
 	public AbstractFinder() {
