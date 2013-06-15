@@ -17,5 +17,6 @@
   <modules>
     <module>base</module>
     <module>runtime</module>
+    <module>javascript-runtime</module>
   </modules>
 </project>

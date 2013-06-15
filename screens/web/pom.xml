@@ -15,5 +15,7 @@
 
   <modules>
     <module>base</module>
+    <module>javascript-runtime</module>
+    <module>testbed</module>
   </modules>
 </project>
