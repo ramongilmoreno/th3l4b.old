@@ -178,6 +178,9 @@ public class TextUtils {
 	}
 	
 	public static void escapeJavaString(String src, Writer out) throws Exception {
+		if (src == null) {
+			src = "";
+		}
 		StringReader in = new StringReader(src);
 		escapeJava(in, out);
 	}

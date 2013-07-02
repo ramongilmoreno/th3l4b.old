@@ -1,6 +1,7 @@
 package com.th3l4b.screens.base;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Locale;
@@ -39,6 +40,15 @@ public abstract class AbstractScreensServlet extends HttpServlet {
 	protected abstract Locale getLocale(HttpServletRequest request,
 			HttpServletResponse response) throws Exception;
 
+	protected int intParameter(String parameter, HttpServletRequest request)
+			throws Exception {
+		String p = request.getParameter(parameter);
+		if (p != null) {
+			return Integer.parseInt(p);
+		}
+		return -1;
+	}
+
 	@Override
 	protected void service(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
@@ -48,8 +58,7 @@ public abstract class AbstractScreensServlet extends HttpServlet {
 
 			// add screens
 			{
-				int count = Integer.parseInt(request
-						.getParameter(ADD_PARAMETER_NAME));
+				int count = intParameter(ADD_PARAMETER_NAME, request);
 				for (int i = 0; i < count; i++) {
 					String prefix = ADD_PARAMETER_NAME + "." + i + ".";
 					String screen = request.getParameter(prefix
@@ -64,8 +73,7 @@ public abstract class AbstractScreensServlet extends HttpServlet {
 
 			// Set values
 			{
-				int count = Integer.parseInt(request
-						.getParameter(SET_PARAMETER_NAME));
+				int count = intParameter(SET_PARAMETER_NAME, request);
 				for (int i = 0; i < count; i++) {
 					String prefix = SET_PARAMETER_NAME + "." + i + ".";
 					String screen = request.getParameter(prefix
@@ -80,8 +88,7 @@ public abstract class AbstractScreensServlet extends HttpServlet {
 
 			// Remove screens
 			{
-				int count = Integer.parseInt(request
-						.getParameter(REMOVE_PARAMETER_NAME));
+				int count = intParameter(REMOVE_PARAMETER_NAME, request);
 				for (int i = 0; i < count; i++) {
 					String screen = request.getParameter(REMOVE_PARAMETER_NAME
 							+ "." + i);
@@ -92,8 +99,7 @@ public abstract class AbstractScreensServlet extends HttpServlet {
 			// Process actions
 			ArrayList<IScreen> actions = new ArrayList<IScreen>();
 			{
-				int count = Integer.parseInt(request
-						.getParameter(ACTIONS_PARAMETER_NAME));
+				int count = intParameter(ACTIONS_PARAMETER_NAME, request);
 				for (int i = 0; i < count; i++) {
 					String s = request.getParameter(ACTIONS_PARAMETER_NAME
 							+ "." + i);
@@ -135,7 +141,10 @@ public abstract class AbstractScreensServlet extends HttpServlet {
 			// Dump result.
 			response.setContentType("application/javascript");
 			response.setCharacterEncoding(ITextConstants.UTF_8);
+			PrintWriter out = response.getWriter();
+			out.println("{ ok: true, tree: ");
 			ScreensWebUtils.dump(tree, response.getWriter());
+			out.println("}");
 
 		} catch (Exception e) {
 			throw new ServletException(e);

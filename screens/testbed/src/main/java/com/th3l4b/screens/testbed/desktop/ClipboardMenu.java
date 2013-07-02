@@ -25,7 +25,6 @@ public class ClipboardMenu implements IScreensContants {
 	}
 
 	protected IScreensConfiguration createImpl() throws Exception {
-
 		DefaultTreeOfScreens r = new DefaultTreeOfScreens();
 		DefaultScreen screen = new DefaultScreen();
 		screen.setName(name("Clipboard"));
@@ -38,6 +37,7 @@ public class ClipboardMenu implements IScreensContants {
 					"Portapapeles");
 		}
 		r.setRoot(screen);
+		final String clipboardFieldName = name("ClipboardField");
 		LinkedHashMap<IScreen, IInteractionListener> interactions = new LinkedHashMap<IScreen, IInteractionListener>();
 		{
 			final DefaultScreen action = new DefaultScreen();
@@ -61,6 +61,8 @@ public class ClipboardMenu implements IScreensContants {
 						sb.append(alphabet.charAt(r));
 					}
 					DesktopSession.get(context).putIntoClipboard(sb.toString());
+					context.getTree().get(clipboardFieldName).getProperties()
+							.put(VALUE, sb.toString());
 				}
 
 			});
@@ -68,7 +70,7 @@ public class ClipboardMenu implements IScreensContants {
 		}
 		{
 			final DefaultScreen field = new DefaultScreen();
-			field.setName(name("ClipboardField"));
+			field.setName(clipboardFieldName);
 			field.getProperties().put(TYPE, TYPE_FIELD);
 			Map<String, String> properties = field.getProperties();
 			String spanish = "es";
