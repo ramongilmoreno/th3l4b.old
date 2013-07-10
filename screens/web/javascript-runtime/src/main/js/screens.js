@@ -38,28 +38,14 @@ define('com/th3l4b/screens/web/javascript-runtime', function () {
 		var properties = screensTree.properties;
 		properties = properties ? properties : {};
 		if (properties[constants.type] == constants.typeField) {
-			var e = context.document.createElement("input");
-			e.setAttribute("type", "text");
-			var v = properties[constants.value];
-			if (!v) {
-				v = "";
-			}
-			e.setAttribute("value", v);
-			e.onchange = function () {
-				context.onChange(screensTree.name, e.value);
-			};
-			newNode.appendChild(e);
+			context.renderer.renderField(screensTree, newNode, function (name, value) {
+				context.onChange(name, value);
+			}, context);
 		} else if (properties[constants.type] == constants.typeInteraction) {
-                        var e = context.document.createElement("a");
-			e.setAttribute("href", "#");
-			e.onclick =  function () {
-				context.onAction(screensTree.name);
-			};
-			var text = context.document.createTextNode("Action");
-			e.appendChild(text);
-                        newNode.appendChild(e);
+			context.renderer.renderAction(screensTree, newNode, function (name) {
+				context.onAction(name);
+			}, context);
                 }
-
 		renderProperties(properties, newNode, context);
 
 		// Render children with this very function
@@ -100,9 +86,10 @@ define('com/th3l4b/screens/web/javascript-runtime', function () {
 	/**
 	* Create context
 	*/
-	var createContext = function (document, node, target) {
+	var createContext = function (document, node, target, renderer) {
 		var r = {
 		};
+		r.renderer = renderer;
 		r.render = render;
 		r.document =  document;
 		r.node = node;
