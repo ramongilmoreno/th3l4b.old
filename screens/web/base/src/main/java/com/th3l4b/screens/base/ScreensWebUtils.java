@@ -11,14 +11,16 @@ public class ScreensWebUtils {
 
 	public static void dump(ITree<IScreen> tree, PrintWriter out)
 			throws Exception {
-		dumpRecursively(tree.getRoot(), tree, out);
+		dumpRecursively(tree.getRoot(), null, tree, out);
 	}
 
-	protected static void dumpRecursively(IScreen screen, ITree<IScreen> tree,
+	protected static void dumpRecursively(IScreen screen, IScreen parent, ITree<IScreen> tree,
 			PrintWriter out) throws Exception {
 		PrintWriter iout = IndentedWriter.get(out);
 		PrintWriter iiout = IndentedWriter.get(iout);
-		out.println('{');
+		out.print("\"");
+		TextUtils.escapeJavaString(screen.getName(), out);
+		out.println("\": {");
 		iout.print("name: \"");
 		TextUtils.escapeJavaString(screen.getName(), iout);
 		iout.println("\",");
@@ -40,22 +42,22 @@ public class ScreensWebUtils {
 			iiout.println();
 		}
 		iout.println("},");
-		iout.println("children: [");
+		iout.print("parent: ");
+		if (parent == null) {
+			iout.println("undefined");
+		} else {
+			iout.print("\"");
+			TextUtils.escapeJavaString(parent.getName(), iout);
+			iout.println("\"");
+		}
+		out.print("}");
 		first = true;
 		for (IScreen child : tree.getChildren(screen)) {
-			if (first) {
-				first = false;
-			} else {
-				iiout.println(',');
-			}
-			dumpRecursively(child, tree, iiout);
+			first = false;
+			out.println(',');
+			dumpRecursively(child, screen, tree, out);
 
 		}
-		if (!first) {
-			iiout.println();
-		}
-		iout.println("]");
-		out.print('}');
 		iiout.flush();
 		iout.flush();
 	}

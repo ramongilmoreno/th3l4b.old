@@ -30,29 +30,29 @@ define('com/th3l4b/screens/web/javascript-runtime', function () {
 	/**
 	* Renders an screen and its children
 	*/
-	var render = function (screensTree, domNode, context) {
+	var render = function (current, domNode, context) {
 		// Create a new node to fit this screen
 		var newNode = context.document.createElement("div");
 
 		// Render it
-		var properties = screensTree.properties;
+		var properties = current.properties;
 		properties = properties ? properties : {};
 		if (properties[constants.type] == constants.typeField) {
-			context.renderer.renderField(screensTree, newNode, function (name, value) {
+			context.renderer.renderField(current, newNode, function (name, value) {
 				context.onChange(name, value);
 			}, context);
 		} else if (properties[constants.type] == constants.typeInteraction) {
-			context.renderer.renderAction(screensTree, newNode, function (name) {
+			context.renderer.renderAction(current, newNode, function (name) {
 				context.onAction(name);
 			}, context);
                 }
 		renderProperties(properties, newNode, context);
 
 		// Render children with this very function
-		var children = screensTree.children;
-		for (var child in children) {
-			if (children.hasOwnProperty(child)) {
-				context.render(children[child], newNode, context);
+		var childrenList = context.children(current.name, context);
+		for (var child in childrenList) {
+			if (childrenList.hasOwnProperty(child)) {
+				context.render(childrenList[child], newNode, context);
 			}
 		}
 
@@ -61,12 +61,26 @@ define('com/th3l4b/screens/web/javascript-runtime', function () {
 	};
 
 	/**
-	* Refactors a domNode to fit a screensTree
+	* Refactors a domNode to fit a current
 	*/
-	var update = function (screensTree, domNode, context) {
+	var update = function (tree, currentName, domNode, context) {
 		domNode.innerHTML = "";
-		context.tree = screensTree;
-		context.render(screensTree, domNode, context);
+		context.tree = tree;
+		context.render(tree[currentName], domNode, context);
+	};
+	
+	var children = function (parentName, context) {
+		var r = [];
+		var tree = context.tree;
+		for (var child in tree) {
+			if (tree.hasOwnProperty(child)) {
+				var candidate = tree[child];
+				if (candidate["parent"] ==  parentName) {
+					r.push(candidate);
+				}
+			}
+		}
+		return r;
 	};
 
 	var handleResponse = function (request, node, context) {
@@ -74,12 +88,14 @@ define('com/th3l4b/screens/web/javascript-runtime', function () {
 			if ((request.readyState == 4) && (request.status == 200)) {
 				var response = eval("var r = " + request.responseText + "; r;");
 				if (response.ok) {
-					update(response.tree, node, context);
+					update(response.tree, response.root, node, context);
 					return;
 				}
 			}
 
 			// If here, an error happened
+			// Do not throw here or the error will be thrown
+			// throw { id: "KO", message: "Could not find the 'ok'"};
 		};
 	};
 
@@ -89,6 +105,8 @@ define('com/th3l4b/screens/web/javascript-runtime', function () {
 	var createContext = function (document, node, target, renderer) {
 		var r = {
 		};
+		r.tree = [];
+		r.children = children;
 		r.renderer = renderer;
 		r.render = render;
 		r.document =  document;
@@ -100,13 +118,13 @@ define('com/th3l4b/screens/web/javascript-runtime', function () {
 			request.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 			request.send("set=1&set.0.screen=" + encodeURIComponent(screen) + "&set.0.property=com.th3l4b.screens.base.value&set.0.value=" + encodeURIComponent(newValue));
 		};
-                r.onAction = function (screen) {
-                        var request = new XMLHttpRequest();
-			request.onreadystatechange = handleResponse(request, node, r);
-                        request.open("POST", target, true);
-                        request.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-                        request.send("actions=1&actions.0=" + encodeURIComponent(screen)); 
-                };
+        r.onAction = function (screen) {
+                var request = new XMLHttpRequest();
+                request.onreadystatechange = handleResponse(request, node, r);
+                request.open("POST", target, true);
+                request.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+                request.send("actions=1&actions.0=" + encodeURIComponent(screen)); 
+        };
 		var request = new XMLHttpRequest();
 		request.onreadystatechange = handleResponse(request, node, r);
 		request.open("GET", target, true);
