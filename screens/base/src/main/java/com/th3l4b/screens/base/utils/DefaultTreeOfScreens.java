@@ -46,4 +46,29 @@ public class DefaultTreeOfScreens extends DefaultNamedContainer<IScreen>
 		_delegated.removeChild(child);
 	}
 
+	/**
+	 * Does nothing.
+	 */
+	@Override
+	public void updated(IScreen screen) throws Exception {
+	}
+
+	@Override
+	public void add(IScreen item) throws Exception {
+		throw new UnsupportedOperationException(
+				"Use tree methods instead (addChild)");
+	}
+
+	@Override
+	public void remove(IScreen item) throws Exception {
+		throw new UnsupportedOperationException(
+				"Use tree methods instead (removeChild)");
+	}
+	
+	@Override
+	public void clear() throws Exception {
+		throw new UnsupportedOperationException(
+				"Use tree methods instead (removeChild)");
+	}
+
 }

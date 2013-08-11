@@ -6,4 +6,5 @@ public interface INamedContainer<T extends INamed> {
 	T get (String name) throws Exception;
 	T contains (String name) throws Exception;
 	void remove (T item) throws Exception;
+	void clear () throws Exception;
 }

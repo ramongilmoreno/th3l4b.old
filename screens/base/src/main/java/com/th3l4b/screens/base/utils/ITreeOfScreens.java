@@ -5,4 +5,5 @@ import com.th3l4b.common.named.INamedContainer;
 import com.th3l4b.screens.base.IScreen;
 
 public interface ITreeOfScreens extends ITree<IScreen>, INamedContainer<IScreen> {
+	void updated (IScreen screen) throws Exception;
 }

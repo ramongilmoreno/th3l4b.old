@@ -64,4 +64,9 @@ public class DefaultNamedContainer<T extends INamed> implements
 		}
 		iout.flush();
 	}
+	
+	@Override
+	public void clear() throws Exception {
+		_items.clear();
+	}
 }
