@@ -1,13 +1,12 @@
 package com.th3l4b.screens.console.interaction;
 
-import com.th3l4b.screens.base.IScreen;
 
 public class DefaultInteractionProducer implements IInteractionProducer {
 
-	private IScreen _screen;
+	private String _screen;
 	private String _interaction;
 
-	public DefaultInteractionProducer(IScreen screen, String interaction) {
+	public DefaultInteractionProducer(String screen, String interaction) {
 		_interaction = interaction;
 	}
 
@@ -17,7 +16,7 @@ public class DefaultInteractionProducer implements IInteractionProducer {
 	}
 
 	@Override
-	public IScreen getScreen() throws Exception {
+	public String getScreen() throws Exception {
 		return _screen;
 	}
 

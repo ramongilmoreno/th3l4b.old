@@ -1,69 +1,68 @@
 package com.th3l4b.screens.base.utils;
 
-import com.th3l4b.screens.base.IScreen;
+import com.th3l4b.screens.base.ITreeOfScreens;
 
+/**
+ *
+ */
 public class TreeOfScreensFilter implements ITreeOfScreens {
-	
+
 	private ITreeOfScreens _delegated;
 
-	public void clear() throws Exception {
-		_delegated.clear();
+	public TreeOfScreensFilter() {
 	}
 
-	public TreeOfScreensFilter (ITreeOfScreens delegated) {
+	public TreeOfScreensFilter(ITreeOfScreens delegated) {
 		_delegated = delegated;
 	}
-	
-	public ITreeOfScreens getDelegated() {
-		return _delegated;
-	}
-	
-	public void setDelegated(ITreeOfScreens delegated) {
-		_delegated = delegated;
-	}
-	
-	public IScreen getRoot() throws Exception {
+
+	public String getRoot() throws Exception {
 		return _delegated.getRoot();
 	}
 
-	public Iterable<IScreen> items() throws Exception {
-		return _delegated.items();
-	}
-
-	public void setRoot(IScreen root) throws Exception {
+	public void setRoot(String root) throws Exception {
 		_delegated.setRoot(root);
 	}
 
-	public void add(IScreen item) throws Exception {
-		_delegated.add(item);
+	public Iterable<String> screens() throws Exception {
+		return _delegated.screens();
 	}
 
-	public Iterable<IScreen> getChildren(IScreen node) throws Exception {
-		return _delegated.getChildren(node);
+	public Iterable<String> children(String screen) throws Exception {
+		return _delegated.children(screen);
 	}
 
-	public IScreen get(String name) throws Exception {
-		return _delegated.get(name);
+	public String parent(String screen) throws Exception {
+		return _delegated.parent(screen);
 	}
 
-	public void addChild(IScreen child, IScreen node) throws Exception {
-		_delegated.addChild(child, node);
+	public void addScreen(String screen, String parent) throws Exception {
+		_delegated.addScreen(screen, parent);
 	}
 
-	public IScreen contains(String name) throws Exception {
-		return _delegated.contains(name);
+	public void removeScreen(String screen) throws Exception {
+		_delegated.removeScreen(screen);
 	}
 
-	public void removeChild(IScreen child) throws Exception {
-		_delegated.removeChild(child);
+	public void setProperty(String screen, String property, String value)
+			throws Exception {
+		_delegated.setProperty(screen, property, value);
 	}
 
-	public void updated(IScreen screen) throws Exception {
-		_delegated.updated(screen);
+	public String getProperty(String screen, String property) throws Exception {
+		return _delegated.getProperty(screen, property);
 	}
 
-	public void remove(IScreen item) throws Exception {
-		_delegated.remove(item);
+	public void removeProperty(String screen, String property) throws Exception {
+		_delegated.removeProperty(screen, property);
+	}
+
+	public boolean hasProperty(String screen, String property) throws Exception {
+		return _delegated.hasProperty(screen, property);
+	}
+
+	public Iterable<String> properties(String screen) throws Exception {
+		return _delegated.properties(screen);
 	}
 
 }

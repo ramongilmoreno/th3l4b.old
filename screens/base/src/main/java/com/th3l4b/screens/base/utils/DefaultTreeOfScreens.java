@@ -1,74 +1,105 @@
 package com.th3l4b.screens.base.utils;
 
-import com.th3l4b.common.data.tree.DefaultTree;
-import com.th3l4b.common.named.DefaultNamedContainer;
-import com.th3l4b.screens.base.IScreen;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
-public class DefaultTreeOfScreens extends DefaultNamedContainer<IScreen>
-		implements ITreeOfScreens {
+import com.th3l4b.common.data.nullsafe.NullSafe;
+import com.th3l4b.common.data.predicate.IPredicate;
+import com.th3l4b.common.data.predicate.PredicateUtils;
+import com.th3l4b.screens.base.ITreeOfScreens;
 
-	DefaultTree<IScreen> _delegated = new DefaultTree<IScreen>();
+public class DefaultTreeOfScreens implements ITreeOfScreens {
+
+	private String _root = UUID.randomUUID().toString();
+	private Map<String, String> _parents = new HashMap<String, String>();
+	private Map<String, Map<String, String>> _properties = new HashMap<String, Map<String, String>>();
 
 	@Override
-	public IScreen getRoot() throws Exception {
-		return _delegated.getRoot();
+	public String getRoot() throws Exception {
+		return _root;
 	}
 
 	@Override
-	public void setRoot(IScreen root) throws Exception {
-		IScreen old = getRoot();
-		if (old != null) {
-			super.remove(old);
+	public void setRoot(String root) throws Exception {
+		_root = root;
+	}
+
+	@Override
+	public Iterable<String> screens() throws Exception {
+		return _parents.keySet();
+	}
+
+	@Override
+	public Iterable<String> children(final String screen) throws Exception {
+		return PredicateUtils.filter(screens(), new IPredicate<String>() {
+			@Override
+			public boolean accept(String t) throws Exception {
+				return NullSafe.equals(_parents.get(t), screen);
+			}
+		});
+	}
+
+	@Override
+	public String parent(String screen) throws Exception {
+		return _parents.get(screen);
+	}
+
+	@Override
+	public void addScreen(String screen, String parent) throws Exception {
+		_parents.put(screen, parent);
+	}
+
+	@Override
+	public void removeScreen(String screen) throws Exception {
+		_parents.remove(screen);
+	}
+
+	@Override
+	public void setProperty(String screen, String property, String value)
+			throws Exception {
+		propertiesToModify(screen).put(property, value);
+	}
+
+	protected Map<String, String> propertiesToModify(String screen)
+			throws Exception {
+		Map<String, String> found = _properties.get(screen);
+		if (found == null) {
+			found = new HashMap<String, String>();
+			_properties.put(screen, found);
 		}
-		super.add(root);
-		_delegated.setRoot(root);
+		return found;
 	}
 
-	@Override
-	public Iterable<IScreen> getChildren(IScreen node) throws Exception {
-		return _delegated.getChildren(node);
-	}
-
-	@Override
-	public void addChild(IScreen child, IScreen node) throws Exception {
-		if (super.contains(child.getName()) == null) {
-			super.add(child);
+	protected Map<String, String> propertiesNotToModify(String screen)
+			throws Exception {
+		Map<String, String> found = _properties.get(screen);
+		if (found == null) {
+			found = Collections.emptyMap();
 		}
-		_delegated.addChild(child, node);
+		return found;
+	}
+
+	@Override
+	public String getProperty(String screen, String property) throws Exception {
+		return propertiesNotToModify(screen).get(property);
+	}
+
+	@Override
+	public void removeProperty(String screen, String property) throws Exception {
+		propertiesToModify(screen).remove(property);
 
 	}
 
 	@Override
-	public void removeChild(IScreen child) throws Exception {
-		if (super.contains(child.getName()) == null) {
-			super.remove(child);
-		}
-		_delegated.removeChild(child);
-	}
-
-	/**
-	 * Does nothing.
-	 */
-	@Override
-	public void updated(IScreen screen) throws Exception {
+	public boolean hasProperty(String screen, String property) throws Exception {
+		return propertiesNotToModify(screen).containsKey(property);
 	}
 
 	@Override
-	public void add(IScreen item) throws Exception {
-		throw new UnsupportedOperationException(
-				"Use tree methods instead (addChild)");
-	}
-
-	@Override
-	public void remove(IScreen item) throws Exception {
-		throw new UnsupportedOperationException(
-				"Use tree methods instead (removeChild)");
-	}
-	
-	@Override
-	public void clear() throws Exception {
-		throw new UnsupportedOperationException(
-				"Use tree methods instead (removeChild)");
+	public Iterable<String> properties(String screen) throws Exception {
+		return propertiesNotToModify(screen).keySet();
 	}
 
 }

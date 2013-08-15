@@ -1,11 +1,8 @@
 package com.th3l4b.screens.testbed.desktop;
 
 import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Random;
 
-import com.th3l4b.screens.base.DefaultScreen;
-import com.th3l4b.screens.base.IScreen;
 import com.th3l4b.screens.base.IScreensContants;
 import com.th3l4b.screens.base.interaction.IInteractionContext;
 import com.th3l4b.screens.base.interaction.IInteractionListener;
@@ -26,32 +23,29 @@ public class ClipboardMenu implements IScreensContants {
 
 	protected IScreensConfiguration createImpl() throws Exception {
 		DefaultTreeOfScreens r = new DefaultTreeOfScreens();
-		DefaultScreen screen = new DefaultScreen();
-		screen.setName(name("Clipboard"));
+		String screen = name("Clipboard");
 		{
-			Map<String, String> properties = screen.getProperties();
 			String spanish = "es";
-			properties.put(LABEL, "Clipboard");
-			properties.put(
+			r.setProperty(screen, LABEL, "Clipboard");
+			r.setProperty(screen,
 					PropertiesUtils.getLocalizedProperty(LABEL, spanish),
 					"Portapapeles");
 		}
 		r.setRoot(screen);
 		final String clipboardFieldName = name("ClipboardField");
-		LinkedHashMap<IScreen, IInteractionListener> interactions = new LinkedHashMap<IScreen, IInteractionListener>();
+		LinkedHashMap<String, IInteractionListener> interactions = new LinkedHashMap<String, IInteractionListener>();
 		{
-			final DefaultScreen action = new DefaultScreen();
-			action.setName(name("Random key"));
-			action.getProperties().put(TYPE, TYPE_INTERACTION);
-			Map<String, String> properties = action.getProperties();
+			String action = name("Random key");
+			r.addScreen(action, screen);
+			r.setProperty(action, TYPE, TYPE_INTERACTION);
 			String spanish = "es";
-			properties.put(LABEL, "Random key");
-			properties.put(
+			r.setProperty(action, LABEL, "Random key");
+			r.setProperty(action,
 					PropertiesUtils.getLocalizedProperty(LABEL, spanish),
 					"Clave aleatoria");
 			interactions.put(action, new IInteractionListener() {
 				@Override
-				public void handleInteraction(IScreen screen,
+				public void handleInteraction(String screen,
 						IInteractionContext context) throws Exception {
 					String alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!\"$%&/()=?*[]^{},;.:-_<>";
 					StringBuffer sb = new StringBuffer();
@@ -61,34 +55,29 @@ public class ClipboardMenu implements IScreensContants {
 						sb.append(alphabet.charAt(r));
 					}
 					DesktopSession.get(context).putIntoClipboard(sb.toString());
-					context.getTree().get(clipboardFieldName).getProperties()
-							.put(VALUE, sb.toString());
+					context.getTree().setProperty(clipboardFieldName, VALUE,
+							sb.toString());
 				}
 
 			});
-			r.addChild(action, screen);
 		}
 		{
-			final DefaultScreen field = new DefaultScreen();
-			field.setName(clipboardFieldName);
-			field.getProperties().put(TYPE, TYPE_FIELD);
-			Map<String, String> properties = field.getProperties();
+			r.addScreen(clipboardFieldName, screen);
+			r.setProperty(clipboardFieldName, TYPE, TYPE_FIELD);
 			String spanish = "es";
-			properties.put(LABEL, "Clipboard field");
-			properties.put(
+			r.setProperty(clipboardFieldName, LABEL, "Clipboard field");
+			r.setProperty(clipboardFieldName,
 					PropertiesUtils.getLocalizedProperty(LABEL, spanish),
 					"Portapapeles");
-			interactions.put(field, new IInteractionListener() {
+			interactions.put(clipboardFieldName, new IInteractionListener() {
 				@Override
-				public void handleInteraction(IScreen screen,
+				public void handleInteraction(String screen,
 						IInteractionContext context) throws Exception {
 					System.out.println("Copied to clipboard: "
-							+ screen.getProperties().get(VALUE));
+							+ context.getTree().getProperty(screen, VALUE));
 				}
 
 			});
-			r.addChild(field, screen);
-
 		}
 
 		return new DefaultScreensConfiguration(r, interactions);

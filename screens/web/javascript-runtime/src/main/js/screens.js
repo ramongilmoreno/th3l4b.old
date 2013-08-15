@@ -116,14 +116,16 @@ define('com/th3l4b/screens/web/javascript-runtime', function () {
 			request.onreadystatechange = handleResponse(request, node, r);
 			request.open("POST", target, true);
 			request.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-			request.send("set=1&set.0.screen=" + encodeURIComponent(screen) + "&set.0.property=com.th3l4b.screens.base.value&set.0.value=" + encodeURIComponent(newValue));
+			
+			// This need refactoring to allow modification of items that do not trigger an action. For the moment it is mandatory.
+			request.send("modification=1&modification.0.type=PropertySet&modification.0.screen=" + encodeURIComponent(screen) + "&modification.0.property=com.th3l4b.screens.base.value&modification.0.value=" + encodeURIComponent(newValue) + "&action=" + encodeURIComponent(screen));
 		};
         r.onAction = function (screen) {
                 var request = new XMLHttpRequest();
                 request.onreadystatechange = handleResponse(request, node, r);
                 request.open("POST", target, true);
                 request.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-                request.send("actions=1&actions.0=" + encodeURIComponent(screen)); 
+                request.send("action=" + encodeURIComponent(screen)); 
         };
 		var request = new XMLHttpRequest();
 		request.onreadystatechange = handleResponse(request, node, r);

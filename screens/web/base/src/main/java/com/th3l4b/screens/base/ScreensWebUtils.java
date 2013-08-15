@@ -1,41 +1,40 @@
 package com.th3l4b.screens.base;
 
 import java.io.PrintWriter;
-import java.util.Map;
 
-import com.th3l4b.common.data.tree.ITree;
 import com.th3l4b.common.text.IndentedWriter;
 import com.th3l4b.common.text.TextUtils;
 
 public class ScreensWebUtils {
 
-	public static void dump(ITree<IScreen> tree, PrintWriter out)
+	public static void dump(ITreeOfScreens tree, PrintWriter out)
 			throws Exception {
 		dumpRecursively(tree.getRoot(), null, tree, out);
 	}
 
-	protected static void dumpRecursively(IScreen screen, IScreen parent, ITree<IScreen> tree,
-			PrintWriter out) throws Exception {
+	protected static void dumpRecursively(String screen, String parent,
+			ITreeOfScreens tree, PrintWriter out) throws Exception {
 		PrintWriter iout = IndentedWriter.get(out);
 		PrintWriter iiout = IndentedWriter.get(iout);
 		out.print("\"");
-		TextUtils.escapeJavaString(screen.getName(), out);
+		TextUtils.escapeJavaString(screen, out);
 		out.println("\": {");
 		iout.print("name: \"");
-		TextUtils.escapeJavaString(screen.getName(), iout);
+		TextUtils.escapeJavaString(screen, iout);
 		iout.println("\",");
 		iout.println("properties: {");
 		boolean first = true;
-		for (Map.Entry<String, String> e : screen.getProperties().entrySet()) {
+		for (String property : tree.properties(screen)) {
 			if (first) {
 				first = false;
 			} else {
 				iiout.println(',');
 			}
 			iiout.print('\"');
-			TextUtils.escapeJavaString(e.getKey(), iiout);
+			TextUtils.escapeJavaString(property, iiout);
 			iiout.print("\": \"");
-			TextUtils.escapeJavaString(e.getValue(), iiout);
+			TextUtils.escapeJavaString(tree.getProperty(screen, property),
+					iiout);
 			iiout.print('\"');
 		}
 		if (!first) {
@@ -47,12 +46,12 @@ public class ScreensWebUtils {
 			iout.println("undefined");
 		} else {
 			iout.print("\"");
-			TextUtils.escapeJavaString(parent.getName(), iout);
+			TextUtils.escapeJavaString(parent, iout);
 			iout.println("\"");
 		}
 		out.print("}");
 		first = true;
-		for (IScreen child : tree.getChildren(screen)) {
+		for (String child : tree.children(screen)) {
 			first = false;
 			out.println(',');
 			dumpRecursively(child, screen, tree, out);

@@ -4,8 +4,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import com.th3l4b.common.propertied.IPropertied;
-import com.th3l4b.screens.base.IScreen;
-import com.th3l4b.screens.base.utils.ITreeOfScreens;
+import com.th3l4b.screens.base.ITreeOfScreens;
 
 public interface IInteractionContext extends IPropertied {
 	ITreeOfScreens getTree() throws Exception;
@@ -15,8 +14,9 @@ public interface IInteractionContext extends IPropertied {
 	Locale getLocale() throws Exception;
 
 	void setLocale(Locale locale) throws Exception;
-	
-	Map<IScreen, IInteractionListener> getInteractions () throws Exception;
-	
-	void setInteractions (Map<IScreen, IInteractionListener> interactions) throws Exception;
+
+	Map<String, IInteractionListener> getInteractions() throws Exception;
+
+	void setInteractions(Map<String, IInteractionListener> interactions)
+			throws Exception;
 }

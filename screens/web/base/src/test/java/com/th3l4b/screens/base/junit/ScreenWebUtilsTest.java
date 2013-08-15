@@ -4,26 +4,20 @@ import java.io.PrintWriter;
 
 import org.junit.Test;
 
-import com.th3l4b.common.data.tree.DefaultTree;
-import com.th3l4b.screens.base.DefaultScreen;
-import com.th3l4b.screens.base.IScreen;
+import com.th3l4b.screens.base.ITreeOfScreens;
 import com.th3l4b.screens.base.ScreensWebUtils;
+import com.th3l4b.screens.base.utils.DefaultTreeOfScreens;
 
 public class ScreenWebUtilsTest {
 	@Test
-	public void testDumpTree () throws Exception {
-		DefaultTree<IScreen> tree = new DefaultTree<IScreen>();
-		DefaultScreen a = new DefaultScreen("A");
-		tree.setRoot(a);
-		DefaultScreen b = new DefaultScreen("B");
-		tree.addChild(b, a);
-		DefaultScreen c = new DefaultScreen("C");
-		tree.addChild(c, a);
-		DefaultScreen d = new DefaultScreen("D");
-		tree.addChild(d, c);
-		DefaultScreen e = new DefaultScreen("E");
-		tree.addChild(e, c);
-		
+	public void testDumpTree() throws Exception {
+		ITreeOfScreens tree = new DefaultTreeOfScreens();
+		tree.setRoot("A");
+		tree.addScreen("B", "A");
+		tree.addScreen("C", "A");
+		tree.addScreen("D", "C");
+		tree.addScreen("E", "C");
+
 		PrintWriter out = new PrintWriter(System.out, true);
 		ScreensWebUtils.dump(tree, out);
 		out.flush();
