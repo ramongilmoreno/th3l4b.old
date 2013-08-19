@@ -2,6 +2,7 @@ package com.th3l4b.screens.base.utils;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.UUID;
 
@@ -28,7 +29,10 @@ public class DefaultTreeOfScreens implements ITreeOfScreens {
 
 	@Override
 	public Iterable<String> screens() throws Exception {
-		return _parents.keySet();
+		LinkedHashSet<String> r = new LinkedHashSet<String>();
+		r.addAll(_parents.keySet());
+		r.add(_root);
+		return r;
 	}
 
 	@Override
@@ -54,6 +58,7 @@ public class DefaultTreeOfScreens implements ITreeOfScreens {
 	@Override
 	public void removeScreen(String screen) throws Exception {
 		_parents.remove(screen);
+		_properties.remove(screen);
 	}
 
 	@Override

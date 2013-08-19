@@ -1,6 +1,6 @@
 /*global define */
 
-define('com/th3l4b/screens/web/javascript-runtime', function () {
+define('com/th3l4b/screens/web/javascript-runtime', ["com/th3l4b/screens/web/javascript-runtime-tree"], function (treelib) {
 
 	var prefix = "com.th3l4b.screens.base";
 	var typePrefix = prefix + ".type";
