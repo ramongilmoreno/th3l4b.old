@@ -17,10 +17,10 @@ public class DesktopScreensServlet extends AbstractScreensServlet {
 			throws Exception {
 		String attribute = DesktopScreensServlet.class.getName();
 		IScreensConfiguration config = (IScreensConfiguration) request
-				.getAttribute(attribute);
+				.getSession(true).getAttribute(attribute);
 		if (config == null) {
 			config = ClipboardMenu.create();
-			request.getSession(true).setAttribute(attribute, config);
+			request.getSession().setAttribute(attribute, config);
 		}
 		return config;
 	}
