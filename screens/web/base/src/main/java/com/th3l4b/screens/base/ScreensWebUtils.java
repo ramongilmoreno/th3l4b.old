@@ -9,14 +9,27 @@ public class ScreensWebUtils {
 
 	public static void dump(ITreeOfScreens tree, PrintWriter out)
 			throws Exception {
-		dumpRecursively(tree.getRoot(), null, tree, out);
+		PrintWriter iout = IndentedWriter.get(out);
+		PrintWriter iiout = IndentedWriter.get(iout);
+		out.println("{");
+		iout.println("tree: {");
+		dumpRecursively(tree.getRoot(), null, tree, iiout);
+		iiout.println();
+		iout.println("},");
+		iout.print("root: \"");
+		TextUtils.escapeJavaString(tree.getRoot(), iout);
+		iout.println("\"");
+		out.println("}");
+		iiout.flush();
+		iout.flush();
 	}
 
 	protected static void dumpRecursively(String screen, String parent,
 			ITreeOfScreens tree, PrintWriter out) throws Exception {
 		PrintWriter iout = IndentedWriter.get(out);
 		PrintWriter iiout = IndentedWriter.get(iout);
-		out.print("\"");
+		String prefix = "_tos_";
+		out.print("\"" + prefix);
 		TextUtils.escapeJavaString(screen, out);
 		out.println("\": {");
 		iout.print("name: \"");
@@ -30,7 +43,7 @@ public class ScreensWebUtils {
 			} else {
 				iiout.println(',');
 			}
-			iiout.print('\"');
+			iiout.print("\"" + prefix);
 			TextUtils.escapeJavaString(property, iiout);
 			iiout.print("\": \"");
 			TextUtils.escapeJavaString(tree.getProperty(screen, property),

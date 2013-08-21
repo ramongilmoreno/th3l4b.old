@@ -5,12 +5,12 @@ define('com/th3l4b/screens/web/javascript-runtime-renderer', function () {
 	var innerRenderField = function (screen, node, onChange, context) {
 		var e = context.document.createElement("input");
 		e.setAttribute("type", "text");
-		var v = screen.properties["com.th3l4b.screens.base.value"];
+		var v = context.treelib.getProperty(context.tree, screen, "com.th3l4b.screens.base.value");
 		if (!v) {
 			v = "";
 		}
 		e.onchange = function () {
-			onChange(screen.name, e.value);
+			onChange(screen, e.value);
 		};
 		node.appendChild(e);
 		e.setAttribute("value", v);	
@@ -42,7 +42,7 @@ define('com/th3l4b/screens/web/javascript-runtime-renderer', function () {
 		var e = context.document.createElement("a");
 		e.setAttribute("href", "#");
 		e.onclick =  function () {
-			onAction(screen.name);
+			onAction(screen);
 		};
 		var text = context.document.createTextNode("Action");
 		e.appendChild(text);

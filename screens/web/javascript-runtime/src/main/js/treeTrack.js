@@ -10,7 +10,7 @@ define('com/th3l4b/screens/web/javascript-runtime-treeTrack', function () {
 			setRoot: function (t, root) {
 				original.setRoot(t, root);
 				modifications.push({
-					type: "setRoot",
+					type: "SetRoot",
 					screen: root
 				});
 			},
@@ -30,7 +30,7 @@ define('com/th3l4b/screens/web/javascript-runtime-treeTrack', function () {
 			addScreen: function (t, screen, parent) {
 				original.addScreen(t, screen, parent);
 				modifications.push({
-					type: "addScreen",
+					type: "AddScreen",
 					screen: screen,
 					parent: parent
 				});
@@ -39,7 +39,7 @@ define('com/th3l4b/screens/web/javascript-runtime-treeTrack', function () {
 			removeScreen: function (t, screen) {
 				original.removeScreen(t, screen);
 				modifications.push({
-					type: "removeScreen",
+					type: "RemoveScreen",
 					screen: screen
 				});
 			},
@@ -47,7 +47,7 @@ define('com/th3l4b/screens/web/javascript-runtime-treeTrack', function () {
 			setProperty: function (t, screen, property, value) {
 				original.setProperty(t, screen, property, value);
 				modifications.push({
-					type: "setProperty",
+					type: "SetProperty",
 					screen: screen,
 					property: property,
 					value: value
@@ -61,7 +61,7 @@ define('com/th3l4b/screens/web/javascript-runtime-treeTrack', function () {
 			removeProperty: function (t, screen, property) {
 				original.removeProperty(t, screen, property);
 				modifications.push({
-					type: "removeProperty",
+					type: "RemoveProperty",
 					screen: screen,
 					property: property
 				});
@@ -82,15 +82,15 @@ define('com/th3l4b/screens/web/javascript-runtime-treeTrack-apply', function () 
 	return function (modifications, t, tree) {
 		for (var i in modifications) {
 			var m = modifications[i];
-			if (m.type == 'setRoot') {
+			if (m.type == 'SetRoot') {
 				tree.setRoot(t, m.screen);
-			} else if (m.type == 'addScreen') {
+			} else if (m.type == 'AddScreen') {
 				tree.addScreen(t, m.screen, m.parent);
-			} else if (m.type == 'removeScreen') {
+			} else if (m.type == 'RemoveScreen') {
 				tree.removeScreen(t, m.screen);
-			} else if (m.type == 'setProperty') {
+			} else if (m.type == 'SetProperty') {
 				tree.setProperty(t, m.screen, m.property, m.value);
-			} else if (m.type == 'removeProperty') {
+			} else if (m.type == 'RemoveProperty') {
 				tree.removeProperty(t, m.screen, m.property);
 			} else {
 				throw "Unknown modification: " + m;

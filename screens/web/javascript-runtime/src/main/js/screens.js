@@ -1,6 +1,8 @@
 /*global define */
 
-define('com/th3l4b/screens/web/javascript-runtime', ["com/th3l4b/screens/web/javascript-runtime-tree"], function (treelib) {
+define('com/th3l4b/screens/web/javascript-runtime',
+		['com/th3l4b/screens/web/javascript-runtime-tree'],
+		function (treelib) {
 
 	var prefix = "com.th3l4b.screens.base";
 	var typePrefix = prefix + ".type";
@@ -14,16 +16,16 @@ define('com/th3l4b/screens/web/javascript-runtime', ["com/th3l4b/screens/web/jav
 	/**
 	* Renders the properties of an screen in a node
 	*/
-	var renderProperties = function (screenProperties, domNode, context) {
-		for (var p in screenProperties) {
-			if (screenProperties.hasOwnProperty(p)) {
-				var e = context.document.createElement("div");
-				var v = screenProperties[p];
-				var s = "" + p + " = " + v;
-				var n = context.document.createTextNode(s);
-				e.appendChild(n);
-				domNode.appendChild(e);
-			}
+	var renderProperties = function (current, domNode, context) {
+		var properties = context.treelib.properties(context.tree, current);
+		for (var i in properties) {
+			var p = properties[i];
+			var e = context.document.createElement("div");
+			var v = context.treelib.getProperty(context.tree, current, p);
+			var s = "" + p + " = " + v;
+			var n = context.document.createTextNode(s);
+			e.appendChild(n);
+			domNode.appendChild(e);
 		}
 	};
 
@@ -35,25 +37,23 @@ define('com/th3l4b/screens/web/javascript-runtime', ["com/th3l4b/screens/web/jav
 		var newNode = context.document.createElement("div");
 
 		// Render it
-		var properties = current.properties;
-		properties = properties ? properties : {};
-		if (properties[constants.type] == constants.typeField) {
+		var type = context.treelib.getProperty(context.tree, current, constants.type);
+		if (type == constants.typeField) {
 			context.renderer.renderField(current, newNode, function (name, value) {
 				context.onChange(name, value);
 			}, context);
-		} else if (properties[constants.type] == constants.typeInteraction) {
+		} else if (type == constants.typeInteraction) {
 			context.renderer.renderAction(current, newNode, function (name) {
 				context.onAction(name);
 			}, context);
-                }
-		renderProperties(properties, newNode, context);
+		}
+		renderProperties(current, newNode, context);
 
 		// Render children with this very function
-		var childrenList = context.children(current.name, context);
-		for (var child in childrenList) {
-			if (childrenList.hasOwnProperty(child)) {
-				context.render(childrenList[child], newNode, context);
-			}
+		var children = context.treelib.children(context.tree, current);
+		for (var i in children) {
+			var child = children[i];
+			context.render(child, newNode, context);
 		}
 
 		// Append result to main node
@@ -63,32 +63,18 @@ define('com/th3l4b/screens/web/javascript-runtime', ["com/th3l4b/screens/web/jav
 	/**
 	* Refactors a domNode to fit a current
 	*/
-	var update = function (tree, currentName, domNode, context) {
+	var update = function (current, domNode, context) {
 		domNode.innerHTML = "";
-		context.tree = tree;
-		context.render(tree[currentName], domNode, context);
+		context.render(current, domNode, context);
 	};
 	
-	var children = function (parentName, context) {
-		var r = [];
-		var tree = context.tree;
-		for (var child in tree) {
-			if (tree.hasOwnProperty(child)) {
-				var candidate = tree[child];
-				if (candidate["parent"] ==  parentName) {
-					r.push(candidate);
-				}
-			}
-		}
-		return r;
-	};
-
 	var handleResponse = function (request, node, context) {
 		return function () {
 			if ((request.readyState == 4) && (request.status == 200)) {
 				var response = eval("var r = " + request.responseText + "; r;");
 				if (response.ok) {
-					update(response.tree, response.root, node, context);
+					context.tree = response.tree;
+					update(context.treelib.getRoot(context.tree), node, context);
 					return;
 				}
 			}
@@ -105,8 +91,8 @@ define('com/th3l4b/screens/web/javascript-runtime', ["com/th3l4b/screens/web/jav
 	var createContext = function (document, node, target, renderer) {
 		var r = {
 		};
-		r.tree = [];
-		r.children = children;
+		r.tree = {};
+		r.treelib = treelib;
 		r.renderer = renderer;
 		r.render = render;
 		r.document =  document;
@@ -118,14 +104,14 @@ define('com/th3l4b/screens/web/javascript-runtime', ["com/th3l4b/screens/web/jav
 			request.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 			
 			// This need refactoring to allow modification of items that do not trigger an action. For the moment it is mandatory.
-			request.send("modification=1&modification.0.type=PropertySet&modification.0.screen=" + encodeURIComponent(screen) + "&modification.0.property=com.th3l4b.screens.base.value&modification.0.value=" + encodeURIComponent(newValue) + "&action=" + encodeURIComponent(screen));
+			request.send("modification=1&modification.0.type=SetProperty&modification.0.screen=" + encodeURIComponent(screen) + "&modification.0.property=com.th3l4b.screens.base.value&modification.0.value=" + encodeURIComponent(newValue) + "&action=" + encodeURIComponent(screen));
 		};
         r.onAction = function (screen) {
-                var request = new XMLHttpRequest();
-                request.onreadystatechange = handleResponse(request, node, r);
-                request.open("POST", target, true);
-                request.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-                request.send("action=" + encodeURIComponent(screen)); 
+            var request = new XMLHttpRequest();
+            request.onreadystatechange = handleResponse(request, node, r);
+            request.open("POST", target, true);
+            request.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+            request.send("action=" + encodeURIComponent(screen)); 
         };
 		var request = new XMLHttpRequest();
 		request.onreadystatechange = handleResponse(request, node, r);

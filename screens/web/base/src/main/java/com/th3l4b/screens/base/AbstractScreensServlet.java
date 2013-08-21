@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.th3l4b.common.text.ITextConstants;
 import com.th3l4b.common.text.IndentedWriter;
-import com.th3l4b.common.text.TextUtils;
 import com.th3l4b.screens.base.interaction.IInteractionListener;
 import com.th3l4b.screens.base.modifications.Modification;
 import com.th3l4b.screens.base.modifications.ModificationsEngine;
@@ -84,24 +83,18 @@ public abstract class AbstractScreensServlet extends HttpServlet {
 							+ action);
 				}
 			}
-			
+
 			// Dump result.
 			response.setContentType("application/javascript");
 			response.setCharacterEncoding(ITextConstants.UTF_8);
 			PrintWriter out = response.getWriter();
 			PrintWriter iout = IndentedWriter.get(out);
-			PrintWriter iiout = IndentedWriter.get(iout);
 			out.println("{");
 			iout.println("ok: true,");
-			iout.println("tree: {");
-			ScreensWebUtils.dump(tree, iiout);
+			iout.print("tree: ");
+			ScreensWebUtils.dump(tree, iout);
 			iout.println();
-			iout.println("},");
-			iout.print("root: \"");
-			TextUtils.escapeJavaString(tree.getRoot(), iout);
-			iout.println("\"");
 			out.println("}");
-			iiout.flush();
 			iout.flush();
 			out.flush();
 

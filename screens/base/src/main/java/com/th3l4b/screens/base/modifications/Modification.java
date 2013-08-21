@@ -15,7 +15,7 @@ public abstract class Modification {
 			SCREEN_ATTRIBUTE_NAME,
 			AbstractPropertyAction.PROPERTY_ATTRIBUTE_NAME,
 			AbstractPropertyAction.VALUE_ATTRIBUTE_NAME,
-			Added.PARENT_ATTRIBUTE_NAME };
+			AddScreen.PARENT_ATTRIBUTE_NAME };
 
 	private String _screen;
 
@@ -73,18 +73,18 @@ public abstract class Modification {
 		}
 	}
 
-	public static class Added extends Modification {
+	public static class AddScreen extends Modification {
 
 		public static final String PARENT_ATTRIBUTE_NAME = "parent";
 
 		String _parent;
 
-		public Added(String screen, String parent) {
+		public AddScreen(String screen, String parent) {
 			super(screen);
 			setParent(parent);
 		}
 
-		public Added(Map<String, String> map) {
+		public AddScreen(Map<String, String> map) {
 			super(map);
 			setParent(map.get(PARENT_ATTRIBUTE_NAME));
 		}
@@ -98,42 +98,42 @@ public abstract class Modification {
 		}
 	}
 
-	public static class RootSet extends Modification {
-		public RootSet(String screen) {
+	public static class SetRoot extends Modification {
+		public SetRoot(String screen) {
 			super(screen);
 		}
 
-		public RootSet(Map<String, String> map) {
+		public SetRoot(Map<String, String> map) {
 			super(map);
 		}
 	}
 
-	public static class Removed extends Modification {
-		public Removed(String screen) {
+	public static class RemoveScreen extends Modification {
+		public RemoveScreen(String screen) {
 			super(screen);
 		}
 
-		public Removed(Map<String, String> map) {
+		public RemoveScreen(Map<String, String> map) {
 			super(map);
 		}
 	}
 
-	public static class PropertySet extends AbstractPropertyAction {
-		public PropertySet(String screen, String property, String value) {
+	public static class SetProperty extends AbstractPropertyAction {
+		public SetProperty(String screen, String property, String value) {
 			super(screen, property, value);
 		}
 
-		public PropertySet(Map<String, String> map) {
+		public SetProperty(Map<String, String> map) {
 			super(map);
 		}
 	}
 
-	public static class PropertyRemoved extends AbstractPropertyAction {
-		public PropertyRemoved(String screen, String property) {
+	public static class RemoveProperty extends AbstractPropertyAction {
+		public RemoveProperty(String screen, String property) {
 			super(screen, property, null);
 		}
 
-		public PropertyRemoved(Map<String, String> map) {
+		public RemoveProperty(Map<String, String> map) {
 			super(map);
 		}
 	}
@@ -141,18 +141,18 @@ public abstract class Modification {
 	public static Modification fromMap(Map<String, String> map)
 			throws Exception {
 		String type = map.get(MODIFICATION_TYPE);
-		if (NullSafe.equals(type, Added.class.getSimpleName())) {
-			return new Added(map);
-		} else if (NullSafe.equals(type, Removed.class.getSimpleName())) {
-			return new Removed(map);
-		} else if (NullSafe.equals(type, PropertySet.class.getSimpleName())) {
-			return new PropertySet(map);
-		} else if (NullSafe.equals(type, PropertyRemoved.class.getSimpleName())) {
-			return new PropertyRemoved(map);
-		} else if (NullSafe.equals(type, RootSet.class.getSimpleName())) {
-			return new RootSet(map);
+		if (NullSafe.equals(type, AddScreen.class.getSimpleName())) {
+			return new AddScreen(map);
+		} else if (NullSafe.equals(type, RemoveScreen.class.getSimpleName())) {
+			return new RemoveScreen(map);
+		} else if (NullSafe.equals(type, SetProperty.class.getSimpleName())) {
+			return new SetProperty(map);
+		} else if (NullSafe.equals(type, RemoveProperty.class.getSimpleName())) {
+			return new RemoveProperty(map);
+		} else if (NullSafe.equals(type, SetRoot.class.getSimpleName())) {
+			return new SetRoot(map);
 		} else {
-			throw new IllegalArgumentException("Unknown type: " + type);
+			throw new IllegalArgumentException("Unknown modification type: " + type);
 		}
 	}
 

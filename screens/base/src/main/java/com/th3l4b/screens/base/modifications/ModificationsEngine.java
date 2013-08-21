@@ -6,19 +6,19 @@ public class ModificationsEngine {
 	public static void apply(Iterable<Modification> modifications,
 			ITreeOfScreens tree) throws Exception {
 		for (Modification m : modifications) {
-			if (m instanceof Modification.Added) {
-				Modification.Added added = (Modification.Added) m;
+			if (m instanceof Modification.AddScreen) {
+				Modification.AddScreen added = (Modification.AddScreen) m;
 				tree.addScreen(added.getScreen(), added.getParent());
-			} else if (m instanceof Modification.Removed) {
+			} else if (m instanceof Modification.RemoveScreen) {
 				tree.removeScreen(m.getScreen());
-			} else if (m instanceof Modification.RootSet) {
+			} else if (m instanceof Modification.SetRoot) {
 				tree.setRoot(m.getScreen());
-			} else if (m instanceof Modification.PropertySet) {
-				Modification.PropertySet property = (Modification.PropertySet) m;
+			} else if (m instanceof Modification.SetProperty) {
+				Modification.SetProperty property = (Modification.SetProperty) m;
 				tree.setProperty(m.getScreen(), property.getProperty(),
 						property.getValue());
-			} else if (m instanceof Modification.PropertyRemoved) {
-				Modification.PropertyRemoved property = (Modification.PropertyRemoved) m;
+			} else if (m instanceof Modification.RemoveProperty) {
+				Modification.RemoveProperty property = (Modification.RemoveProperty) m;
 				tree.removeProperty(m.getScreen(), property.getProperty());
 			} else {
 				throw new IllegalArgumentException("Unknown modification:  "

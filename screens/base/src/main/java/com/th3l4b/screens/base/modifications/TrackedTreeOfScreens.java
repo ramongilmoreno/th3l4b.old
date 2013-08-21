@@ -21,29 +21,29 @@ public class TrackedTreeOfScreens extends TreeOfScreensFilter {
 
 	public void setRoot(String root) throws Exception {
 		super.setRoot(root);
-		getModifications().add(new Modification.RootSet(root));
+		getModifications().add(new Modification.SetRoot(root));
 	}
 
 	public void addScreen(String screen, String parent) throws Exception {
 		super.addScreen(screen, parent);
-		getModifications().add(new Modification.Added(screen, parent));
+		getModifications().add(new Modification.AddScreen(screen, parent));
 	}
 
 	public void removeScreen(String screen) throws Exception {
 		super.removeScreen(screen);
-		getModifications().add(new Modification.Removed(screen));
+		getModifications().add(new Modification.RemoveScreen(screen));
 	}
 
 	public void setProperty(String screen, String property, String value)
 			throws Exception {
 		super.setProperty(screen, property, value);
 		getModifications().add(
-				new Modification.PropertySet(screen, property, value));
+				new Modification.SetProperty(screen, property, value));
 	}
 
 	public void removeProperty(String screen, String property) throws Exception {
 		super.removeProperty(screen, property);
 		getModifications().add(
-				new Modification.PropertyRemoved(screen, property));
+				new Modification.RemoveProperty(screen, property));
 	}
 }
