@@ -15,15 +15,16 @@ define('com/th3l4b/types/javascript-runtime-junit', function () {
 				msg += " - " + c;
 			}
 			console.error(msg);
+			return false;
 		};
 		r.assertTrue =  function (expected, msg) {
 			if (!msg) {
 				msg = "is not true";
 			}
 			if (expected == true) {
-				return;
+				return true;
 			} else {
-				r.log(msg, expected);
+				return r.log(msg, expected);
 			}
 		};
 		r.assertFalse =  function (expected, msg) {
@@ -31,9 +32,9 @@ define('com/th3l4b/types/javascript-runtime-junit', function () {
 				msg = "is not false";
 			}
 			if (expected == false) {
-				return;
+				return true;
 			} else {
-				r.log(msg, expected);
+				return r.log(msg, expected);
 			}
 		};
 		r.assertEquals =  function (expected, actual, msg) {
@@ -41,9 +42,27 @@ define('com/th3l4b/types/javascript-runtime-junit', function () {
 				msg = "are not equals";
 			}
 			if (expected == actual) {
-				return;
+				return true;
 			} else {
-				r.log(msg, expected, actual);
+				return r.log(msg, expected, actual);
+			}
+		};
+		r.assertDeepEquals = function (expected, actual, msg) {
+			if (!msg) {
+				msg = "objects are not equals";
+			}
+			if ((typeof expected == typeof actual) && (typeof expected == 'object')) {
+				for (var i in expected) {
+//					console.log("Testing property", i, "of", actual)
+					if (expected.hasOwnProperty(i)) {
+						if (!r.assertDeepEquals(expected[i], actual[i], msg)) {
+							return false;
+						}
+					}
+				}
+				return true;
+			} else {
+				return r.assertEquals(expected, actual, msg);
 			}
 		};
 		r.assertArraysEquals = function (expected, actual, msg) {
@@ -54,14 +73,13 @@ define('com/th3l4b/types/javascript-runtime-junit', function () {
 				if (expected.length == actual.length) {
 					for (var i = 0; i < expected.length; i++) {
 						if (expected[i] != actual[i]) {
-							r.log(msg, expected, actual);
-							return;
+							return r.log(msg, expected, actual);
 						}
 					}
-					return;
+					return true;
 				}
 			}
-			r.log(msg, expected, actual);
+			return r.log(msg, expected, actual);
 		};
 		return r;
 	};
