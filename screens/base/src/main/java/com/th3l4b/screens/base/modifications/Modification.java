@@ -5,6 +5,7 @@ import java.util.Map;
 import com.th3l4b.common.data.nullsafe.NullSafe;
 
 public abstract class Modification {
+
 	public static final String MODIFICATION_TYPE = "type";
 	public static final String SCREEN_ATTRIBUTE_NAME = "screen";
 
@@ -33,6 +34,12 @@ public abstract class Modification {
 
 	public void setScreen(String screen) {
 		_screen = screen;
+	}
+
+	public Map<String, String> toMap(Map<String, String> map) {
+		map.put(MODIFICATION_TYPE, getClass().getSimpleName());
+		map.put(SCREEN_ATTRIBUTE_NAME, getScreen());
+		return map;
 	}
 
 	protected static abstract class AbstractPropertyAction extends Modification {
@@ -71,6 +78,14 @@ public abstract class Modification {
 		public void setValue(String value) {
 			_value = value;
 		}
+
+		@Override
+		public Map<String, String> toMap(Map<String, String> map) {
+			super.toMap(map);
+			map.put(PROPERTY_ATTRIBUTE_NAME, getProperty());
+			map.put(VALUE_ATTRIBUTE_NAME, getValue());
+			return map;
+		}
 	}
 
 	public static class AddScreen extends Modification {
@@ -95,6 +110,13 @@ public abstract class Modification {
 
 		public void setParent(String parent) {
 			_parent = parent;
+		}
+
+		@Override
+		public Map<String, String> toMap(Map<String, String> map) {
+			super.toMap(map);
+			map.put(PARENT_ATTRIBUTE_NAME, getParent());
+			return map;
 		}
 	}
 
@@ -152,7 +174,8 @@ public abstract class Modification {
 		} else if (NullSafe.equals(type, SetRoot.class.getSimpleName())) {
 			return new SetRoot(map);
 		} else {
-			throw new IllegalArgumentException("Unknown modification type: " + type);
+			throw new IllegalArgumentException("Unknown modification type: "
+					+ type);
 		}
 	}
 

@@ -99,3 +99,25 @@ define('com/th3l4b/screens/web/javascript-runtime-treeTrack-apply', function () 
 	};
 });
 
+define('com/th3l4b/screens/web/javascript-runtime-treeTrack-request', function () {
+	return function (modifications) {
+		var r = [];
+		var parameter = "modifications";
+		r.push(parameter + "=");
+		r.push(modifications.length);
+		for (var i in modifications) {
+			var m = modifications[i];
+			var prefix = "&" + parameter + "." + i + ".";
+			for (var j in m) {
+				if (m.hasOwnProperty(j)) {
+					var v = m[j];
+					r.push(prefix);
+					r.push(encodeURIComponent(j));
+					r.push("=");
+					r.push(encodeURIComponent(v));
+				}
+			}
+		}
+		return r.join("");
+	};
+});

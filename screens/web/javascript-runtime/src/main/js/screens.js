@@ -1,8 +1,12 @@
 /*global define */
 
-define('com/th3l4b/screens/web/javascript-runtime',
-		['com/th3l4b/screens/web/javascript-runtime-tree'],
-		function (treelib) {
+define("com/th3l4b/screens/web/javascript-runtime",
+		[
+		 	"com/th3l4b/screens/web/javascript-runtime-tree",
+	 		"com/th3l4b/screens/web/javascript-runtime-treeTrack-apply"
+
+		],
+		function (treelib, treeTrackApply) {
 
 	var prefix = "com.th3l4b.screens.base";
 	var typePrefix = prefix + ".type";
@@ -73,7 +77,12 @@ define('com/th3l4b/screens/web/javascript-runtime',
 			if ((request.readyState == 4) && (request.status == 200)) {
 				var response = eval("var r = " + request.responseText + "; r;");
 				if (response.ok) {
-					context.tree = response.tree;
+					if (response.tree) {
+						context.tree = response.tree;
+					}
+					if (response.modifications) {
+						treeTrackApply(response.modifications, context.tree, context.treelib);
+					}
 					update(context.treelib.getRoot(context.tree), node, context);
 					return;
 				}
@@ -91,12 +100,17 @@ define('com/th3l4b/screens/web/javascript-runtime',
 	var createContext = function (document, node, target, renderer) {
 		var r = {
 		};
-		r.tree = {};
+		r.tree = {
+			root: undefined,
+			tree: {
+			}
+		};
 		r.treelib = treelib;
 		r.renderer = renderer;
 		r.render = render;
 		r.document =  document;
 		r.node = node;
+		r.modifications = [];
 		r.onChange = function (screen, newValue) {
 			var request = new XMLHttpRequest();
 			request.onreadystatechange = handleResponse(request, node, r);
@@ -104,14 +118,14 @@ define('com/th3l4b/screens/web/javascript-runtime',
 			request.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 			
 			// This need refactoring to allow modification of items that do not trigger an action. For the moment it is mandatory.
-			request.send("modification=1&modification.0.type=SetProperty&modification.0.screen=" + encodeURIComponent(screen) + "&modification.0.property=com.th3l4b.screens.base.value&modification.0.value=" + encodeURIComponent(newValue) + "&action=" + encodeURIComponent(screen));
+			request.send("modificationsOnly=true&modifications=1&modifications.0.type=SetProperty&modifications.0.screen=" + encodeURIComponent(screen) + "&modifications.0.property=com.th3l4b.screens.base.value&modifications.0.value=" + encodeURIComponent(newValue) + "&action=" + encodeURIComponent(screen));
 		};
         r.onAction = function (screen) {
             var request = new XMLHttpRequest();
             request.onreadystatechange = handleResponse(request, node, r);
             request.open("POST", target, true);
             request.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-            request.send("action=" + encodeURIComponent(screen)); 
+            request.send("modificationsOnly=true&action=" + encodeURIComponent(screen)); 
         };
 		var request = new XMLHttpRequest();
 		request.onreadystatechange = handleResponse(request, node, r);

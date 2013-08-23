@@ -9,10 +9,16 @@ import com.th3l4b.screens.base.utils.TreeOfScreensFilter;
 
 public class TrackedTreeOfScreens extends TreeOfScreensFilter {
 
-	protected List<Modification> _modifications = new ArrayList<Modification>();
+	protected List<Modification> _modifications;
 
 	public TrackedTreeOfScreens(ITreeOfScreens tree) {
+		this(tree, new ArrayList<Modification>());
+	}
+
+	public TrackedTreeOfScreens(ITreeOfScreens tree,
+			List<Modification> modifications) {
 		super(tree);
+		_modifications = modifications;
 	}
 
 	public Collection<Modification> getModifications() {

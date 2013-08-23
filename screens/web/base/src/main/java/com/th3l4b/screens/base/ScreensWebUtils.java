@@ -1,9 +1,13 @@
 package com.th3l4b.screens.base;
 
 import java.io.PrintWriter;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.th3l4b.common.text.IndentedWriter;
 import com.th3l4b.common.text.TextUtils;
+import com.th3l4b.screens.base.modifications.Modification;
 
 public class ScreensWebUtils {
 
@@ -73,4 +77,43 @@ public class ScreensWebUtils {
 		iiout.flush();
 		iout.flush();
 	}
+
+	public static void dump(List<Modification> modification, PrintWriter out)
+			throws Exception {
+		PrintWriter iout = IndentedWriter.get(out);
+		PrintWriter iiout = IndentedWriter.get(iout);
+		LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
+		out.println("[");
+		boolean first = true;
+		for (Modification m : modification) {
+			if (first) {
+				first = false;
+			} else {
+				iout.println(",");
+			}
+			iout.println("{");
+			m.toMap(map);
+			boolean first2 = true;
+			for (Map.Entry<String, String> entry : map.entrySet()) {
+				if (first2) {
+					first2 = false;
+				} else {
+					iiout.println(",");
+				}
+				iiout.print("\"");
+				TextUtils.escapeJavaString(entry.getKey(), iiout);
+				iiout.print("\": \"");
+				TextUtils.escapeJavaString(entry.getValue(), iiout);
+				iiout.print("\"");
+			}
+			map.clear();
+			iiout.println();
+			iout.print("}");
+		}
+		iout.println();
+		out.print("]");
+		iiout.flush();
+		iout.flush();
+	}
+
 }
