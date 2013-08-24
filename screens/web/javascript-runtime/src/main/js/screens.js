@@ -3,10 +3,12 @@
 define("com/th3l4b/screens/web/javascript-runtime",
 		[
 		 	"com/th3l4b/screens/web/javascript-runtime-tree",
-	 		"com/th3l4b/screens/web/javascript-runtime-treeTrack-apply"
+	 		"com/th3l4b/screens/web/javascript-runtime-treeTrack",
+	 		"com/th3l4b/screens/web/javascript-runtime-treeTrack-apply",
+	 		"com/th3l4b/screens/web/javascript-runtime-treeTrack-request"
 
 		],
-		function (treelib, treeTrackApply) {
+		function (treelib, treeTrack, treeTrackApply, treeTrackRequest) {
 
 	var prefix = "com.th3l4b.screens.base";
 	var typePrefix = prefix + ".type";
@@ -43,13 +45,9 @@ define("com/th3l4b/screens/web/javascript-runtime",
 		// Render it
 		var type = context.treelib.getProperty(context.tree, current, constants.type);
 		if (type == constants.typeField) {
-			context.renderer.renderField(current, newNode, function (name, value) {
-				context.onChange(name, value);
-			}, context);
+			context.renderer.renderField(current, newNode, context);
 		} else if (type == constants.typeInteraction) {
-			context.renderer.renderAction(current, newNode, function (name) {
-				context.onAction(name);
-			}, context);
+			context.renderer.renderAction(current, newNode, context);
 		}
 		renderProperties(current, newNode, context);
 
@@ -111,21 +109,20 @@ define("com/th3l4b/screens/web/javascript-runtime",
 		r.document =  document;
 		r.node = node;
 		r.modifications = [];
-		r.onChange = function (screen, newValue) {
-			var request = new XMLHttpRequest();
-			request.onreadystatechange = handleResponse(request, node, r);
-			request.open("POST", target, true);
-			request.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-			
-			// This need refactoring to allow modification of items that do not trigger an action. For the moment it is mandatory.
-			request.send("modificationsOnly=true&modifications=1&modifications.0.type=SetProperty&modifications.0.screen=" + encodeURIComponent(screen) + "&modifications.0.property=com.th3l4b.screens.base.value&modifications.0.value=" + encodeURIComponent(newValue) + "&action=" + encodeURIComponent(screen));
+		r.onChange = function (screen, newValue, context) {
+			var tracked = treeTrack(context.treelib, context.modifications);
+			tracked.setProperty(context.tree, screen, constants.value, newValue);
+			context.onAction(screen, context);
 		};
-        r.onAction = function (screen) {
+        r.onAction = function (screen, context) {
             var request = new XMLHttpRequest();
             request.onreadystatechange = handleResponse(request, node, r);
             request.open("POST", target, true);
             request.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-            request.send("modificationsOnly=true&action=" + encodeURIComponent(screen)); 
+            var modifications = treeTrackRequest(context.modifications);
+            // Clear modifications
+            context.modifications = [];
+            request.send("modificationsOnly=true&" + modifications + "&action=" + encodeURIComponent(screen)); 
         };
 		var request = new XMLHttpRequest();
 		request.onreadystatechange = handleResponse(request, node, r);

@@ -2,7 +2,7 @@
 
 define('com/th3l4b/screens/web/javascript-runtime-renderer', function () {
 
-	var innerRenderField = function (screen, node, onChange, context) {
+	var innerRenderField = function (screen, node, context) {
 		var e = context.document.createElement("input");
 		e.setAttribute("type", "text");
 		var v = context.treelib.getProperty(context.tree, screen, "com.th3l4b.screens.base.value");
@@ -10,15 +10,15 @@ define('com/th3l4b/screens/web/javascript-runtime-renderer', function () {
 			v = "";
 		}
 		e.onchange = function () {
-			onChange(screen, e.value);
+			context.onChange(screen, e.value, context);
 		};
 		node.appendChild(e);
 		e.setAttribute("value", v);	
 		return e;
 	};
 
-	var renderField = function (screen, node, onChange, context) {
-		var e = innerRenderField(screen, node, onChange, context);
+	var renderField = function (screen, node, context) {
+		var e = innerRenderField(screen, node, context);
 		var r2 = {
 			input: e,
 			setValue: function (field, value, context) {
@@ -38,11 +38,11 @@ define('com/th3l4b/screens/web/javascript-runtime-renderer', function () {
 		return r2;
 	};
 
-	var innerRenderAction = function (screen, node, onAction, context) {
+	var innerRenderAction = function (screen, node, context) {
 		var e = context.document.createElement("a");
 		e.setAttribute("href", "#");
 		e.onclick =  function () {
-			onAction(screen);
+			context.onAction(screen, context);
 		};
 		var text = context.document.createTextNode("Action");
 		e.appendChild(text);
@@ -50,13 +50,13 @@ define('com/th3l4b/screens/web/javascript-runtime-renderer', function () {
 		return e;
 	};
 
-	var renderAction = function (screen, node, onAction, context) {
-		var e = innerRenderAction(screen, node, onAction, context);
+	var renderAction = function (screen, node, context) {
+		var e = innerRenderAction(screen, node, context);
 		var r2 = {
 			link: e,
-			update: function (field, screen, node, onAction, context) {
+			update: function (field, screen, node, context) {
 				node.innerHTML = "";
-				field.link = innerRenderAction(screen, node, onAction, context);
+				field.link = innerRenderAction(screen, node, context);
 			},
 			destroy: function (field, node) {
 				node.innerHTML = "";

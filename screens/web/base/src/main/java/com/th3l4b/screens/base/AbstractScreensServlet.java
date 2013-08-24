@@ -69,10 +69,12 @@ public abstract class AbstractScreensServlet extends HttpServlet {
 			ModificationsEngine.apply(modifications, tree);
 
 			// Check if partial modifications shall be returned by the servlet.
+			boolean modificationsOnly = false;
 			modifications.clear();
 			if (NullSafe.equals(
 					request.getParameter(MODIFICATIONS_ONLY_PARAMETER_NAME),
 					"true")) {
+				modificationsOnly = true;
 				tree = new TrackedTreeOfScreens(tree, modifications);
 			}
 
@@ -100,17 +102,21 @@ public abstract class AbstractScreensServlet extends HttpServlet {
 			response.setCharacterEncoding(ITextConstants.UTF_8);
 			PrintWriter out = response.getWriter();
 			PrintWriter iout = IndentedWriter.get(out);
-			out.println("{");
-			iout.println("ok: true,");
-			if (modifications.size() > 0) {
-				iout.print("modifications: ");
-				ScreensWebUtils.dump(modifications, iout);
+			out.println('{');
+			iout.print("ok: true");
+			if (modificationsOnly) {
+				if (modifications.size() > 0) {
+					iout.println(',');
+					iout.print("modifications: ");
+					ScreensWebUtils.dump(modifications, iout);
+				}
 			} else {
+				iout.println(',');
 				iout.print("tree: ");
 				ScreensWebUtils.dump(tree, iout);
 			}
 			iout.println();
-			out.println("}");
+			out.println('}');
 			iout.flush();
 			out.flush();
 
