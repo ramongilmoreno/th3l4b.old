@@ -12,11 +12,15 @@ define("com/th3l4b/screens/web/javascript-runtime",
 
 	var prefix = "com.th3l4b.screens.base";
 	var typePrefix = prefix + ".type";
+	var interactionPrefix = prefix + ".interaction";
 	var constants = {
 		type: typePrefix,
 		value: prefix + ".value",
 		typeField: typePrefix + ".field",
-		typeInteraction: typePrefix + ".interaction"
+		typeAction: typePrefix + ".action",
+		typeHidden: typePrefix + ".hidden",
+		interaction: interactionPrefix,
+		interactionJavascript: interactionPrefix + ".javascript"
 	};
 
 	/**
@@ -46,7 +50,7 @@ define("com/th3l4b/screens/web/javascript-runtime",
 		var type = context.treelib.getProperty(context.tree, current, constants.type);
 		if (type == constants.typeField) {
 			context.renderer.renderField(current, newNode, context);
-		} else if (type == constants.typeInteraction) {
+		} else if (type == constants.typeAction) {
 			context.renderer.renderAction(current, newNode, context);
 		}
 		renderProperties(current, newNode, context);
@@ -112,7 +116,9 @@ define("com/th3l4b/screens/web/javascript-runtime",
 		r.onChange = function (screen, newValue, context) {
 			var tracked = treeTrack(context.treelib, context.modifications);
 			tracked.setProperty(context.tree, screen, constants.value, newValue);
-			context.onAction(screen, context);
+			if (context.treelib.getProperty(context.tree, screen, constants.interaction) == "true") {
+				context.onAction(screen, context);
+			}
 		};
         r.onAction = function (screen, context) {
             var request = new XMLHttpRequest();

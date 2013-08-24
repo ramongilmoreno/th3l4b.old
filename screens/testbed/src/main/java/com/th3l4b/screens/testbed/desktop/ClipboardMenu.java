@@ -37,12 +37,14 @@ public class ClipboardMenu implements IScreensContants {
 		{
 			String action = name("Random key");
 			r.addScreen(action, screen);
-			r.setProperty(action, TYPE, TYPE_INTERACTION);
+			r.setProperty(action, TYPE, TYPE_ACTION);
 			String spanish = "es";
 			r.setProperty(action, LABEL, "Random key");
 			r.setProperty(action,
 					PropertiesUtils.getLocalizedProperty(LABEL, spanish),
 					"Clave aleatoria");
+			r.setProperty(action, INTERACTION, "true");
+			r.setProperty(action, INTERACTION_JAVA, action);
 			interactions.put(action, new IInteractionListener() {
 				@Override
 				public void handleInteraction(String screen,
@@ -69,6 +71,8 @@ public class ClipboardMenu implements IScreensContants {
 			r.setProperty(clipboardFieldName,
 					PropertiesUtils.getLocalizedProperty(LABEL, spanish),
 					"Portapapeles");
+			r.setProperty(clipboardFieldName, INTERACTION, "true");
+			r.setProperty(clipboardFieldName, INTERACTION_JAVA, clipboardFieldName);
 			interactions.put(clipboardFieldName, new IInteractionListener() {
 				@Override
 				public void handleInteraction(String screen,

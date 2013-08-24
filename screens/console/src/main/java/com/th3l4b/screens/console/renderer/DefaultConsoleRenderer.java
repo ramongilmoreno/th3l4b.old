@@ -18,7 +18,7 @@ public class DefaultConsoleRenderer extends AbstractDelegatedConsoleRenderer
 		IConsoleRenderer r = null;
 		String value = PropertiesUtils.getValue(TYPE, null,
 				context.getLocale(), item, context.getTree());
-		if (NullSafe.equals(value, TYPE_INTERACTION)) {
+		if (NullSafe.equals(value, TYPE_ACTION)) {
 			r = _button;
 		} else if (NullSafe.equals(value, TYPE_FIELD)) {
 			r = _field;

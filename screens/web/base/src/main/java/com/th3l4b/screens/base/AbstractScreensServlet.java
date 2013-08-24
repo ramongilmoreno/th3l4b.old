@@ -81,9 +81,10 @@ public abstract class AbstractScreensServlet extends HttpServlet {
 			// Process action
 			String action = request.getParameter(ACTION_PARAMETER_NAME);
 			if (action != null) {
+				String action2 = tree.getProperty(action, IScreensContants.INTERACTION_JAVA);
 				Map<String, IInteractionListener> interactions = configuration
 						.getInteractions();
-				IInteractionListener interaction = interactions.get(action);
+				IInteractionListener interaction = interactions.get(action2);
 				if (interaction != null) {
 					DefaultWebInteractionContext context = new DefaultWebInteractionContext();
 					context.setTree(tree);
@@ -92,7 +93,7 @@ public abstract class AbstractScreensServlet extends HttpServlet {
 					context.setRequest(request);
 					interaction.handleInteraction(action, context);
 				} else {
-					throw new IllegalArgumentException("Unknown action: "
+					throw new IllegalArgumentException("Unknown action for screen: "
 							+ action);
 				}
 			}

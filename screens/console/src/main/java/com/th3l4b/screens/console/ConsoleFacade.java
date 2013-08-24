@@ -52,8 +52,7 @@ public class ConsoleFacade {
 					iout.println("Set field " + list.size() + " - "
 							+ renderer.getLabel(s, context));
 					list.add(s);
-				} else if (NullSafe.equals(type,
-						IScreensContants.TYPE_INTERACTION)) {
+				} else if (NullSafe.equals(type, IScreensContants.TYPE_ACTION)) {
 					IInteractionListener i = context.getInteractions().get(s);
 					if (i != null) {
 
@@ -83,9 +82,18 @@ public class ConsoleFacade {
 							String found = list.get(index);
 							if (NullSafe.equals(tree.getProperty(found,
 									IScreensContants.TYPE),
-									IScreensContants.TYPE_INTERACTION)) {
-								context.getInteractions().get(found)
-										.handleInteraction(found, context);
+									IScreensContants.TYPE_ACTION)) {
+								// Locate the Java implementation
+								String javaInteraction = tree.getProperty(
+										found,
+										IScreensContants.INTERACTION_JAVA);
+								if (javaInteraction == null) {
+									out.println("Could not find the Java interaction for screen: "
+											+ found);
+								} else {
+									context.getInteractions().get(javaInteraction)
+											.handleInteraction(found, context);
+								}
 							} else {
 								out.println("Index of is not an action.");
 							}
@@ -105,10 +113,11 @@ public class ConsoleFacade {
 							out.println("Index of field out of bounds.");
 						} else {
 							String found = list.get(index);
-							if (NullSafe.equals(
-									tree.getProperty(found, IScreensContants.TYPE),
+							if (NullSafe.equals(tree.getProperty(found,
+									IScreensContants.TYPE),
 									IScreensContants.TYPE_FIELD)) {
-								tree.setProperty(found, IScreensContants.VALUE, command[2]);
+								tree.setProperty(found, IScreensContants.VALUE,
+										command[2]);
 								IInteractionListener i = context
 										.getInteractions().get(found);
 								if (i != null) {
