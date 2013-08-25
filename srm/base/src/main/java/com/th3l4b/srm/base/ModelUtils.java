@@ -10,7 +10,6 @@ import java.util.Collections;
 import java.util.List;
 
 import com.th3l4b.common.named.INamed;
-import com.th3l4b.common.named.NamedUtils;
 import com.th3l4b.common.text.ITextConstants;
 import com.th3l4b.common.text.TextUtils;
 import com.th3l4b.srm.base.original.IRelationship;
@@ -150,51 +149,6 @@ public class ModelUtils {
 					+ " "
 					+ (direct != null ? direct.getName() : relationship.getTo());
 		}
-	}
-
-	/**
-	 * @deprecated
-	 */
-	public static String getRelationshipNameOld(IRelationship relationship)
-			throws Exception {
-		StringWriter sw = new StringWriter();
-		String from = relationship.getFrom();
-		String to = relationship.getTo();
-		INamed direct = relationship.getDirect();
-		INamed reverse = relationship.getReverse();
-
-		// // Check that the name is unique for many-to-many relationships.
-		// boolean direction = from.compareTo(to) <= 0;
-		// if ((relationship.getType() == RelationshipType.manyToMany)
-		// && !direction) {
-		// {
-		// String aux = from;
-		// from = to;
-		// to = aux;
-		// }
-		// {
-		// INamed aux = direct;
-		// direct = reverse;
-		// reverse = aux;
-		// }
-		// }
-
-		ArrayList<Reader> r = new ArrayList<Reader>();
-		if (relationship.getType() == RelationshipType.manyToMany) {
-			r.add(new StringReader(notNull(from)));
-			r.add(new StringReader(notNull(to)));
-			r.add(new StringReader(notNull(NamedUtils.NAME_GETTER.get(direct))));
-			r.add(new StringReader(notNull(NamedUtils.NAME_GETTER.get(reverse))));
-			r.add(new StringReader(notNull(relationship.getEntity())));
-		} else {
-			r.add(new StringReader(notNull(from)));
-			r.add(new StringReader(notNull(to)));
-			r.add(new StringReader(notNull(NamedUtils.NAME_GETTER.get(direct))));
-			r.add(new StringReader(notNull(NamedUtils.NAME_GETTER.get(reverse))));
-		}
-		toStringList(r, sw);
-		sw.flush();
-		return sw.getBuffer().toString();
 	}
 
 	public static List<String> stringAsList(String input) throws Exception {
