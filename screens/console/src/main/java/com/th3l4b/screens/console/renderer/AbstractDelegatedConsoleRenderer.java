@@ -1,24 +1,25 @@
 package com.th3l4b.screens.console.renderer;
 
+import java.io.PrintWriter;
+
 import com.th3l4b.common.text.IndentedWriter;
-import com.th3l4b.screens.console.ConsoleContextUtils;
-import com.th3l4b.screens.console.DefaultConsoleContext;
-import com.th3l4b.screens.console.IConsoleInteractionContext;
+import com.th3l4b.screens.base.utils.IScreensConfiguration;
+import com.th3l4b.screens.console.IConsoleScreensClientDescriptor;
 
 public abstract class AbstractDelegatedConsoleRenderer implements
 		IConsoleRenderer {
 
 	protected abstract IConsoleRenderer getRenderer(String item,
-			IConsoleInteractionContext context) throws Exception;
+			IScreensConfiguration<? extends IConsoleScreensClientDescriptor> context) throws Exception;
 
 	@Override
-	public String getLabel(String item, IConsoleInteractionContext context)
+	public String getLabel(String item, IScreensConfiguration<? extends IConsoleScreensClientDescriptor> context)
 			throws Exception {
 		return getRenderer(item, context).getLabel(item, context);
 	}
 
 	@Override
-	public boolean render(String item, IConsoleInteractionContext context)
+	public boolean render(String item, IScreensConfiguration<? extends IConsoleScreensClientDescriptor> context)
 			throws Exception {
 
 		// Render item itself.
@@ -27,14 +28,13 @@ public abstract class AbstractDelegatedConsoleRenderer implements
 
 		// Render children if not rendered
 		if (!done) {
-			IConsoleInteractionContext childContext = new DefaultConsoleContext();
-			ConsoleContextUtils.copy(context, childContext);
-			childContext
-					.setWriter(IndentedWriter.get(childContext.getWriter()));
-
+			IConsoleScreensClientDescriptor client = context.getClient();
+			PrintWriter original = client.getWriter();
+			client.setWriter(IndentedWriter.get(original));
 			for (String child : context.getTree().children(item)) {
-				render(child, childContext);
+				render(child, context);
 			}
+			client.setWriter(original);
 		}
 		return true;
 	}

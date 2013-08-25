@@ -2,12 +2,12 @@ package com.th3l4b.screens.base;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.th3l4b.screens.base.interaction.DefaultInteractionContext;
+import com.th3l4b.screens.base.utils.DefaultScreensClientDescriptor;
 
-public class DefaultWebInteractionContext extends DefaultInteractionContext
-		implements IWebInteractionContext {
+public class DefaultWebScreensClientDescriptor extends
+		DefaultScreensClientDescriptor implements IWebScreensClientDescriptor {
 
-	private HttpServletRequest _request;
+	private transient HttpServletRequest _request;
 
 	@Override
 	public HttpServletRequest getRequest() throws Exception {

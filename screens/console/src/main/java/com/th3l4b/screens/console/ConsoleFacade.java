@@ -10,6 +10,7 @@ import com.th3l4b.screens.base.IScreensContants;
 import com.th3l4b.screens.base.ITreeOfScreens;
 import com.th3l4b.screens.base.interaction.IInteractionListener;
 import com.th3l4b.screens.base.utils.AsTree;
+import com.th3l4b.screens.base.utils.IScreensConfiguration;
 import com.th3l4b.screens.console.renderer.DefaultConsoleRenderer;
 import com.th3l4b.screens.console.renderer.IConsoleRenderer;
 
@@ -24,17 +25,15 @@ public class ConsoleFacade {
 		return _defaultRenderer;
 	}
 
-	public void handle(String source, ICommandsInput input,
-			IConsoleInteractionContext context) throws Exception {
+	public void handle(
+			String source,
+			ICommandsInput input,
+			IScreensConfiguration<? extends IConsoleScreensClientDescriptor> context)
+			throws Exception {
 
-		PrintWriter out = context.getWriter();
+		PrintWriter out = context.getClient().getWriter();
 		PrintWriter iout = IndentedWriter.get(out);
 
-		// Indent context
-		IConsoleInteractionContext target = new DefaultConsoleContext();
-		ConsoleContextUtils.copy(context, target);
-		target.setWriter(iout);
-		context = target;
 		out.println("Entering console...");
 
 		ITreeOfScreens tree = context.getTree();
@@ -91,7 +90,8 @@ public class ConsoleFacade {
 									out.println("Could not find the Java interaction for screen: "
 											+ found);
 								} else {
-									context.getInteractions().get(javaInteraction)
+									context.getInteractions()
+											.get(javaInteraction)
 											.handleInteraction(found, context);
 								}
 							} else {

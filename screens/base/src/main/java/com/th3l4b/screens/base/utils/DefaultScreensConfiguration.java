@@ -3,16 +3,20 @@ package com.th3l4b.screens.base.utils;
 import java.io.Serializable;
 import java.util.Map;
 
+import com.th3l4b.common.propertied.DefaultPropertied;
 import com.th3l4b.screens.base.ITreeOfScreens;
 import com.th3l4b.screens.base.interaction.IInteractionListener;
 
 @SuppressWarnings("serial")
-public class DefaultScreensConfiguration implements IScreensConfiguration,
+public class DefaultScreensConfiguration<T extends IScreensClientDescriptor>
+		extends DefaultPropertied implements IScreensConfiguration<T>,
 		Serializable {
 
-	ITreeOfScreens _tree;
+	private ITreeOfScreens _tree;
 
-	Map<String, IInteractionListener> _interactions;
+	private Map<String, IInteractionListener> _interactions;
+
+	private T _client;
 
 	public DefaultScreensConfiguration(ITreeOfScreens tree,
 
@@ -45,4 +49,13 @@ public class DefaultScreensConfiguration implements IScreensConfiguration,
 
 	}
 
+	@Override
+	public T getClient() throws Exception {
+		return _client;
+	}
+
+	@Override
+	public void setClient(T client) throws Exception {
+		_client = client;
+	}
 }

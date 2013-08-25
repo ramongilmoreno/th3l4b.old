@@ -1,21 +1,28 @@
 package com.th3l4b.screens.console.renderer;
 
 import com.th3l4b.screens.base.IScreensContants;
-import com.th3l4b.screens.base.utils.PropertiesUtils;
-import com.th3l4b.screens.console.IConsoleInteractionContext;
+import com.th3l4b.screens.base.utils.IScreensConfiguration;
+import com.th3l4b.screens.console.IConsoleScreensClientDescriptor;
 
 public class SimpleConsoleRenderer implements IConsoleRenderer {
 
-	public String getLabel(String item, IConsoleInteractionContext context)
+	public String getLabel(
+			String item,
+			IScreensConfiguration<? extends IConsoleScreensClientDescriptor> context)
 			throws Exception {
-		return PropertiesUtils.getValue(IScreensContants.LABEL, item,
-				context.getLocale(), item, context.getTree());
+		String r = context.getTree().getProperty(item, IScreensContants.LABEL);
+		if (r == null) {
+			r = item;
+		}
+		return r;
 	}
 
 	@Override
-	public boolean render(String item, IConsoleInteractionContext context)
+	public boolean render(
+			String item,
+			IScreensConfiguration<? extends IConsoleScreensClientDescriptor> context)
 			throws Exception {
-		context.getWriter().println(getLabel(item, context));
+		context.getClient().getWriter().println(getLabel(item, context));
 		return false;
 	}
 

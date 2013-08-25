@@ -2,8 +2,8 @@ package com.th3l4b.screens.console.renderer;
 
 import com.th3l4b.common.data.nullsafe.NullSafe;
 import com.th3l4b.screens.base.IScreensContants;
-import com.th3l4b.screens.base.utils.PropertiesUtils;
-import com.th3l4b.screens.console.IConsoleInteractionContext;
+import com.th3l4b.screens.base.utils.IScreensConfiguration;
+import com.th3l4b.screens.console.IConsoleScreensClientDescriptor;
 
 public class DefaultConsoleRenderer extends AbstractDelegatedConsoleRenderer
 		implements IScreensContants {
@@ -14,10 +14,9 @@ public class DefaultConsoleRenderer extends AbstractDelegatedConsoleRenderer
 
 	@Override
 	protected IConsoleRenderer getRenderer(String item,
-			IConsoleInteractionContext context) throws Exception {
+			IScreensConfiguration<? extends IConsoleScreensClientDescriptor> context) throws Exception {
 		IConsoleRenderer r = null;
-		String value = PropertiesUtils.getValue(TYPE, null,
-				context.getLocale(), item, context.getTree());
+		String value = context.getTree().getProperty(item, TYPE);
 		if (NullSafe.equals(value, TYPE_ACTION)) {
 			r = _button;
 		} else if (NullSafe.equals(value, TYPE_FIELD)) {

@@ -2,9 +2,10 @@ package com.th3l4b.screens.console;
 
 import java.io.PrintWriter;
 
-import com.th3l4b.screens.base.interaction.DefaultInteractionContext;
+import com.th3l4b.screens.base.utils.DefaultScreensClientDescriptor;
 
-public class DefaultConsoleContext extends DefaultInteractionContext implements IConsoleInteractionContext {
+public class DefaultConsoleScreensClientDescriptor extends DefaultScreensClientDescriptor
+		implements IConsoleScreensClientDescriptor {
 
 	private PrintWriter _writer;
 
@@ -16,7 +17,7 @@ public class DefaultConsoleContext extends DefaultInteractionContext implements 
 	@Override
 	public void setWriter(PrintWriter writer) throws Exception {
 		_writer = writer;
-		
+
 	}
 
 }

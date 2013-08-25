@@ -2,9 +2,9 @@ package com.th3l4b.screens.console;
 
 import java.io.PrintWriter;
 
-import com.th3l4b.screens.base.interaction.IInteractionContext;
+import com.th3l4b.screens.base.utils.IScreensClientDescriptor;
 
-public interface IConsoleInteractionContext extends IInteractionContext {
+public interface IConsoleScreensClientDescriptor extends IScreensClientDescriptor {
 	
 	PrintWriter getWriter() throws Exception;
 	

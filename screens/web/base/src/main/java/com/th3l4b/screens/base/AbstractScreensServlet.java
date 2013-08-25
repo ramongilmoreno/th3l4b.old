@@ -32,7 +32,7 @@ public abstract class AbstractScreensServlet extends HttpServlet {
 	public static final String ACTION_PARAMETER_NAME = "action";
 	public static final String MODIFICATIONS_ONLY_PARAMETER_NAME = "modificationsOnly";
 
-	protected abstract IScreensConfiguration getConfiguration(
+	protected abstract IScreensConfiguration<? extends IWebScreensClientDescriptor> getConfiguration(
 			HttpServletRequest request) throws Exception;
 
 	protected abstract Locale getLocale(HttpServletRequest request,
@@ -51,8 +51,9 @@ public abstract class AbstractScreensServlet extends HttpServlet {
 	protected void service(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		try {
-			IScreensConfiguration configuration = getConfiguration(request);
-			ITreeOfScreens tree = configuration.getTree();
+			IScreensConfiguration<? extends IWebScreensClientDescriptor> context = getConfiguration(request);
+			ITreeOfScreens tree = context.getTree();
+			context.getClient().setRequest(request);
 
 			// Build a list of modifications and apply it
 			ArrayList<Modification> modifications = new ArrayList<Modification>();
@@ -81,20 +82,22 @@ public abstract class AbstractScreensServlet extends HttpServlet {
 			// Process action
 			String action = request.getParameter(ACTION_PARAMETER_NAME);
 			if (action != null) {
-				String action2 = tree.getProperty(action, IScreensContants.INTERACTION_JAVA);
-				Map<String, IInteractionListener> interactions = configuration
+				ITreeOfScreens original = context.getTree();
+				context.setTree(tree);
+				String action2 = tree.getProperty(action,
+						IScreensContants.INTERACTION_JAVA);
+				Map<String, IInteractionListener> interactions = context
 						.getInteractions();
 				IInteractionListener interaction = interactions.get(action2);
-				if (interaction != null) {
-					DefaultWebInteractionContext context = new DefaultWebInteractionContext();
-					context.setTree(tree);
-					context.setLocale(getLocale(request, response));
-					context.setInteractions(interactions);
-					context.setRequest(request);
-					interaction.handleInteraction(action, context);
-				} else {
-					throw new IllegalArgumentException("Unknown action for screen: "
-							+ action);
+				try {
+					if (interaction != null) {
+						interaction.handleInteraction(action, context);
+					} else {
+						throw new IllegalArgumentException(
+								"Unknown action for screen: " + action);
+					}
+				} finally {
+					context.setTree(original);
 				}
 			}
 
