@@ -3,6 +3,7 @@ package com.th3l4b.screens.base;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -32,8 +33,8 @@ public abstract class AbstractScreensServlet extends HttpServlet {
 	public static final String ACTION_PARAMETER_NAME = "action";
 	public static final String MODIFICATIONS_ONLY_PARAMETER_NAME = "modificationsOnly";
 
-	protected abstract IScreensConfiguration<? extends IWebScreensClientDescriptor> getConfiguration(
-			HttpServletRequest request) throws Exception;
+	protected abstract IScreensConfiguration getConfiguration(
+			IWebScreensClientDescriptor client) throws Exception;
 
 	protected abstract Locale getLocale(HttpServletRequest request,
 			HttpServletResponse response) throws Exception;
@@ -51,9 +52,22 @@ public abstract class AbstractScreensServlet extends HttpServlet {
 	protected void service(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		try {
-			IScreensConfiguration<? extends IWebScreensClientDescriptor> context = getConfiguration(request);
+			IWebScreensClientDescriptor client = new DefaultWebScreensClientDescriptor();
+			ArrayList<Locale> locales = new ArrayList<Locale>();
+			Enumeration<Locale> e = request.getLocales();
+			while (e.hasMoreElements()) {
+				locales.add(e.nextElement());
+			}
+			client.setLocales(locales);
+			ArrayList<String> languages = new ArrayList<String>();
+			languages.add(IScreensContants.INTERACTION_JAVA);
+			languages.add(IScreensContants.INTERACTION_JAVASCRIPT);
+			client.setLanguages(languages);
+			client.setRequest(request);
+
+			IScreensConfiguration context = getConfiguration(client);
+
 			ITreeOfScreens tree = context.getTree();
-			context.getClient().setRequest(request);
 
 			// Build a list of modifications and apply it
 			ArrayList<Modification> modifications = new ArrayList<Modification>();
@@ -91,7 +105,7 @@ public abstract class AbstractScreensServlet extends HttpServlet {
 				IInteractionListener interaction = interactions.get(action2);
 				try {
 					if (interaction != null) {
-						interaction.handleInteraction(action, context);
+						interaction.handleInteraction(action, context, client);
 					} else {
 						throw new IllegalArgumentException(
 								"Unknown action for screen: " + action);

@@ -24,10 +24,9 @@ public class Main {
 		client.setLanguages(languages);
 		client.setWriter(new PrintWriter(System.out, true));
 
-		IScreensConfiguration<IConsoleScreensClientDescriptor> context = ClipboardMenu
-				.create(client);
+		IScreensConfiguration context = ClipboardMenu.create(client);
 		ConsoleFacade facade = new ConsoleFacade();
 		facade.handle(context.getTree().getRoot(), new DefaultCommandsInput(
-				System.in, Charset.defaultCharset().name()), context);
+				System.in, Charset.defaultCharset().name()), context, client);
 	}
 }

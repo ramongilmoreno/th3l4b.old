@@ -10,29 +10,30 @@ public abstract class AbstractDelegatedConsoleRenderer implements
 		IConsoleRenderer {
 
 	protected abstract IConsoleRenderer getRenderer(String item,
-			IScreensConfiguration<? extends IConsoleScreensClientDescriptor> context) throws Exception;
+			IScreensConfiguration context,
+			IConsoleScreensClientDescriptor client) throws Exception;
 
 	@Override
-	public String getLabel(String item, IScreensConfiguration<? extends IConsoleScreensClientDescriptor> context)
-			throws Exception {
-		return getRenderer(item, context).getLabel(item, context);
+	public String getLabel(String item, IScreensConfiguration context,
+			IConsoleScreensClientDescriptor client) throws Exception {
+		return getRenderer(item, context, client).getLabel(item, context,
+				client);
 	}
 
 	@Override
-	public boolean render(String item, IScreensConfiguration<? extends IConsoleScreensClientDescriptor> context)
-			throws Exception {
+	public boolean render(String item, IScreensConfiguration context,
+			IConsoleScreensClientDescriptor client) throws Exception {
 
 		// Render item itself.
-		IConsoleRenderer renderer = getRenderer(item, context);
-		boolean done = renderer.render(item, context);
+		IConsoleRenderer renderer = getRenderer(item, context, client);
+		boolean done = renderer.render(item, context, client);
 
 		// Render children if not rendered
 		if (!done) {
-			IConsoleScreensClientDescriptor client = context.getClient();
 			PrintWriter original = client.getWriter();
 			client.setWriter(IndentedWriter.get(original));
 			for (String child : context.getTree().children(item)) {
-				render(child, context);
+				render(child, context, client);
 			}
 			client.setWriter(original);
 		}

@@ -14,7 +14,8 @@ public class DefaultConsoleRenderer extends AbstractDelegatedConsoleRenderer
 
 	@Override
 	protected IConsoleRenderer getRenderer(String item,
-			IScreensConfiguration<? extends IConsoleScreensClientDescriptor> context) throws Exception {
+			IScreensConfiguration context,
+			IConsoleScreensClientDescriptor client) throws Exception {
 		IConsoleRenderer r = null;
 		String value = context.getTree().getProperty(item, TYPE);
 		if (NullSafe.equals(value, TYPE_ACTION)) {

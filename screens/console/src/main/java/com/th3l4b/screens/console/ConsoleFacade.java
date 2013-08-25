@@ -28,10 +28,10 @@ public class ConsoleFacade {
 	public void handle(
 			String source,
 			ICommandsInput input,
-			IScreensConfiguration<? extends IConsoleScreensClientDescriptor> context)
+			IScreensConfiguration context, IConsoleScreensClientDescriptor client)
 			throws Exception {
 
-		PrintWriter out = context.getClient().getWriter();
+		PrintWriter out = client.getWriter();
 		PrintWriter iout = IndentedWriter.get(out);
 
 		out.println("Entering console...");
@@ -41,7 +41,7 @@ public class ConsoleFacade {
 		do {
 			out.println("Screen:");
 			IConsoleRenderer renderer = getDefaultConsoleRenderer();
-			renderer.render(source, context);
+			renderer.render(source, context, client);
 			out.println("Actions:");
 
 			ArrayList<String> list = new ArrayList<String>();
@@ -49,14 +49,14 @@ public class ConsoleFacade {
 				String type = tree.getProperty(s, IScreensContants.TYPE);
 				if (NullSafe.equals(type, IScreensContants.TYPE_FIELD)) {
 					iout.println("Set field " + list.size() + " - "
-							+ renderer.getLabel(s, context));
+							+ renderer.getLabel(s, context, client));
 					list.add(s);
 				} else if (NullSafe.equals(type, IScreensContants.TYPE_ACTION)) {
 					IInteractionListener i = context.getInteractions().get(s);
 					if (i != null) {
 
 						iout.println("Do action " + list.size() + " - "
-								+ renderer.getLabel(s, context));
+								+ renderer.getLabel(s, context, client));
 						list.add(s);
 					}
 
@@ -92,7 +92,7 @@ public class ConsoleFacade {
 								} else {
 									context.getInteractions()
 											.get(javaInteraction)
-											.handleInteraction(found, context);
+											.handleInteraction(found, context, client);
 								}
 							} else {
 								out.println("Index of is not an action.");
@@ -121,7 +121,7 @@ public class ConsoleFacade {
 								IInteractionListener i = context
 										.getInteractions().get(found);
 								if (i != null) {
-									i.handleInteraction(found, context);
+									i.handleInteraction(found, context, client);
 								}
 							} else {
 								out.println("Index is not a field.");

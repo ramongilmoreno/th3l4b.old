@@ -8,15 +8,12 @@ import com.th3l4b.screens.base.ITreeOfScreens;
 import com.th3l4b.screens.base.interaction.IInteractionListener;
 
 @SuppressWarnings("serial")
-public class DefaultScreensConfiguration<T extends IScreensClientDescriptor>
-		extends DefaultPropertied implements IScreensConfiguration<T>,
-		Serializable {
+public class DefaultScreensConfiguration extends DefaultPropertied implements
+		IScreensConfiguration, Serializable {
 
 	private ITreeOfScreens _tree;
 
 	private Map<String, IInteractionListener> _interactions;
-
-	private T _client;
 
 	public DefaultScreensConfiguration(ITreeOfScreens tree,
 
@@ -47,15 +44,5 @@ public class DefaultScreensConfiguration<T extends IScreensClientDescriptor>
 			throws Exception {
 		_interactions = interactions;
 
-	}
-
-	@Override
-	public T getClient() throws Exception {
-		return _client;
-	}
-
-	@Override
-	public void setClient(T client) throws Exception {
-		_client = client;
 	}
 }

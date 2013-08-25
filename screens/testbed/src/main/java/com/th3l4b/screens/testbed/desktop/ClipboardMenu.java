@@ -14,8 +14,8 @@ import com.th3l4b.screens.base.utils.IScreensConfiguration;
 
 public class ClipboardMenu implements IScreensContants {
 
-	public static <T extends IScreensClientDescriptor> IScreensConfiguration<T> create(
-			T client) throws Exception {
+	public static IScreensConfiguration create(IScreensClientDescriptor client)
+			throws Exception {
 		return new ClipboardMenu().createImpl(client);
 	}
 
@@ -23,8 +23,8 @@ public class ClipboardMenu implements IScreensContants {
 		return ClipboardMenu.class.getName() + "." + name;
 	}
 
-	protected <T extends IScreensClientDescriptor> IScreensConfiguration<T> createImpl(
-			T client) throws Exception {
+	protected IScreensConfiguration createImpl(IScreensClientDescriptor client)
+			throws Exception {
 		DefaultTreeOfScreens r = new DefaultTreeOfScreens();
 		boolean english = true;
 		for (Locale l : client.getLocales()) {
@@ -51,10 +51,9 @@ public class ClipboardMenu implements IScreensContants {
 			r.setProperty(action, INTERACTION_JAVA, action);
 			interactions.put(action, new IInteractionListener() {
 				@Override
-				public void handleInteraction(
-						String screen,
-						IScreensConfiguration<? extends IScreensClientDescriptor> context)
-						throws Exception {
+				public void handleInteraction(String screen,
+						IScreensConfiguration context,
+						IScreensClientDescriptor client) throws Exception {
 					String alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!\"$%&/()=?*[]^{},;.:-_<>";
 					StringBuffer sb = new StringBuffer();
 					Random random = new Random();
@@ -79,10 +78,9 @@ public class ClipboardMenu implements IScreensContants {
 					clipboardFieldName);
 			interactions.put(clipboardFieldName, new IInteractionListener() {
 				@Override
-				public void handleInteraction(
-						String screen,
-						IScreensConfiguration<? extends IScreensClientDescriptor> context)
-						throws Exception {
+				public void handleInteraction(String screen,
+						IScreensConfiguration context,
+						IScreensClientDescriptor client) throws Exception {
 					System.out.println("Copied to clipboard: "
 							+ context.getTree().getProperty(screen, VALUE));
 				}
@@ -90,11 +88,10 @@ public class ClipboardMenu implements IScreensContants {
 			});
 		}
 
-		DefaultScreensConfiguration<T> config = new DefaultScreensConfiguration<T>(
-				r, interactions);
+		DefaultScreensConfiguration config = new DefaultScreensConfiguration(r,
+				interactions);
 		config.setTree(r);
 		config.setInteractions(interactions);
-		config.setClient(client);
 		return config;
 	}
 }
