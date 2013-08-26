@@ -27,7 +27,7 @@ define('com/th3l4b/screens/web/javascript-runtime-treeTrack-test',
 		var junit = junitlib();
 		var t = {
 			root: "_tos_a",
-			tree: {
+			nodes: {
 				"_tos_a": {
 					properties: {
 					}

@@ -16,7 +16,7 @@ public class ScreensWebUtils {
 		PrintWriter iout = IndentedWriter.get(out);
 		PrintWriter iiout = IndentedWriter.get(iout);
 		out.println("{");
-		iout.println("tree: {");
+		iout.println("nodes: {");
 		dumpRecursively(tree.getRoot(), null, tree, iiout);
 		iiout.println();
 		iout.println("},");

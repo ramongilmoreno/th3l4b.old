@@ -102,11 +102,7 @@ define("com/th3l4b/screens/web/javascript-runtime",
 	var createContext = function (document, node, target, renderer) {
 		var r = {
 		};
-		r.tree = treelib({
-			root: undefined,
-			tree: {
-			}
-		});
+		r.tree = treelib();
 		r.renderer = renderer;
 		r.render = render;
 		r.document =  document;

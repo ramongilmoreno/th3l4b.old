@@ -2,6 +2,13 @@
 
 define('com/th3l4b/screens/web/javascript-runtime-tree', function () {
 	return function (tree) {
+		if (tree == undefined) {
+			tree = {
+				root: undefined,
+				nodes: {
+				}
+			};
+		}
 		var prefix = "_tos_";
 		var prefixLength = prefix.length;
 		return {
@@ -14,7 +21,7 @@ define('com/th3l4b/screens/web/javascript-runtime-tree', function () {
 			},
 			
 			screens: function () {
-				var t2 = tree.tree;
+				var t2 = tree.nodes;
 				var r = [];
 				for (var i in t2) {
 					if (t2.hasOwnProperty(i)) {
@@ -26,7 +33,7 @@ define('com/th3l4b/screens/web/javascript-runtime-tree', function () {
 			},
 			
 			children: function (screen) {
-				var t2 = tree.tree;
+				var t2 = tree.nodes;
 				var r = [];
 				for (var i in t2) {
 					if (t2.hasOwnProperty(i) && (t2[i].parent == screen)) {
@@ -38,11 +45,11 @@ define('com/th3l4b/screens/web/javascript-runtime-tree', function () {
 			},
 			
 			parent: function (screen) {
-				return tree.tree[prefix + screen].parent;
+				return tree.nodes[prefix + screen].parent;
 			},
 			
 			addScreen: function (screen, parent) {
-				tree.tree[prefix + screen] = {
+				tree.nodes[prefix + screen] = {
 					name: screen,
 					parent: parent,
 					properties: {
@@ -51,28 +58,28 @@ define('com/th3l4b/screens/web/javascript-runtime-tree', function () {
 			},
 			
 			removeScreen: function (screen) {
-				delete tree.tree[prefix + screen];
+				delete tree.nodes[prefix + screen];
 			},
 			
 			setProperty: function (screen, property, value) {
-				tree.tree[prefix + screen].properties[prefix + property] = value;
+				tree.nodes[prefix + screen].properties[prefix + property] = value;
 			},
 			
 			getProperty: function (screen, property, value) {
-				return tree.tree[prefix + screen].properties[prefix + property];
+				return tree.nodes[prefix + screen].properties[prefix + property];
 			},
 			
 			removeProperty: function (screen, property) {
-				delete tree.tree[prefix + screen].properties[prefix + property];
+				delete tree.nodes[prefix + screen].properties[prefix + property];
 			},
 			
 			hasProperty: function (screen, property) {
-				return tree.tree[prefix + screen].properties.hasOwnProperty(prefix + property);
+				return tree.nodes[prefix + screen].properties.hasOwnProperty(prefix + property);
 			},
 			
 			properties: function (screen) {
 				var r = [];
-				var p = tree.tree[prefix + screen].properties;
+				var p = tree.nodes[prefix + screen].properties;
 				for (var i in p) {
 					if (p.hasOwnProperty(i)) {
 						i = i.substring(prefixLength);
