@@ -63,7 +63,7 @@ define('com/th3l4b/screens/web/javascript-runtime-treeTrack-test',
 		junit.assertFalse(tree.hasProperty("b", "kk"));
 		junit.assertArraysEquals([], tree.properties("b"));
 		treeTrackApply(modifications, treelib(original));
-		console.log(treeTrackRequest(modifications));
+		var request = treeTrackRequest(modifications);
 		junit.assertDeepEquals(t, original, "Modifications applied to copy do not lead to same result");
 	};
 });

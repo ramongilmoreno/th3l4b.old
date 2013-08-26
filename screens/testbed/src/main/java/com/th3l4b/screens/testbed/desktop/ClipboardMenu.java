@@ -1,11 +1,14 @@
 package com.th3l4b.screens.testbed.desktop;
 
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Random;
 
 import com.th3l4b.common.data.nullsafe.NullSafe;
 import com.th3l4b.screens.base.IScreensContants;
+import com.th3l4b.screens.base.ITreeOfScreens;
 import com.th3l4b.screens.base.interaction.IInteractionListener;
 import com.th3l4b.screens.base.utils.DefaultScreensConfiguration;
 import com.th3l4b.screens.base.utils.DefaultTreeOfScreens;
@@ -23,9 +26,8 @@ public class ClipboardMenu implements IScreensContants {
 		return ClipboardMenu.class.getName() + "." + name;
 	}
 
-	protected IScreensConfiguration createImpl(IScreensClientDescriptor client)
+	protected static boolean english(IScreensClientDescriptor client)
 			throws Exception {
-		DefaultTreeOfScreens r = new DefaultTreeOfScreens();
 		boolean english = true;
 		for (Locale l : client.getLocales()) {
 			if (NullSafe.equals(l.getLanguage(), "es")) {
@@ -35,6 +37,13 @@ public class ClipboardMenu implements IScreensContants {
 				break;
 			}
 		}
+		return english;
+	}
+
+	protected IScreensConfiguration createImpl(IScreensClientDescriptor client)
+			throws Exception {
+		DefaultTreeOfScreens r = new DefaultTreeOfScreens();
+		boolean english = english(client);
 
 		String screen = name("Clipboard");
 		r.setProperty(screen, LABEL, english ? "Clipboard" : "Portapapeles");
@@ -45,7 +54,7 @@ public class ClipboardMenu implements IScreensContants {
 			String action = name("Random key");
 			r.addScreen(action, screen);
 			r.setProperty(action, TYPE, TYPE_ACTION);
-			r.setProperty(screen, LABEL, english ? "Random key"
+			r.setProperty(action, LABEL, english ? "Random key"
 					: "Clave aleatoria");
 			r.setProperty(action, INTERACTION, "true");
 			r.setProperty(action, INTERACTION_JAVA, action);
@@ -83,6 +92,69 @@ public class ClipboardMenu implements IScreensContants {
 						IScreensClientDescriptor client) throws Exception {
 					System.out.println("Copied to clipboard: "
 							+ context.getTree().getProperty(screen, VALUE));
+				}
+
+			});
+		}
+		final String items = name("Items");
+		{
+			r.addScreen(items, screen);
+			r.setProperty(items, TYPE, TYPE_HIDDEN);
+			r.setProperty(screen, LABEL, english ? "Items" : "Elementos");
+		}
+		{
+			String action = name("Add item");
+			r.addScreen(action, screen);
+			r.setProperty(action, TYPE, TYPE_ACTION);
+			r.setProperty(action, LABEL, english ? "Add item"
+					: "Nuevo elemento");
+			r.setProperty(action, INTERACTION, "true");
+			r.setProperty(action, INTERACTION_JAVA, action);
+			interactions.put(action, new IInteractionListener() {
+				@Override
+				public void handleInteraction(String screen,
+						IScreensConfiguration context,
+						IScreensClientDescriptor client) throws Exception {
+					int count = 0;
+					Iterator<String> i = context.getTree().children(items)
+							.iterator();
+					while (i.hasNext()) {
+						i.next();
+						count++;
+					}
+					String item = name("Item #" + count);
+					context.getTree().addScreen(item, items);
+					context.getTree().setProperty(item, TYPE, TYPE_HIDDEN);
+					context.getTree().setProperty(
+							item,
+							LABEL,
+							(english(client) ? "Item" : "Elemento")
+									+ (" #" + count));
+				}
+
+			});
+		}
+		{
+			String action = name("Remove all items");
+			r.addScreen(action, screen);
+			r.setProperty(action, TYPE, TYPE_ACTION);
+			r.setProperty(action, LABEL, english ? "Remove all items"
+					: "Quitar todos los elementos");
+			r.setProperty(action, INTERACTION, "true");
+			r.setProperty(action, INTERACTION_JAVA, action);
+			interactions.put(action, new IInteractionListener() {
+				@Override
+				public void handleInteraction(String screen,
+						IScreensConfiguration context,
+						IScreensClientDescriptor client) throws Exception {
+					HashSet<String> set = new HashSet<String>();
+					ITreeOfScreens tree = context.getTree();
+					for (String c : tree.children(items)) {
+						set.add(c);
+					}
+					for (String c : set) {
+						tree.removeScreen(c);
+					}
 				}
 
 			});

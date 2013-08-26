@@ -44,7 +44,11 @@ define('com/th3l4b/screens/web/javascript-runtime-renderer', function () {
 		e.onclick =  function () {
 			context.onAction(screen, context);
 		};
-		var text = context.document.createTextNode("Action");
+		var v = context.tree.getProperty(screen, "com.th3l4b.screens.base.label");
+		if (!v) {
+			v = "Action";
+		}		
+		var text = context.document.createTextNode(v);
 		e.appendChild(text);
 		node.appendChild(e);
 		return e;
