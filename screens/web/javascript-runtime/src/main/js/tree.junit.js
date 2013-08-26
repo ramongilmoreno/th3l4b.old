@@ -5,7 +5,7 @@ define('com/th3l4b/screens/web/javascript-runtime-tree-test',
 		 	'com/th3l4b/screens/web/javascript-runtime-tree',
 		 	'com/th3l4b/types/javascript-runtime-junit'
 		 	],
-		function (tree, junitlib) {
+		function (treelib, junitlib) {
 	return function () {
 		var junit = junitlib();
 		var t = {
@@ -27,18 +27,19 @@ define('com/th3l4b/screens/web/javascript-runtime-tree-test',
 				}
 			}
 		};
-		tree.addScreen(t, "d", "a");
-		junit.assertArraysEquals(['a', 'b', 'c', 'd'], tree.screens(t));
-		junit.assertArraysEquals(['b', 'c', 'd'], tree.children(t, "a"));
-		junit.assertEquals('a', tree.parent(t, "b"));
-		tree.removeScreen(t, "c");
-		junit.assertArraysEquals(['b', 'd'], tree.children(t, "a"));
-		tree.setProperty(t, "b", "kk", "value");
-		junit.assertEquals('value', tree.getProperty(t, "b", "kk"));
-		junit.assertTrue(tree.hasProperty(t, "b", "kk"));
-		junit.assertArraysEquals(['kk'], tree.properties(t, "b"));
-		tree.removeProperty(t, "b", "kk")
-		junit.assertFalse(tree.hasProperty(t, "b", "kk"));
-		junit.assertArraysEquals([], tree.properties(t, "b"));
+		var tree = treelib(t);
+		tree.addScreen("d", "a");
+		junit.assertArraysEquals(['a', 'b', 'c', 'd'], tree.screens());
+		junit.assertArraysEquals(['b', 'c', 'd'], tree.children("a"));
+		junit.assertEquals('a', tree.parent("b"));
+		tree.removeScreen("c");
+		junit.assertArraysEquals(['b', 'd'], tree.children("a"));
+		tree.setProperty("b", "kk", "value");
+		junit.assertEquals('value', tree.getProperty("b", "kk"));
+		junit.assertTrue(tree.hasProperty("b", "kk"));
+		junit.assertArraysEquals(['kk'], tree.properties("b"));
+		tree.removeProperty("b", "kk")
+		junit.assertFalse(tree.hasProperty("b", "kk"));
+		junit.assertArraysEquals([], tree.properties("b"));
 	};
 });

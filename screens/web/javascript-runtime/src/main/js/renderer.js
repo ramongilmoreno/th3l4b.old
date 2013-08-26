@@ -5,7 +5,7 @@ define('com/th3l4b/screens/web/javascript-runtime-renderer', function () {
 	var innerRenderField = function (screen, node, context) {
 		var e = context.document.createElement("input");
 		e.setAttribute("type", "text");
-		var v = context.treelib.getProperty(context.tree, screen, "com.th3l4b.screens.base.value");
+		var v = context.tree.getProperty(screen, "com.th3l4b.screens.base.value");
 		if (!v) {
 			v = "";
 		}

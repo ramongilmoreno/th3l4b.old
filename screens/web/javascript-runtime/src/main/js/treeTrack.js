@@ -3,32 +3,32 @@
 define('com/th3l4b/screens/web/javascript-runtime-treeTrack', function () {
 	return function (original, modifications) {
 		return {
-			getRoot: function (t) {
-				return original.getRoot(t);
+			getRoot: function () {
+				return original.getRoot();
 			},
 			
-			setRoot: function (t, root) {
-				original.setRoot(t, root);
+			setRoot: function (root) {
+				original.setRoot(root);
 				modifications.push({
 					type: "SetRoot",
 					screen: root
 				});
 			},
 			
-			screens: function (t) {
-				return original.screens(t);
+			screens: function () {
+				return original.screens();
 			},
 			
-			children: function (t, screen) {
-				return original.children(t, screen);
+			children: function (screen) {
+				return original.children(screen);
 			},
 			
-			parent: function (t, screen) {
-				return original.parent(t, screen);
+			parent: function (screen) {
+				return original.parent(screen);
 			},
 			
-			addScreen: function (t, screen, parent) {
-				original.addScreen(t, screen, parent);
+			addScreen: function (screen, parent) {
+				original.addScreen(screen, parent);
 				modifications.push({
 					type: "AddScreen",
 					screen: screen,
@@ -36,16 +36,16 @@ define('com/th3l4b/screens/web/javascript-runtime-treeTrack', function () {
 				});
 			},
 			
-			removeScreen: function (t, screen) {
-				original.removeScreen(t, screen);
+			removeScreen: function (screen) {
+				original.removeScreen(screen);
 				modifications.push({
 					type: "RemoveScreen",
 					screen: screen
 				});
 			},
 			
-			setProperty: function (t, screen, property, value) {
-				original.setProperty(t, screen, property, value);
+			setProperty: function (screen, property, value) {
+				original.setProperty(screen, property, value);
 				modifications.push({
 					type: "SetProperty",
 					screen: screen,
@@ -54,12 +54,12 @@ define('com/th3l4b/screens/web/javascript-runtime-treeTrack', function () {
 				});
 			},
 			
-			getProperty: function (t, screen, property, value) {
-				return original.getProperty(t, screen, property, value);
+			getProperty: function (screen, property, value) {
+				return original.getProperty(screen, property, value);
 			},
 			
-			removeProperty: function (t, screen, property) {
-				original.removeProperty(t, screen, property);
+			removeProperty: function (screen, property) {
+				original.removeProperty(screen, property);
 				modifications.push({
 					type: "RemoveProperty",
 					screen: screen,
@@ -67,31 +67,31 @@ define('com/th3l4b/screens/web/javascript-runtime-treeTrack', function () {
 				});
 			},
 			
-			hasProperty: function (t, screen, property) {
-				return original.hasProperty(t, screen, property);
+			hasProperty: function (screen, property) {
+				return original.hasProperty(screen, property);
 			},
 			
-			properties: function (t, screen) {
-				return original.properties(t, screen);
+			properties: function (screen) {
+				return original.properties(screen);
 			}
 		};
 	};
 });
 
 define('com/th3l4b/screens/web/javascript-runtime-treeTrack-apply', function () {
-	return function (modifications, t, tree) {
+	return function (modifications, tree) {
 		for (var i in modifications) {
 			var m = modifications[i];
 			if (m.type == 'SetRoot') {
-				tree.setRoot(t, m.screen);
+				tree.setRoot(m.screen);
 			} else if (m.type == 'AddScreen') {
-				tree.addScreen(t, m.screen, m.parent);
+				tree.addScreen(m.screen, m.parent);
 			} else if (m.type == 'RemoveScreen') {
-				tree.removeScreen(t, m.screen);
+				tree.removeScreen(m.screen);
 			} else if (m.type == 'SetProperty') {
-				tree.setProperty(t, m.screen, m.property, m.value);
+				tree.setProperty(m.screen, m.property, m.value);
 			} else if (m.type == 'RemoveProperty') {
-				tree.removeProperty(t, m.screen, m.property);
+				tree.removeProperty(m.screen, m.property);
 			} else {
 				throw "Unknown modification: " + m;
 			}

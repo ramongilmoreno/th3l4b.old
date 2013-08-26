@@ -48,21 +48,21 @@ define('com/th3l4b/screens/web/javascript-runtime-treeTrack-test',
 //		original.tree._tos_b.parent = "b";
 		junit.assertDeepEquals(t, original, "Copy is not equal");
 		var modifications = [];
-		var tree = treeTrack(treelib, modifications);
-		tree.addScreen(t, "d", "a");
-		junit.assertArraysEquals(['a', 'b', 'c', 'd'], tree.screens(t));
-		junit.assertArraysEquals(['b', 'c', 'd'], tree.children(t, "a"));
-		junit.assertEquals('a', tree.parent(t, "b"));
-		tree.removeScreen(t, "c");
-		junit.assertArraysEquals(['b', 'd'], tree.children(t, "a"));
-		tree.setProperty(t, "b", "kk", "value");
-		junit.assertEquals('value', tree.getProperty(t, "b", "kk"));
-		junit.assertTrue(tree.hasProperty(t, "b", "kk"));
-		junit.assertArraysEquals(['kk'], tree.properties(t, "b"));
-		tree.removeProperty(t, "b", "kk")
-		junit.assertFalse(tree.hasProperty(t, "b", "kk"));
-		junit.assertArraysEquals([], tree.properties(t, "b"));
-		treeTrackApply(modifications, original, treelib);
+		var tree = treeTrack(treelib(t), modifications);
+		tree.addScreen("d", "a");
+		junit.assertArraysEquals(['a', 'b', 'c', 'd'], tree.screens());
+		junit.assertArraysEquals(['b', 'c', 'd'], tree.children("a"));
+		junit.assertEquals('a', tree.parent("b"));
+		tree.removeScreen("c");
+		junit.assertArraysEquals(['b', 'd'], tree.children("a"));
+		tree.setProperty("b", "kk", "value");
+		junit.assertEquals('value', tree.getProperty("b", "kk"));
+		junit.assertTrue(tree.hasProperty("b", "kk"));
+		junit.assertArraysEquals(['kk'], tree.properties("b"));
+		tree.removeProperty("b", "kk")
+		junit.assertFalse(tree.hasProperty("b", "kk"));
+		junit.assertArraysEquals([], tree.properties("b"));
+		treeTrackApply(modifications, treelib(original));
 		console.log(treeTrackRequest(modifications));
 		junit.assertDeepEquals(t, original, "Modifications applied to copy do not lead to same result");
 	};

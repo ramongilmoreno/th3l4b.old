@@ -27,11 +27,11 @@ define("com/th3l4b/screens/web/javascript-runtime",
 	* Renders the properties of an screen in a node
 	*/
 	var renderProperties = function (current, domNode, context) {
-		var properties = context.treelib.properties(context.tree, current);
+		var properties = context.tree.properties(current);
 		for (var i in properties) {
 			var p = properties[i];
 			var e = context.document.createElement("div");
-			var v = context.treelib.getProperty(context.tree, current, p);
+			var v = context.tree.getProperty(current, p);
 			var s = "" + p + " = " + v;
 			var n = context.document.createTextNode(s);
 			e.appendChild(n);
@@ -47,7 +47,7 @@ define("com/th3l4b/screens/web/javascript-runtime",
 		var newNode = context.document.createElement("div");
 
 		// Render it
-		var type = context.treelib.getProperty(context.tree, current, constants.type);
+		var type = context.tree.getProperty(current, constants.type);
 		if (type == constants.typeField) {
 			context.renderer.renderField(current, newNode, context);
 		} else if (type == constants.typeAction) {
@@ -56,7 +56,7 @@ define("com/th3l4b/screens/web/javascript-runtime",
 		renderProperties(current, newNode, context);
 
 		// Render children with this very function
-		var children = context.treelib.children(context.tree, current);
+		var children = context.tree.children(current);
 		for (var i in children) {
 			var child = children[i];
 			context.render(child, newNode, context);
@@ -80,12 +80,12 @@ define("com/th3l4b/screens/web/javascript-runtime",
 				var response = eval("var r = " + request.responseText + "; r;");
 				if (response.ok) {
 					if (response.tree) {
-						context.tree = response.tree;
+						context.tree = treelib(response.tree);
 					}
 					if (response.modifications) {
-						treeTrackApply(response.modifications, context.tree, context.treelib);
+						treeTrackApply(response.modifications, context.tree);
 					}
-					update(context.treelib.getRoot(context.tree), node, context);
+					update(context.tree.getRoot(), node, context);
 					return;
 				}
 			}
@@ -102,21 +102,20 @@ define("com/th3l4b/screens/web/javascript-runtime",
 	var createContext = function (document, node, target, renderer) {
 		var r = {
 		};
-		r.tree = {
+		r.tree = treelib({
 			root: undefined,
 			tree: {
 			}
-		};
-		r.treelib = treelib;
+		});
 		r.renderer = renderer;
 		r.render = render;
 		r.document =  document;
 		r.node = node;
 		r.modifications = [];
 		r.onChange = function (screen, newValue, context) {
-			var tracked = treeTrack(context.treelib, context.modifications);
-			tracked.setProperty(context.tree, screen, constants.value, newValue);
-			if (context.treelib.getProperty(context.tree, screen, constants.interaction) == "true") {
+			var tracked = treeTrack(context.tree, context.modifications);
+			tracked.setProperty(screen, constants.value, newValue);
+			if (context.tree.getProperty(screen, constants.interaction) == "true") {
 				context.onAction(screen, context);
 			}
 		};
