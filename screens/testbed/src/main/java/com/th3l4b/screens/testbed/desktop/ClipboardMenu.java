@@ -52,6 +52,7 @@ public class ClipboardMenu implements IScreensContants {
 		{
 			String action = name("Random key");
 			r.addScreen(action, screen);
+			r.setProperty(action, ORDER_INDEX, "1");
 			r.setProperty(action, TYPE, TYPE_ACTION);
 			r.setProperty(action, LABEL, english ? "Random key"
 					: "Clave aleatoria");
@@ -78,9 +79,10 @@ public class ClipboardMenu implements IScreensContants {
 		}
 		{
 			r.addScreen(clipboardFieldName, screen);
+			r.setProperty(clipboardFieldName, ORDER_INDEX, "2");
 			r.setProperty(clipboardFieldName, TYPE, TYPE_FIELD);
-			r.setProperty(screen, LABEL, english ? "Clipboard field"
-					: "Portapapeles");
+			r.setProperty(clipboardFieldName, LABEL,
+					english ? "Clipboard field" : "Portapapeles");
 			r.setProperty(clipboardFieldName, INTERACTION, "true");
 			r.setProperty(clipboardFieldName, INTERACTION_JAVA,
 					clipboardFieldName);
@@ -98,11 +100,13 @@ public class ClipboardMenu implements IScreensContants {
 		final String items = name("Items");
 		{
 			r.addScreen(items, screen);
+			r.setProperty(items, ORDER_INDEX, "5");
 			r.setProperty(items, TYPE, TYPE_HIDDEN);
 			r.setProperty(items, LABEL, english ? "Items" : "Elementos");
 		}
 		{
 			String action = name("Add item");
+			r.setProperty(action, ORDER_INDEX, "3");
 			r.addScreen(action, screen);
 			r.setProperty(action, TYPE, TYPE_ACTION);
 			r.setProperty(action, LABEL, english ? "Add item"
@@ -135,6 +139,7 @@ public class ClipboardMenu implements IScreensContants {
 		}
 		{
 			String action = name("Remove all items");
+			r.setProperty(action, ORDER_INDEX, "4");
 			r.addScreen(action, screen);
 			r.setProperty(action, TYPE, TYPE_ACTION);
 			r.setProperty(action, LABEL, english ? "Remove all items"

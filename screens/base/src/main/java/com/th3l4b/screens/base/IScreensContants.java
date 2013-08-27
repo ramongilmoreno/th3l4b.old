@@ -19,4 +19,7 @@ public interface IScreensContants {
 	public static final String APPEARANCE_PREFIX = PREFIX + ".appearance";
 	public static final String APPEARANCE = APPEARANCE_PREFIX;
 	public static final String APPEARANCE_MENU = APPEARANCE_PREFIX + ".menu";
+	
+	public static final String ORDER_PREFIX = PREFIX + ".order";
+	public static final String ORDER_INDEX = ORDER_PREFIX + ".index";
 }

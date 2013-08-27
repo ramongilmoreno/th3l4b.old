@@ -41,6 +41,20 @@ define('com/th3l4b/screens/web/javascript-runtime-tree', function () {
 						r.push(i);
 					}
 				}
+				var f = function (a) {
+					var r = 10;
+					a = tree.nodes[prefix + a].properties[prefix + "com.th3l4b.screens.base.order.index"]
+					if (a) {
+						var v = parseInt(a);
+						if (!isNaN(v)) {
+							r = v; 
+						}
+					}
+					return r;
+				}
+				r.sort(function (a, b) {
+					return f(a) - f(b);
+				});
 				return r;
 			},
 			

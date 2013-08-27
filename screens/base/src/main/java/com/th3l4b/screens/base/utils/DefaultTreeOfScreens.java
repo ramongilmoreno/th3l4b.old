@@ -1,12 +1,15 @@
 package com.th3l4b.screens.base.utils;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.UUID;
 
 import com.th3l4b.common.data.nullsafe.NullSafe;
+import com.th3l4b.screens.base.IScreensContants;
 import com.th3l4b.screens.base.ITreeOfScreens;
 
 public class DefaultTreeOfScreens implements ITreeOfScreens {
@@ -35,12 +38,44 @@ public class DefaultTreeOfScreens implements ITreeOfScreens {
 
 	@Override
 	public Iterable<String> children(final String screen) throws Exception {
-		LinkedHashSet<String> r = new LinkedHashSet<String>();
+		ArrayList<String> r = new ArrayList<String>();
 		for (String candidate : screens()) {
 			if (NullSafe.equals(_parents.get(candidate), screen)) {
 				r.add(candidate);
 			}
 		}
+		Collections.sort(r, new Comparator<String>() {
+			HashMap<String, Integer> _cache = new HashMap<String, Integer>();
+			private Integer cache(String a) throws Exception {
+				Integer i = _cache.get(a);
+				if (i != null) {
+					return i;
+				} else {
+					i = new Integer(Integer.MAX_VALUE);
+					String p = DefaultTreeOfScreens.this.getProperty(a,
+							IScreensContants.ORDER_INDEX);
+					if (p != null) {
+						try {
+							i = Integer.parseInt(p);
+						} catch (NumberFormatException nfe) {
+						}
+					}
+					_cache.put(a, i);
+				}
+				return i;
+			}
+
+			@Override
+			public int compare(String a, String b) {
+				int r = 0;
+				try {
+					r = cache(a).intValue() - cache(b).intValue();
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+				return r;
+			}
+		});
 		return r;
 	}
 
