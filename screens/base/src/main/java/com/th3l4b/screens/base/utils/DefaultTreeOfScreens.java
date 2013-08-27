@@ -7,8 +7,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.th3l4b.common.data.nullsafe.NullSafe;
-import com.th3l4b.common.data.predicate.IPredicate;
-import com.th3l4b.common.data.predicate.PredicateUtils;
 import com.th3l4b.screens.base.ITreeOfScreens;
 
 public class DefaultTreeOfScreens implements ITreeOfScreens {
@@ -37,12 +35,13 @@ public class DefaultTreeOfScreens implements ITreeOfScreens {
 
 	@Override
 	public Iterable<String> children(final String screen) throws Exception {
-		return PredicateUtils.filter(screens(), new IPredicate<String>() {
-			@Override
-			public boolean accept(String t) throws Exception {
-				return NullSafe.equals(_parents.get(t), screen);
+		LinkedHashSet<String> r = new LinkedHashSet<String>();
+		for (String candidate : screens()) {
+			if (NullSafe.equals(_parents.get(candidate), screen)) {
+				r.add(candidate);
 			}
-		});
+		}
+		return r;
 	}
 
 	@Override
@@ -104,7 +103,9 @@ public class DefaultTreeOfScreens implements ITreeOfScreens {
 
 	@Override
 	public Iterable<String> properties(String screen) throws Exception {
-		return propertiesNotToModify(screen).keySet();
+		LinkedHashSet<String> r = new LinkedHashSet<String>();
+		r.addAll(propertiesNotToModify(screen).keySet());
+		return r;
 	}
 
 }

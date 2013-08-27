@@ -1,6 +1,5 @@
 package com.th3l4b.screens.testbed.desktop;
 
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Locale;
@@ -100,7 +99,7 @@ public class ClipboardMenu implements IScreensContants {
 		{
 			r.addScreen(items, screen);
 			r.setProperty(items, TYPE, TYPE_HIDDEN);
-			r.setProperty(screen, LABEL, english ? "Items" : "Elementos");
+			r.setProperty(items, LABEL, english ? "Items" : "Elementos");
 		}
 		{
 			String action = name("Add item");
@@ -147,17 +146,19 @@ public class ClipboardMenu implements IScreensContants {
 				public void handleInteraction(String screen,
 						IScreensConfiguration context,
 						IScreensClientDescriptor client) throws Exception {
-					HashSet<String> set = new HashSet<String>();
 					ITreeOfScreens tree = context.getTree();
 					for (String c : tree.children(items)) {
-						set.add(c);
-					}
-					for (String c : set) {
 						tree.removeScreen(c);
 					}
 				}
 
 			});
+			r.setProperty(action, INTERACTION_JAVASCRIPT,
+					"function (screen, context, client) {\n"
+							+ "	var children = context.tree.children('" + items
+							+ "');\n" + "	for (var i in children) {\n"
+							+ "		context.tree.removeScreen(children[i]);\n"
+							+ "	}\n" + "}");
 		}
 
 		DefaultScreensConfiguration config = new DefaultScreensConfiguration(r,

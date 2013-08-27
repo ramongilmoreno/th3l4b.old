@@ -116,14 +116,29 @@ define("com/th3l4b/screens/web/javascript-runtime",
 			}
 		};
         r.onAction = function (screen, context) {
-            var request = new XMLHttpRequest();
-            request.onreadystatechange = handleResponse(request, node, r);
-            request.open("POST", target, true);
-            request.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-            var modifications = treeTrackRequest(context.modifications);
-            // Clear modifications
-            context.modifications = [];
-            request.send("modificationsOnly=true&" + modifications + "&action=" + encodeURIComponent(screen)); 
+        	var javascriptAction = context.tree.getProperty(screen, constants.interactionJavascript);
+        	if (context.tree.hasProperty(screen, constants.interactionJavascript)) {
+    			var tracked = treeTrack(context.tree, context.modifications);
+        		// Action handled locally
+        		var icontext = {
+        				tree: tracked
+        		};
+        		var iclient = {
+        		};
+        		javascriptAction = eval("var r = " + javascriptAction + "; r;");
+        		javascriptAction(screen, icontext, iclient);
+				update(context.tree.getRoot(), node, context);
+        	} else {
+        		// Server handles the action.
+	            var request = new XMLHttpRequest();
+	            request.onreadystatechange = handleResponse(request, node, r);
+	            request.open("POST", target, true);
+	            request.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+	            var modifications = treeTrackRequest(context.modifications);
+	            // Clear modifications
+	            context.modifications = [];
+	            request.send("modificationsOnly=true&" + modifications + "&action=" + encodeURIComponent(screen));
+        	}
         };
 		var request = new XMLHttpRequest();
 		request.onreadystatechange = handleResponse(request, node, r);
