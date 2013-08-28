@@ -22,6 +22,16 @@ define("com/th3l4b/screens/web/javascript-runtime",
 		interaction: interactionPrefix,
 		interactionJavascript: interactionPrefix + ".javascript"
 	};
+	
+	var renderTitle = function (screen, node, context) {
+		var div = context.document.createElement("div");
+		var b = context.document.createElement("b");
+		var t = context.document.createTextNode(screen);
+		b.appendChild(t);
+		div.appendChild(b);
+		node.appendChild(div);
+	};
+
 
 	/**
 	* Renders the properties of an screen in a node
@@ -45,7 +55,8 @@ define("com/th3l4b/screens/web/javascript-runtime",
 	var render = function (current, domNode, context) {
 		// Create a new node to fit this screen
 		var newNode = context.document.createElement("div");
-
+		newNode.setAttribute("style", "margin-left: 1em")
+		renderTitle(current, newNode, context);
 		// Render it
 		var type = context.tree.getProperty(current, constants.type);
 		if (type == constants.typeField) {
