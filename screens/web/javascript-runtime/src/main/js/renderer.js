@@ -41,6 +41,7 @@ define('com/th3l4b/screens/web/javascript-runtime-renderer', function () {
 	var innerRenderAction = function (screen, node, context) {
 		var e = context.document.createElement("a");
 		e.setAttribute("href", "#");
+		e.setAttribute("style", "color: inherit;");
 		e.onclick =  function () {
 			context.onAction(screen, context);
 		};

@@ -45,7 +45,7 @@ public class ConsoleFacade {
 			out.println("Actions:");
 
 			ArrayList<String> list = new ArrayList<String>();
-			for (String s : TreeUtils.bfs(AsTree.getTree(tree))) {
+			for (String s : TreeUtils.dfs(AsTree.getTree(tree))) {
 				String type = tree.getProperty(s, IScreensContants.TYPE);
 				if (NullSafe.equals(type, IScreensContants.TYPE_FIELD)) {
 					iout.println("Set field " + list.size() + " - "
