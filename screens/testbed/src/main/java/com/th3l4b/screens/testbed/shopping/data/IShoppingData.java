@@ -4,4 +4,5 @@ public interface IShoppingData {
 	IContainer<IItem> getItemsContainer () throws Exception;
 	IContainer<IStore> getStoresContainer () throws Exception;
 	IContainer<INeed> getNeedsContainer () throws Exception;
+	Iterable<INeed> getNeedsByItem (String item) throws Exception;
 }

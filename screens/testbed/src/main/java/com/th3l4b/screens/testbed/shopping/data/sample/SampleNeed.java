@@ -2,35 +2,38 @@ package com.th3l4b.screens.testbed.shopping.data.sample;
 
 import java.util.Locale;
 
-import com.th3l4b.screens.testbed.shopping.data.IItem;
 import com.th3l4b.screens.testbed.shopping.data.INeed;
 
 public class SampleNeed extends SampleDataSupport implements INeed {
 
-	private IItem _item;
+	private String _item;
 	private long _quantity;
-	
-	public SampleNeed () {
-		_item = new SampleItem();
+
+	public SampleNeed() {
 	}
-	
+
+	@Override
+	public void setIdentifier(String identifier) throws Exception {
+		super.setIdentifier(identifier);
+		_item = identifier;
+	}
+
 	@Override
 	public String getLabel(Locale locale) throws Exception {
-		return _item.getLabel(locale);
+		return "USE ITEM'S LABEL";
 	}
-	
+
 	@Override
 	public void setLabel(String label, Locale locale) throws Exception {
-		_item.setLabel(label, locale);
 	}
-	
+
 	@Override
-	public IItem getItem() throws Exception {
+	public String getItem() throws Exception {
 		return _item;
 	}
 
 	@Override
-	public void setItem(IItem item) throws Exception {
+	public void setItem(String item) throws Exception {
 		_item = item;
 	}
 

@@ -56,6 +56,7 @@ public abstract class AbstractSampleContainer<T extends IAbstractDataSupport>
 
 	@Override
 	public T get(String id) throws Exception {
-		return create();
+		T r = create(Integer.parseInt(id));
+		return r;
 	}
 }

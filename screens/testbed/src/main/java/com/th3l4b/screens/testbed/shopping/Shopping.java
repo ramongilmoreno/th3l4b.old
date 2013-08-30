@@ -7,19 +7,21 @@ import com.th3l4b.common.data.nullsafe.NullSafe;
 import com.th3l4b.screens.base.IRenderingConstants;
 import com.th3l4b.screens.base.IScreensContants;
 import com.th3l4b.screens.base.ITreeOfScreens;
+import com.th3l4b.screens.base.addon.AbstractToggleInteractionListener;
 import com.th3l4b.screens.base.interaction.IInteractionListener;
 import com.th3l4b.screens.base.utils.DefaultScreensConfiguration;
 import com.th3l4b.screens.base.utils.DefaultTreeOfScreens;
 import com.th3l4b.screens.base.utils.IScreensClientDescriptor;
 import com.th3l4b.screens.base.utils.IScreensConfiguration;
 import com.th3l4b.screens.testbed.shopping.data.IContainer;
+import com.th3l4b.screens.testbed.shopping.data.IItem;
 import com.th3l4b.screens.testbed.shopping.data.INeed;
 import com.th3l4b.screens.testbed.shopping.data.sample.SampleShoppingData;
 
-public class Shopping implements IScreensContants {
+public class Shopping implements IScreensContants, IRenderingConstants {
 
 	private static final String KEY = Shopping.class.getPackage().getName();
-	private static final String STATUS = KEY + ".status";
+	private static final String STATUS_ENUM_VALUE = KEY + ".status";
 
 	protected String name(String n) {
 		return Shopping.class.getPackage().getName() + "." + n;
@@ -116,7 +118,7 @@ public class Shopping implements IScreensContants {
 								IScreensConfiguration context,
 								IScreensClientDescriptor client)
 								throws Exception {
-
+							renderItems(root, Shopping.this.getContext(context));
 						}
 					});
 		}
@@ -178,7 +180,8 @@ public class Shopping implements IScreensContants {
 		IContainer<INeed> container = shoppingContext.getData()
 				.getNeedsContainer();
 		INeed need = container.get(id);
-		Status status = Status.valueOf(tree.getProperty(needName, STATUS));
+		Status status = Status.valueOf(tree.getProperty(needName,
+				STATUS_ENUM_VALUE));
 
 		if (NullSafe.equals(toggleMarked, Boolean.TRUE)) {
 			// Toggle marked
@@ -209,24 +212,24 @@ public class Shopping implements IScreensContants {
 			}
 		}
 
-		tree.setProperty(needName, STATUS, status.toString());
+		tree.setProperty(needName, STATUS_ENUM_VALUE, status.toString());
 
 		String newTone = null;
 		if (status == Status.marked) {
 			// Set to weak and remove from list
-			newTone = IRenderingConstants.TONE_VALUE_WEAK;
+			newTone = TONE_VALUE_WEAK;
 		} else {
 			// Set to normal and restore it to list
-			newTone = IRenderingConstants.TONE_VALUE_NORMAL;
+			newTone = TONE_VALUE_NORMAL;
 		}
-		tree.setProperty(needName, IRenderingConstants.TONE, newTone);
+		tree.setProperty(needName, TONE, newTone);
 		String newStatus = null;
 		if (status == Status.later) {
 			// Set to bad status but do not touch it
-			newStatus = IRenderingConstants.STATUS_VALUE_BAD;
+			newStatus = STATUS_VALUE_BAD;
 		} else {
 			// Set to weak and remove from list
-			newStatus = IRenderingConstants.STATUS_VALUE_NORMAL;
+			newStatus = STATUS_VALUE_NORMAL;
 		}
 		tree.setProperty(needName, IRenderingConstants.STATUS, newStatus);
 	}
@@ -241,16 +244,18 @@ public class Shopping implements IScreensContants {
 		// Render items
 		int index = 0;
 		for (INeed need : context.getData().getNeedsContainer().all()) {
-			final String needId = need.getIdentifier();
 			final String needName = name("need of - " + need.getIdentifier());
 			{
+				IItem item = context.getData().getItemsContainer()
+						.get(need.getIdentifier());
 				String name = needName;
 				tree.addScreen(name, itemsChild);
 				tree.setProperty(name, ORDER_INDEX, Integer.toString(index++));
 				tree.setProperty(name, LABEL,
-						need.getLabel(context.getLocale()));
-				tree.setProperty(needName, KEY, needId);
-				tree.setProperty(needName, STATUS, Status.normal.toString());
+						item.getLabel(context.getLocale()));
+				tree.setProperty(needName, KEY, need.getIdentifier());
+				tree.setProperty(needName, STATUS_ENUM_VALUE,
+						Status.normal.toString());
 				tree.setProperty(name, TYPE, TYPE_ACTION);
 				tree.setProperty(name, INTERACTION, "true");
 				tree.setProperty(name, INTERACTION_JAVA, name);
@@ -269,6 +274,73 @@ public class Shopping implements IScreensContants {
 			addLaterAction(needName, context);
 		}
 
+	}
+
+	protected boolean itemHasNeeds(String item, IShoppingContext context)
+			throws Exception {
+		for (@SuppressWarnings("unused")
+		INeed need : context.getData().getNeedsByItem(item)) {
+			return true;
+		}
+		return false;
+	}
+
+	protected void renderItems(String root, IShoppingContext context)
+			throws Exception {
+		ITreeOfScreens tree = clearRoot(root, context);
+		String itemsChild = name("Items");
+		tree.addScreen(itemsChild, root);
+		tree.setProperty(itemsChild, ORDER_INDEX, "0");
+
+		int index = 0;
+		for (IItem item : context.getData().getItemsContainer().all()) {
+			String name = name("item - " + item.getIdentifier());
+			tree.addScreen(name, itemsChild);
+			tree.setProperty(name, ORDER_INDEX, Integer.toString(index++));
+			tree.setProperty(name, LABEL, item.getLabel(context.getLocale()));
+			tree.setProperty(name, KEY, item.getIdentifier());
+			tree.setProperty(name, TYPE, TYPE_ACTION);
+			tree.setProperty(name, INTERACTION, "true");
+			tree.setProperty(name, INTERACTION_JAVA, name);
+			boolean hasNeeds = itemsHasNeeds(item.getIdentifier(), context);
+			AbstractToggleInteractionListener.setStatus(tree, name, hasNeeds);
+			tree.setProperty(name, TONE, hasNeeds ? TONE_VALUE_STRONG
+					: TONE_VALUE_NORMAL);
+			context.getContext().getInteractions()
+					.put(name, new AbstractToggleInteractionListener() {
+						@Override
+						protected void handleInteraction(String screen,
+								boolean status, IScreensConfiguration context,
+								IScreensClientDescriptor client)
+								throws Exception {
+							IShoppingContext shopping = getContext(context);
+							ITreeOfScreens tree = context.getTree();
+							IContainer<INeed> needs = shopping.getData()
+									.getNeedsContainer();
+							String item = tree.getProperty(screen, KEY);
+							// Clean needs.
+							for (INeed need : shopping.getData()
+									.getNeedsByItem(item)) {
+								needs.remove(need);
+
+							}
+							// Create it if selected.
+							if (status) {
+								INeed created = needs.create();
+								created.setItem(item);
+							}
+							tree.setProperty(screen, TONE,
+									status ? TONE_VALUE_STRONG
+											: TONE_VALUE_NORMAL);
+						}
+					});
+		}
+
+	}
+
+	private boolean itemsHasNeeds(String identifier, IShoppingContext context) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	public IScreensConfiguration sample(IScreensClientDescriptor client)
