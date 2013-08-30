@@ -11,6 +11,16 @@ define('com/th3l4b/screens/web/javascript-runtime-tree', function () {
 		}
 		var prefix = "_tos_";
 		var prefixLength = prefix.length;
+		var dfs = function (root, tree, action) {
+			var t2 = tree.nodes;
+			for (var i in t2) {
+				if (t2.hasOwnProperty(i) && (t2[i].parent == root)) {
+					i = i.substring(prefixLength);
+					dfs(i, tree, action);
+				}
+			}
+			action(root);
+		};
 		return {
 			getRoot: function () {
 				return tree.root;
@@ -72,7 +82,7 @@ define('com/th3l4b/screens/web/javascript-runtime-tree', function () {
 			},
 			
 			removeScreen: function (screen) {
-				delete tree.nodes[prefix + screen];
+				dfs(screen, tree, function (s) { delete tree.nodes[prefix + screen]; });
 			},
 			
 			setProperty: function (screen, property, value) {

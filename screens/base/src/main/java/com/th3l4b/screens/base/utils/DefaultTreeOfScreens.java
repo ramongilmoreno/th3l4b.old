@@ -9,6 +9,9 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.th3l4b.common.data.nullsafe.NullSafe;
+import com.th3l4b.common.data.tree.AbstractUnmodifiableTree;
+import com.th3l4b.common.data.tree.ITree;
+import com.th3l4b.common.data.tree.TreeUtils;
 import com.th3l4b.screens.base.IScreensContants;
 import com.th3l4b.screens.base.ITreeOfScreens;
 
@@ -90,9 +93,23 @@ public class DefaultTreeOfScreens implements ITreeOfScreens {
 	}
 
 	@Override
-	public void removeScreen(String screen) throws Exception {
-		_parents.remove(screen);
-		_properties.remove(screen);
+	public void removeScreen(final String screen) throws Exception {
+		// Iterate the tree depth first to delete all
+		ITree<String> tree = new AbstractUnmodifiableTree<String>() {
+			@Override
+			public String getRoot() throws Exception {
+				return screen;
+			}
+
+			@Override
+			public Iterable<String> getChildren(String node) throws Exception {
+				return DefaultTreeOfScreens.this.children(screen);
+			}
+		};
+		for (String s: TreeUtils.dfs(tree)) {
+			_parents.remove(s);
+			_properties.remove(s);
+		}
 	}
 
 	@Override
