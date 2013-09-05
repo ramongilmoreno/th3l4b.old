@@ -82,7 +82,7 @@ define('com/th3l4b/screens/web/javascript-runtime-tree', function () {
 			},
 			
 			removeScreen: function (screen) {
-				dfs(screen, tree, function (s) { delete tree.nodes[prefix + screen]; });
+				dfs(screen, tree, function (s) { delete tree.nodes[prefix + s]; });
 			},
 			
 			setProperty: function (screen, property, value) {
