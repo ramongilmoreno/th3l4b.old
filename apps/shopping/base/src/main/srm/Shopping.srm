@@ -1,0 +1,24 @@
+#
+# Shopping model
+#
+
+model "Shopping"
+	properties {
+	};
+	
+	
+entity "Item" {
+	field "Name" "string";
+	field "Description" "string";
+};
+
+entity "Store" {
+	field "Name" "string";
+	field "Description" "string";
+};
+
+entity "Need" {
+	field "Quantity" "decimal";
+};
+
+relationship "Need" "Item" many-to-one;

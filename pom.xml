@@ -9,6 +9,7 @@
     <version>1.0-SNAPSHOT</version>
  
     <modules>
+    <module>apps</module>
     <module>common</module>
     <module>diary7</module>
     <module>screens</module>
