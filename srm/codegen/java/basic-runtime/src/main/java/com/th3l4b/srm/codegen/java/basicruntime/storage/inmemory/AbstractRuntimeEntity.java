@@ -8,8 +8,8 @@ import com.th3l4b.srm.runtime.IRuntimeEntity;
 public abstract class AbstractRuntimeEntity<T extends IRuntimeEntity<T>>
 		implements IRuntimeEntity<T> {
 
-	protected IIdentifier _identifier = new UUIDIdentifier(clazz());
-	protected EntityStatus _status = EntityStatus.New;
+	protected IIdentifier __identifier = new UUIDIdentifier(clazz());
+	protected EntityStatus __status = EntityStatus.New;
 	private ICoordinates _coordinates;
 
 	@Override
@@ -18,23 +18,23 @@ public abstract class AbstractRuntimeEntity<T extends IRuntimeEntity<T>>
 			_coordinates = new ICoordinates() {
 				@Override
 				public IIdentifier getIdentifier() throws Exception {
-					return _identifier;
+					return __identifier;
 				}
 
 				@Override
 				public void setIdentifier(IIdentifier identifier)
 						throws Exception {
-					_identifier = identifier;
+					__identifier = identifier;
 				}
 
 				@Override
 				public EntityStatus getStatus() throws Exception {
-					return _status;
+					return __status;
 				}
 
 				@Override
 				public void setStatus(EntityStatus status) throws Exception {
-					_status = status;
+					__status = status;
 				}
 			};
 		}

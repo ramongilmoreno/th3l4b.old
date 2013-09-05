@@ -14,7 +14,7 @@ public class UpdateTool {
 			IModelUtils utils) throws Exception {
 		// Filter non updatable
 		LinkedHashMap<IIdentifier, IRuntimeEntity<?>> filtered = new LinkedHashMap<IIdentifier, IRuntimeEntity<?>>();
-		for (IRuntimeEntity<?> e : filtered.values()) {
+		for (IRuntimeEntity<?> e : entities.values()) {
 			switch (e.coordinates().getStatus()) {
 			case Deleted:
 			case Modified:

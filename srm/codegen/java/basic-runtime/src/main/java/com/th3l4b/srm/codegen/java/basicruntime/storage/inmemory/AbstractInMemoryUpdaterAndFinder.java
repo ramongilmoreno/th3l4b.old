@@ -10,8 +10,8 @@ import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.srm.runtime.IModelUtils;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
 
-public abstract class AbstractInMemoryUpdater implements IUpdateToolUpdater,
-		IUpdateToolFinder {
+public abstract class AbstractInMemoryUpdaterAndFinder implements
+		IUpdateToolUpdater, IUpdateToolFinder {
 
 	protected abstract Map<IIdentifier, IRuntimeEntity<?>> getEntities()
 			throws Exception;
@@ -43,8 +43,8 @@ public abstract class AbstractInMemoryUpdater implements IUpdateToolUpdater,
 				throw new IllegalArgumentException(
 						"Cannot update status of entity: " + status);
 			}
-			e.coordinates().setStatus(status);
-			getEntities().put(id, e);
+			r.coordinates().setStatus(status);
+			getEntities().put(id, r);
 		}
 	}
 
