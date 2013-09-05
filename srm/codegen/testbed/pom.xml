@@ -49,7 +49,7 @@
           <version>1.0-SNAPSHOT</version>
           <configuration>
               <input>src/test/srm/Input.srm</input>
-              <output>${com.th3l4b.srm.codegen.target.generated-sources.dir}/java</output>
+              <output>${com.th3l4b.srm.codegen.target.generated-sources.dir}</output>
               <package>com.th3l4b.srm.codegen.testbed.samplemodel</package>
               <overwrite>true</overwrite>
           </configuration>

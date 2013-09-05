@@ -160,6 +160,7 @@ public class AllMojo extends AbstractMojo {
 			// Produce code.
 			JavaCodeGeneratorContext javaContext = new JavaCodeGeneratorContext();
 			context.copyTo(javaContext);
+			javaContext.setOutput(new File(context.getOutput(), "java"));
 			javaContext.setJavaNames(new JavaNames());
 			javaContext.setPackage(_package);
 			JavaCodeGenerator java = new JavaCodeGenerator();
