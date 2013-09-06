@@ -31,6 +31,7 @@ public abstract class AbstractInMemoryUpdaterAndFinder implements
 			EntityStatus status = e.coordinates().getStatus();
 			switch (status) {
 			case Deleted:
+				// No change from original status
 				break;
 			case Modified:
 			case New:

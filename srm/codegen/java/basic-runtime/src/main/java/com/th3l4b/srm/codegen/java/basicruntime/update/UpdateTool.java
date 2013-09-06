@@ -9,7 +9,7 @@ import com.th3l4b.srm.runtime.IRuntimeEntity;
 
 public class UpdateTool {
 
-	public void process(Map<IIdentifier, IRuntimeEntity<?>> entities,
+	public static void process(Map<IIdentifier, IRuntimeEntity<?>> entities,
 			IUpdateToolFinder finder, IUpdateToolUpdater updater,
 			IModelUtils utils) throws Exception {
 		// Filter non updatable
