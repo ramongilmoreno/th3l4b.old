@@ -23,7 +23,7 @@ public abstract class AbstractSampleContainer<T extends IAbstractDataSupport>
 	protected T create(int i) throws Exception {
 		T r = createImpl(i);
 		r.setIdentifier("" + i);
-		r.setLabel(_name + " #" + i, null);
+		r.setLabel(_name + " #" + i);
 		return r;
 	}
 

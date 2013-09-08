@@ -6,7 +6,7 @@ import com.th3l4b.screens.base.utils.IScreensClientDescriptor;
 import com.th3l4b.screens.base.utils.IScreensConfiguration;
 import com.th3l4b.screens.testbed.shopping.data.IShoppingData;
 
-public interface IShoppingContext {
+public interface IShoppingApplicationContext {
 	IScreensConfiguration getContext () throws Exception;
 	void setContext (IScreensConfiguration context) throws Exception;
 	IScreensClientDescriptor getClient () throws Exception;

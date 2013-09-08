@@ -31,22 +31,22 @@ public class Shopping implements IScreensContants, IRenderingConstants {
 		return name("need - later - " + needId);
 	}
 
-	protected String localizedLabel(String name, IShoppingContext client) {
+	protected String localizedLabel(String name, IShoppingApplicationContext client) {
 		return name;
 	}
 
-	protected ITreeOfScreens clearRoot(String root, IShoppingContext context)
+	protected ITreeOfScreens clearRoot(String root, IShoppingApplicationContext context)
 			throws Exception {
 		return clearRoot(root, context, false);
 	}
 
-	protected IShoppingContext getContext(IScreensConfiguration context)
+	protected IShoppingApplicationContext getContext(IScreensConfiguration context)
 			throws Exception {
-		return (IShoppingContext) context.getAttributes().get(KEY);
+		return (IShoppingApplicationContext) context.getAttributes().get(KEY);
 	}
 
 	protected ITreeOfScreens clearRoot(final String root,
-			IShoppingContext context, boolean atIndex) throws Exception {
+			IShoppingApplicationContext context, boolean atIndex) throws Exception {
 		ITreeOfScreens tree = context.getContext().getTree();
 		for (String c : tree.children(root)) {
 			tree.removeScreen(c);
@@ -78,7 +78,7 @@ public class Shopping implements IScreensContants, IRenderingConstants {
 
 	}
 
-	protected void renderIndex(final String root, IShoppingContext context)
+	protected void renderIndex(final String root, IShoppingApplicationContext context)
 			throws Exception {
 		ITreeOfScreens tree = clearRoot(root, context, true);
 		{
@@ -149,7 +149,7 @@ public class Shopping implements IScreensContants, IRenderingConstants {
 	};
 
 	protected void addLaterAction(final String needName,
-			IShoppingContext context) throws Exception {
+			IShoppingApplicationContext context) throws Exception {
 		ITreeOfScreens tree = context.getContext().getTree();
 		String id = tree.getProperty(needName, KEY);
 		String name = nameOfLater(id);
@@ -176,7 +176,7 @@ public class Shopping implements IScreensContants, IRenderingConstants {
 			Boolean toggleLater) throws Exception {
 		ITreeOfScreens tree = context.getTree();
 		String id = tree.getProperty(needName, KEY);
-		IShoppingContext shoppingContext = getContext(context);
+		IShoppingApplicationContext shoppingContext = getContext(context);
 		IContainer<INeed> container = shoppingContext.getData()
 				.getNeedsContainer();
 		INeed need = container.get(id);
@@ -234,7 +234,7 @@ public class Shopping implements IScreensContants, IRenderingConstants {
 		tree.setProperty(needName, IRenderingConstants.STATUS, newStatus);
 	}
 
-	protected void renderShopping(String root, IShoppingContext context)
+	protected void renderShopping(String root, IShoppingApplicationContext context)
 			throws Exception {
 		ITreeOfScreens tree = clearRoot(root, context);
 		String itemsChild = name("Items");
@@ -252,7 +252,7 @@ public class Shopping implements IScreensContants, IRenderingConstants {
 				tree.addScreen(name, itemsChild);
 				tree.setProperty(name, ORDER_INDEX, Integer.toString(index++));
 				tree.setProperty(name, LABEL,
-						item.getLabel(context.getLocale()));
+						item.getLabel());
 				tree.setProperty(needName, KEY, need.getIdentifier());
 				tree.setProperty(needName, STATUS_ENUM_VALUE,
 						Status.normal.toString());
@@ -276,7 +276,7 @@ public class Shopping implements IScreensContants, IRenderingConstants {
 
 	}
 
-	protected boolean itemHasNeeds(String item, IShoppingContext context)
+	protected boolean itemHasNeeds(String item, IShoppingApplicationContext context)
 			throws Exception {
 		for (@SuppressWarnings("unused")
 		INeed need : context.getData().getNeedsByItem(item)) {
@@ -285,7 +285,7 @@ public class Shopping implements IScreensContants, IRenderingConstants {
 		return false;
 	}
 
-	protected void renderItems(String root, IShoppingContext context)
+	protected void renderItems(String root, IShoppingApplicationContext context)
 			throws Exception {
 		ITreeOfScreens tree = clearRoot(root, context);
 		String itemsChild = name("Items");
@@ -297,7 +297,7 @@ public class Shopping implements IScreensContants, IRenderingConstants {
 			String name = name("item - " + item.getIdentifier());
 			tree.addScreen(name, itemsChild);
 			tree.setProperty(name, ORDER_INDEX, Integer.toString(index++));
-			tree.setProperty(name, LABEL, item.getLabel(context.getLocale()));
+			tree.setProperty(name, LABEL, item.getLabel());
 			tree.setProperty(name, KEY, item.getIdentifier());
 			tree.setProperty(name, TYPE, TYPE_ACTION);
 			tree.setProperty(name, INTERACTION, "true");
@@ -313,7 +313,7 @@ public class Shopping implements IScreensContants, IRenderingConstants {
 								boolean status, IScreensConfiguration context,
 								IScreensClientDescriptor client)
 								throws Exception {
-							IShoppingContext shopping = getContext(context);
+							IShoppingApplicationContext shopping = getContext(context);
 							ITreeOfScreens tree = context.getTree();
 							IContainer<INeed> needs = shopping.getData()
 									.getNeedsContainer();
@@ -338,14 +338,14 @@ public class Shopping implements IScreensContants, IRenderingConstants {
 
 	}
 
-	private boolean itemsHasNeeds(String identifier, IShoppingContext context) {
+	private boolean itemsHasNeeds(String identifier, IShoppingApplicationContext context) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	public IScreensConfiguration sample(IScreensClientDescriptor client)
 			throws Exception {
-		IShoppingContext context = new DefaultShoppingContext();
+		IShoppingApplicationContext context = new DefaultShoppingApplicationContext();
 		LinkedHashMap<String, IInteractionListener> interactions = new LinkedHashMap<String, IInteractionListener>();
 		DefaultTreeOfScreens tree = new DefaultTreeOfScreens();
 		DefaultScreensConfiguration config = new DefaultScreensConfiguration(

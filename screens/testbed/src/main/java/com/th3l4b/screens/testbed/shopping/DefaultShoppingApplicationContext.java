@@ -6,7 +6,7 @@ import com.th3l4b.screens.base.utils.IScreensClientDescriptor;
 import com.th3l4b.screens.base.utils.IScreensConfiguration;
 import com.th3l4b.screens.testbed.shopping.data.IShoppingData;
 
-public class DefaultShoppingContext implements IShoppingContext {
+public class DefaultShoppingApplicationContext implements IShoppingApplicationContext {
 
 	private IScreensConfiguration _context;
 	private IScreensClientDescriptor _client;

@@ -1,7 +1,5 @@
 package com.th3l4b.screens.testbed.shopping.data.sample;
 
-import java.util.Locale;
-
 import com.th3l4b.screens.testbed.shopping.data.INeed;
 
 public class SampleNeed extends SampleDataSupport implements INeed {
@@ -19,12 +17,12 @@ public class SampleNeed extends SampleDataSupport implements INeed {
 	}
 
 	@Override
-	public String getLabel(Locale locale) throws Exception {
+	public String getLabel() throws Exception {
 		return "USE ITEM'S LABEL";
 	}
 
 	@Override
-	public void setLabel(String label, Locale locale) throws Exception {
+	public void setLabel(String label) throws Exception {
 	}
 
 	@Override
