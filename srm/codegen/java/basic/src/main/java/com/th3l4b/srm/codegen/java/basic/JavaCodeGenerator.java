@@ -2,6 +2,7 @@ package com.th3l4b.srm.codegen.java.basic;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Map;
 
 import com.th3l4b.common.text.AbstractPrintable;
 import com.th3l4b.common.text.IndentedWriter;
@@ -11,12 +12,15 @@ import com.th3l4b.srm.base.normalized.INormalizedEntity;
 import com.th3l4b.srm.base.normalized.INormalizedManyToOneRelationship;
 import com.th3l4b.srm.base.normalized.INormalizedModel;
 import com.th3l4b.srm.codegen.base.FileUtils;
+import com.th3l4b.srm.codegen.java.basicruntime.ISRMContext;
 import com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory.AbstractInMemoryFinder;
+import com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory.AbstractInMemorySRMContext;
 import com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory.AbstractModelUtils;
 import com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory.AbstractPredicateOfRelationship;
 import com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory.AbstractRuntimeEntity;
 import com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory.Pair;
 import com.th3l4b.srm.runtime.IIdentifier;
+import com.th3l4b.srm.runtime.IModelUtils;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
 import com.th3l4b.types.base.ITypesConstants;
 
@@ -436,6 +440,75 @@ public class JavaCodeGenerator {
 						+ "<T>> extends " + IRuntimeEntity.class.getName()
 						+ "<T> {");
 				out.println("}");
+			}
+		});
+	}
+
+	public void context(final INormalizedModel model,
+			final JavaCodeGeneratorContext context) throws Exception {
+		final JavaNames javaNames = context.getJavaNames();
+		final String clazz = javaNames.context(model);
+		final String pkg = context.getPackage();
+		FileUtils.java(context, pkg, clazz, new AbstractPrintable() {
+			@Override
+			protected void printWithException(PrintWriter out) throws Exception {
+				out.println("package " + pkg + ";");
+				out.println();
+				out.println("public interface " + clazz + " extends "
+						+ ISRMContext.class.getName() + "<"
+						+ javaNames.fqn(javaNames.finder(model), context)
+						+ "> {");
+				out.println("}");
+			}
+		});
+	}
+
+	public void abstractInMemoryContext(final INormalizedModel model,
+			final JavaCodeGeneratorContext context) throws Exception {
+		final JavaNames javaNames = context.getJavaNames();
+		final String clazz = javaNames.abstractInMemoryContext(model);
+		final String pkg = javaNames.packageForImpl(context);
+		FileUtils.java(context, pkg, clazz, new AbstractPrintable() {
+			@Override
+			protected void printWithException(PrintWriter out) throws Exception {
+				out.println("package " + pkg + ";");
+				out.println();
+				String finderClass = javaNames.fqn(javaNames.finder(model),
+						context);
+				out.println("public abstract class " + clazz + " extends "
+						+ AbstractInMemorySRMContext.class.getName() + "<"
+						+ finderClass + "> implements "
+						+ javaNames.fqn(javaNames.context(model), context)
+						+ " {");
+				PrintWriter iout = IndentedWriter.get(out);
+				PrintWriter iiout = IndentedWriter.get(iout);
+				PrintWriter iiiout = IndentedWriter.get(iiout);
+				PrintWriter iiiiout = IndentedWriter.get(iiiout);
+				iout.println("protected " + IModelUtils.class.getName()
+						+ " createUtils() throws Exception {");
+				iiout.println("return new "
+						+ javaNames.fqnImpl(javaNames.modelUtils(model),
+								context) + "();");
+				iout.println("}");
+				out.println();
+
+				iout.println("protected " + finderClass
+						+ " createFinder() throws Exception {");
+				iiout.println("return new "
+						+ javaNames.fqnImpl(javaNames.finderInMemory(model),
+								context) + "() {");
+				iiiout.println("protected " + Map.class.getName() + "<"
+						+ IIdentifier.class.getName() + ", "
+						+ IRuntimeEntity.class.getName()
+						+ "<?>> getEntities() throws Exception {");
+				iiiiout.println("return " + clazz + ".this.getEntities();");
+				iiiout.println("}");
+				iiout.println("};");
+				iout.println("}");
+				out.println("}");
+
+				iiout.flush();
+				iout.flush();
 			}
 		});
 	}

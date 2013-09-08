@@ -184,6 +184,22 @@ public class AllMojo extends AbstractMojo {
 			java.modelUtils(normalized, javaContext);
 			javaContext.getLog().message(
 					TextUtils.toPrintable("Model utils finished."));
+			javaContext.getLog().message(
+					TextUtils.toPrintable("Producing context interface..."));
+			java.context(normalized, javaContext);
+			javaContext.getLog().message(
+					TextUtils.toPrintable("Context interface finished."));
+			javaContext
+					.getLog()
+					.message(
+							TextUtils
+									.toPrintable("Producing abstract in memory context..."));
+			java.abstractInMemoryContext(normalized, javaContext);
+			javaContext
+					.getLog()
+					.message(
+							TextUtils
+									.toPrintable("Abstract in memory context finished."));
 
 		} catch (Exception e) {
 			throw new MojoExecutionException("Could not generate code", e);

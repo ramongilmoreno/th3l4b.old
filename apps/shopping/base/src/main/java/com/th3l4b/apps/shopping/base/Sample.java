@@ -5,43 +5,18 @@ import java.util.Map;
 
 import com.th3l4b.apps.shopping.base.codegen.srm.IItem;
 import com.th3l4b.apps.shopping.base.codegen.srm.INeed;
-import com.th3l4b.apps.shopping.base.codegen.srm.IShoppingFinder;
+import com.th3l4b.apps.shopping.base.codegen.srm.IShoppingContext;
 import com.th3l4b.apps.shopping.base.codegen.srm.IStore;
-import com.th3l4b.apps.shopping.base.codegen.srm.basicruntime.AbstractShoppingInMemoryFinder;
-import com.th3l4b.apps.shopping.base.codegen.srm.basicruntime.ShoppingModelUtils;
-import com.th3l4b.srm.codegen.java.basicruntime.ISRMContext;
-import com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory.AbstractInMemorySRMContext;
+import com.th3l4b.apps.shopping.base.codegen.srm.basicruntime.AbstractShoppingContext;
 import com.th3l4b.srm.runtime.IIdentifier;
-import com.th3l4b.srm.runtime.IModelUtils;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
 
 public class Sample {
 
-	public static abstract class AbstractSampleContext extends
-			AbstractInMemorySRMContext<IShoppingFinder> {
-
-		@Override
-		protected IModelUtils createUtils() throws Exception {
-			return new ShoppingModelUtils();
-		}
-
-		@Override
-		protected IShoppingFinder createFinder() throws Exception {
-			return new AbstractShoppingInMemoryFinder() {
-				@Override
-				protected Map<IIdentifier, IRuntimeEntity<?>> getEntities()
-						throws Exception {
-					return AbstractSampleContext.this.getEntities();
-				}
-			};
-		}
-
-	}
-
 	public static Map<IIdentifier, IRuntimeEntity<?>> getEntities()
 			throws Exception {
 		final LinkedHashMap<IIdentifier, IRuntimeEntity<?>> r = new LinkedHashMap<IIdentifier, IRuntimeEntity<?>>();
-		ISRMContext<IShoppingFinder> context = new AbstractSampleContext() {
+		IShoppingContext context = new AbstractShoppingContext() {
 			@Override
 			protected Map<IIdentifier, IRuntimeEntity<?>> getEntities()
 					throws Exception {
