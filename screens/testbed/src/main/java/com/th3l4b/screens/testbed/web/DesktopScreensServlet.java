@@ -5,10 +5,10 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.th3l4b.apps.shopping.base.Shopping;
 import com.th3l4b.screens.base.AbstractScreensServlet;
 import com.th3l4b.screens.base.IWebScreensClientDescriptor;
 import com.th3l4b.screens.base.utils.IScreensConfiguration;
-import com.th3l4b.screens.testbed.shopping.Shopping;
 
 @SuppressWarnings("serial")
 public class DesktopScreensServlet extends AbstractScreensServlet {

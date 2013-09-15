@@ -11,7 +11,7 @@ import com.th3l4b.apps.shopping.base.codegen.srm.basicruntime.AbstractShoppingCo
 import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
 
-public class Sample {
+public class ShoppingSample {
 
 	public static IShoppingContext getSampleContext()
 			throws Exception {
@@ -55,6 +55,6 @@ public class Sample {
 	}
 
 	public static void main(String[] args) throws Exception {
-		System.out.println(Sample.getSampleContext());
+		System.out.println(ShoppingSample.getSampleContext());
 	}
 }

@@ -1,4 +1,4 @@
-package com.th3l4b.screens.testbed.shopping;
+package com.th3l4b.apps.shopping.base;
 
 import java.util.Locale;
 
@@ -6,7 +6,7 @@ import com.th3l4b.apps.shopping.base.codegen.srm.IShoppingContext;
 import com.th3l4b.screens.base.utils.IScreensClientDescriptor;
 import com.th3l4b.screens.base.utils.IScreensConfiguration;
 
-public class DefaultShoppingApplicationContext implements IShoppingApplicationContext {
+public class DefaultShoppingApplication implements IShoppingApplication {
 
 	private IScreensConfiguration _context;
 	private IScreensClientDescriptor _client;
@@ -14,7 +14,7 @@ public class DefaultShoppingApplicationContext implements IShoppingApplicationCo
 	private Locale _locale;
 
 	@Override
-	public IScreensConfiguration getContext() throws Exception {
+	public IScreensConfiguration getScreens() throws Exception {
 		return _context;
 	}
 

@@ -1,4 +1,4 @@
-package com.th3l4b.screens.testbed.shopping;
+package com.th3l4b.apps.shopping.base;
 
 import java.util.Locale;
 
@@ -6,8 +6,8 @@ import com.th3l4b.apps.shopping.base.codegen.srm.IShoppingContext;
 import com.th3l4b.screens.base.utils.IScreensClientDescriptor;
 import com.th3l4b.screens.base.utils.IScreensConfiguration;
 
-public interface IShoppingApplicationContext {
-	IScreensConfiguration getContext () throws Exception;
+public interface IShoppingApplication {
+	IScreensConfiguration getScreens () throws Exception;
 	void setContext (IScreensConfiguration context) throws Exception;
 	IScreensClientDescriptor getClient () throws Exception;
 	void setClient (IScreensClientDescriptor client) throws Exception;

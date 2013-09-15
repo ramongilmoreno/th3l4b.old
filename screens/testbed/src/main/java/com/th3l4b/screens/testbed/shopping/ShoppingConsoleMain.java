@@ -5,6 +5,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import com.th3l4b.apps.shopping.base.Shopping;
 import com.th3l4b.screens.base.IScreensContants;
 import com.th3l4b.screens.base.utils.IScreensConfiguration;
 import com.th3l4b.screens.console.ConsoleFacade;
@@ -12,7 +13,7 @@ import com.th3l4b.screens.console.DefaultCommandsInput;
 import com.th3l4b.screens.console.DefaultConsoleScreensClientDescriptor;
 import com.th3l4b.screens.console.IConsoleScreensClientDescriptor;
 
-public class SampleMain {
+public class ShoppingConsoleMain {
 	public static void main(String[] args) throws Exception {
 		IConsoleScreensClientDescriptor client = new DefaultConsoleScreensClientDescriptor();
 		ArrayList<Locale> locales = new ArrayList<Locale>();
