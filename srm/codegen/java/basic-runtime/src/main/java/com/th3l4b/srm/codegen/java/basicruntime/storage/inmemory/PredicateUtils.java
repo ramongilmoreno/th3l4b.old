@@ -2,11 +2,36 @@ package com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory;
 
 import java.util.Iterator;
 
+import com.th3l4b.srm.runtime.EntityStatus;
+import com.th3l4b.srm.runtime.IRuntimeEntity;
+
 public class PredicateUtils {
 
-	public static <S, R> Iterator<R> filter(
-			final Iterator<S> iterator, final IPredicate<R> filter)
-			throws Exception {
+	public static <S, R extends IRuntimeEntity<?>> Iterator<R> filterPersistedOnly(
+			Iterator<S> iterator, final IPredicate<R> filter) throws Exception {
+		final IPredicate<R> p = new IPredicate<R>() {
+			@Override
+			public boolean accept(R arg) throws Exception {
+				if (arg.coordinates().getStatus() == EntityStatus.Persisted) {
+					return filter.accept(arg);
+				} else {
+					return false;
+				}
+			}
+
+			@Override
+			public Class<R> clazz() throws Exception {
+				return filter.clazz();
+			}
+
+		};
+
+		return filter(iterator, p);
+
+	}
+
+	public static <S, R> Iterator<R> filter(final Iterator<S> iterator,
+			final IPredicate<R> filter) throws Exception {
 		return new Iterator<R>() {
 
 			int _next = 0;

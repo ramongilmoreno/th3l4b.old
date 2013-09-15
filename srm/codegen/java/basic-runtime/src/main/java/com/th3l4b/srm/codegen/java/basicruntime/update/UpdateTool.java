@@ -31,7 +31,7 @@ public class UpdateTool {
 		}
 
 		// Get the originals
-		Map<IIdentifier, IRuntimeEntity<?>> originals = finder.find(entities,
+		Map<IIdentifier, IRuntimeEntity<?>> originals = finder.find(filtered,
 				utils);
 
 		// Proceed with the update

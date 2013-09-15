@@ -1,4 +1,4 @@
-package com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory;
+package com.th3l4b.srm.codegen.java.basicruntime;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -9,6 +9,10 @@ import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.srm.runtime.IModelUtils;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
 
+/**
+ * An {@link IModelUtils} implementation built around the {@link UUIDIdentifier}
+ * class for identifiers.
+ */
 public abstract class AbstractModelUtils implements IModelUtils {
 
 	protected interface Creator {
@@ -53,6 +57,16 @@ public abstract class AbstractModelUtils implements IModelUtils {
 		return UUIDIdentifier.eq((UUIDIdentifier) a, (UUIDIdentifier) b);
 	}
 
+	@Override
+	public String identifierToString(IIdentifier id) throws Exception {
+		return UUIDIdentifier.toString((UUIDIdentifier) id);
+	}
+
+	@Override
+	public IIdentifier identifierFromString(String id) throws Exception {
+		return new UUIDIdentifier(id, whichClassLoader());
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends IRuntimeEntity<?>> T create(Class<T> clazz)
@@ -66,9 +80,24 @@ public abstract class AbstractModelUtils implements IModelUtils {
 	}
 
 	@Override
-	public <T extends IRuntimeEntity<?>> void copy(Object source,
-			Object target, Class<T> clazz) throws Exception {
+	public <T extends IRuntimeEntity<?>> void copy(IRuntimeEntity<?> source,
+			IRuntimeEntity<?> target, Class<T> clazz) throws Exception {
 		_copiers.get(clazz.getName()).copy(source, target);
+		target.coordinates()
+				.setIdentifier(source.coordinates().getIdentifier());
+		target.coordinates().setStatus(source.coordinates().getStatus());
+	}
+
+	/**
+	 * This utility allows specifying different class loaders. This default
+	 * implementation class {@link #getClass()} then
+	 * {@link Class#getClassLoader()}. Usually this implementation get an
+	 * appropriate class loader from the non abstract class that instantiates
+	 * this object, but in the case this is not enough, this method allows
+	 * overriding that behavior.
+	 */
+	protected ClassLoader whichClassLoader() throws Exception {
+		return getClass().getClassLoader();
 	}
 
 	@Override

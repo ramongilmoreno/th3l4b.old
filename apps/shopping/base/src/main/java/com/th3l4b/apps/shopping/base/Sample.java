@@ -13,7 +13,7 @@ import com.th3l4b.srm.runtime.IRuntimeEntity;
 
 public class Sample {
 
-	public static Map<IIdentifier, IRuntimeEntity<?>> getEntities()
+	public static IShoppingContext getSampleContext()
 			throws Exception {
 		final LinkedHashMap<IIdentifier, IRuntimeEntity<?>> r = new LinkedHashMap<IIdentifier, IRuntimeEntity<?>>();
 		IShoppingContext context = new AbstractShoppingContext() {
@@ -51,10 +51,10 @@ public class Sample {
 		}
 
 		context.update(updates);
-		return r;
+		return context;
 	}
 
 	public static void main(String[] args) throws Exception {
-		System.out.println(Sample.getEntities());
+		System.out.println(Sample.getSampleContext());
 	}
 }

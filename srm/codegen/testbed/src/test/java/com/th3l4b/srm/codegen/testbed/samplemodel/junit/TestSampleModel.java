@@ -11,6 +11,7 @@ import com.th3l4b.srm.codegen.testbed.samplemodel.IDepartment;
 import com.th3l4b.srm.codegen.testbed.samplemodel.IOfficeFinder;
 import com.th3l4b.srm.codegen.testbed.samplemodel.basicruntime.AbstractOfficeInMemoryFinder;
 import com.th3l4b.srm.codegen.testbed.samplemodel.basicruntime.OfficeModelUtils;
+import com.th3l4b.srm.runtime.EntityStatus;
 import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
 
@@ -25,13 +26,17 @@ public class TestSampleModel {
 	@Test
 	public void test() throws Exception {
 		final LinkedHashMap<IIdentifier, IRuntimeEntity<?>> map = new LinkedHashMap<IIdentifier, IRuntimeEntity<?>>();
+		
 		OfficeModelUtils utils = new OfficeModelUtils();
 		IDepartment dept1 = put(utils.create(IDepartment.class), map);
+		dept1.coordinates().setStatus(EntityStatus.Persisted);
 		dept1.setName("Department #1");
 		IDepartment dept2 = put(utils.create(IDepartment.class), map);
+		dept2.coordinates().setStatus(EntityStatus.Persisted);
 		dept2.setName("Department #2");
 		dept2.setParent(dept1);
 		IDepartment dept3 = put(utils.create(IDepartment.class), map);
+		dept3.coordinates().setStatus(EntityStatus.Persisted);
 		dept3.setName("Department #3");
 		dept3.setParent(dept1);
 		IOfficeFinder finder = new AbstractOfficeInMemoryFinder() {

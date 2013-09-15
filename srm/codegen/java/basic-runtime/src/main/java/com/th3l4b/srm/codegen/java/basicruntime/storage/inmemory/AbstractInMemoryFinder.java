@@ -34,8 +34,8 @@ public abstract class AbstractInMemoryFinder {
 			@Override
 			public Iterator<R> iterator() {
 				try {
-					return PredicateUtils.filter(getEntities().values()
-							.iterator(), p);
+					return PredicateUtils.filterPersistedOnly(getEntities()
+							.values().iterator(), p);
 				} catch (Exception e) {
 					throw new RuntimeException(e);
 				}
@@ -65,8 +65,8 @@ public abstract class AbstractInMemoryFinder {
 			@Override
 			public Iterator<T> iterator() {
 				try {
-					return PredicateUtils.filter(getEntities().values()
-							.iterator(), new IPredicate<T>() {
+					return PredicateUtils.filterPersistedOnly(getEntities()
+							.values().iterator(), new IPredicate<T>() {
 						@Override
 						public boolean accept(T arg) throws Exception {
 							return true;

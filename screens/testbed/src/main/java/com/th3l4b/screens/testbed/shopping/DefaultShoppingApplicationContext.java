@@ -2,15 +2,15 @@ package com.th3l4b.screens.testbed.shopping;
 
 import java.util.Locale;
 
+import com.th3l4b.apps.shopping.base.codegen.srm.IShoppingContext;
 import com.th3l4b.screens.base.utils.IScreensClientDescriptor;
 import com.th3l4b.screens.base.utils.IScreensConfiguration;
-import com.th3l4b.screens.testbed.shopping.data.IShoppingData;
 
 public class DefaultShoppingApplicationContext implements IShoppingApplicationContext {
 
 	private IScreensConfiguration _context;
 	private IScreensClientDescriptor _client;
-	private IShoppingData _data;
+	private IShoppingContext _data;
 	private Locale _locale;
 
 	@Override
@@ -35,13 +35,13 @@ public class DefaultShoppingApplicationContext implements IShoppingApplicationCo
 	}
 
 	@Override
-	public IShoppingData getData() throws Exception {
+	public IShoppingContext getData() throws Exception {
 		return _data;
 	}
 
 	@Override
-	public void setData(IShoppingData data) throws Exception {
-		_data = data;
+	public void setData(IShoppingContext context) throws Exception {
+		_data = context;
 	}
 
 	@Override

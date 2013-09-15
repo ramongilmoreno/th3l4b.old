@@ -1,5 +1,6 @@
 package com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory;
 
+import com.th3l4b.srm.codegen.java.basicruntime.AbstractModelUtils;
 import com.th3l4b.srm.runtime.IIdentifier;
 
 public abstract class AbstractPredicateOfRelationship<R, S> {

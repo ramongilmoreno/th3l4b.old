@@ -1,9 +1,12 @@
-package com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory;
+package com.th3l4b.srm.codegen.java.basicruntime;
 
 import java.util.UUID;
 
 import com.th3l4b.srm.runtime.IIdentifier;
 
+/**
+ * Sample UUID implementation which also keeps track of the a class of an item.
+ */
 public class UUIDIdentifier implements IIdentifier {
 
 	private Class<?> _clazz;
@@ -17,6 +20,14 @@ public class UUIDIdentifier implements IIdentifier {
 
 	public UUIDIdentifier(Class<?> clazz, long msb, long lsb) {
 		init(clazz, msb, lsb);
+	}
+
+	public UUIDIdentifier(String s, ClassLoader loader)
+			throws NumberFormatException, ClassNotFoundException {
+		String[] split = s.split(" ");
+		init(loader.loadClass(split[0]),
+				Long.parseLong(split[1], Character.MAX_RADIX),
+				Long.parseLong(split[2], Character.MAX_RADIX));
 	}
 
 	private void init(Class<?> clazz, long msb, long lsb) {
@@ -46,7 +57,18 @@ public class UUIDIdentifier implements IIdentifier {
 
 	@Override
 	public String toString() {
-		return _clazz.getSimpleName() + " - " + new UUID(_msb, _lsb).toString();
+		return toString(this);
+	}
+
+	/**
+	 * Returns an string suitable of being used by the
+	 * {@link #UUIDIdentifier(String, ClassLoader)} constructor.
+	 */
+	public static String toString(UUIDIdentifier i) {
+		return i._clazz.getName() + " "
+				+ Long.toString(i._msb, Character.MAX_RADIX) + " "
+				+ Long.toString(i._lsb, Character.MAX_RADIX);
+
 	}
 
 	protected static boolean eq(UUIDIdentifier a, UUIDIdentifier b) {

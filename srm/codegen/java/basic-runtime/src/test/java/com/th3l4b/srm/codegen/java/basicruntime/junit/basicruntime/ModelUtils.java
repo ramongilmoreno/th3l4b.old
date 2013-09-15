@@ -1,7 +1,7 @@
 package com.th3l4b.srm.codegen.java.basicruntime.junit.basicruntime;
 
+import com.th3l4b.srm.codegen.java.basicruntime.AbstractModelUtils;
 import com.th3l4b.srm.codegen.java.basicruntime.junit.IEntityA;
-import com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory.AbstractModelUtils;
 
 public class ModelUtils extends AbstractModelUtils {
 

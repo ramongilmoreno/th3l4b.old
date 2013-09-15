@@ -45,9 +45,13 @@ public class JavaNames {
 	}
 
 	public String name(INormalizedEntity entity) throws Exception {
-		return "I" + valueOrProperty(javaIdentifier(entity.getName()), entity);
+		return valueOrProperty(javaIdentifier(entity.getName()), entity);
 	}
 
+	public String nameInterface(INormalizedEntity entity) throws Exception {
+		return "I" + name(entity);
+	}
+	
 	public String nameImpl(INormalizedEntity entity) throws Exception {
 		return "Default"
 				+ valueOrProperty(javaIdentifier(entity.getName()), entity);

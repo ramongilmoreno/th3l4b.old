@@ -3,6 +3,10 @@ package com.th3l4b.screens.testbed.shopping;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 
+import com.th3l4b.apps.shopping.base.Sample;
+import com.th3l4b.apps.shopping.base.codegen.srm.IItem;
+import com.th3l4b.apps.shopping.base.codegen.srm.INeed;
+import com.th3l4b.apps.shopping.base.codegen.srm.IShoppingEntity;
 import com.th3l4b.common.data.nullsafe.NullSafe;
 import com.th3l4b.screens.base.IRenderingConstants;
 import com.th3l4b.screens.base.IScreensContants;
@@ -13,10 +17,9 @@ import com.th3l4b.screens.base.utils.DefaultScreensConfiguration;
 import com.th3l4b.screens.base.utils.DefaultTreeOfScreens;
 import com.th3l4b.screens.base.utils.IScreensClientDescriptor;
 import com.th3l4b.screens.base.utils.IScreensConfiguration;
-import com.th3l4b.screens.testbed.shopping.data.IContainer;
-import com.th3l4b.screens.testbed.shopping.data.IItem;
-import com.th3l4b.screens.testbed.shopping.data.INeed;
-import com.th3l4b.screens.testbed.shopping.data.sample.SampleShoppingData;
+import com.th3l4b.srm.runtime.EntityStatus;
+import com.th3l4b.srm.runtime.IIdentifier;
+import com.th3l4b.srm.runtime.IRuntimeEntity;
 
 public class Shopping implements IScreensContants, IRenderingConstants {
 
@@ -31,22 +34,24 @@ public class Shopping implements IScreensContants, IRenderingConstants {
 		return name("need - later - " + needId);
 	}
 
-	protected String localizedLabel(String name, IShoppingApplicationContext client) {
+	protected String localizedLabel(String name,
+			IShoppingApplicationContext client) {
 		return name;
 	}
 
-	protected ITreeOfScreens clearRoot(String root, IShoppingApplicationContext context)
-			throws Exception {
+	protected ITreeOfScreens clearRoot(String root,
+			IShoppingApplicationContext context) throws Exception {
 		return clearRoot(root, context, false);
 	}
 
-	protected IShoppingApplicationContext getContext(IScreensConfiguration context)
-			throws Exception {
+	protected IShoppingApplicationContext getContext(
+			IScreensConfiguration context) throws Exception {
 		return (IShoppingApplicationContext) context.getAttributes().get(KEY);
 	}
 
 	protected ITreeOfScreens clearRoot(final String root,
-			IShoppingApplicationContext context, boolean atIndex) throws Exception {
+			IShoppingApplicationContext context, boolean atIndex)
+			throws Exception {
 		ITreeOfScreens tree = context.getContext().getTree();
 		for (String c : tree.children(root)) {
 			tree.removeScreen(c);
@@ -78,8 +83,8 @@ public class Shopping implements IScreensContants, IRenderingConstants {
 
 	}
 
-	protected void renderIndex(final String root, IShoppingApplicationContext context)
-			throws Exception {
+	protected void renderIndex(final String root,
+			IShoppingApplicationContext context) throws Exception {
 		ITreeOfScreens tree = clearRoot(root, context, true);
 		{
 			String text = "Start shopping";
@@ -171,32 +176,56 @@ public class Shopping implements IScreensContants, IRenderingConstants {
 
 	}
 
+	protected IIdentifier getIdentifierFromString(String id,
+			IShoppingApplicationContext context) throws Exception {
+		return context.getData().getUtils().identifierFromString(id);
+	}
+
+	protected String getStringFromIdentifier(IShoppingEntity<?> entity,
+			IShoppingApplicationContext context) throws Exception {
+		return context.getData().getUtils()
+				.identifierToString(entity.coordinates().getIdentifier());
+	}
+
 	protected void updateNeed(String needName, IScreensConfiguration context,
 			IScreensClientDescriptor client, Boolean toggleMarked,
 			Boolean toggleLater) throws Exception {
 		ITreeOfScreens tree = context.getTree();
-		String id = tree.getProperty(needName, KEY);
 		IShoppingApplicationContext shoppingContext = getContext(context);
-		IContainer<INeed> container = shoppingContext.getData()
-				.getNeedsContainer();
-		INeed need = container.get(id);
+		String idAsString = tree.getProperty(needName, KEY);
+		IIdentifier id = getIdentifierFromString(idAsString, shoppingContext);
 		Status status = Status.valueOf(tree.getProperty(needName,
 				STATUS_ENUM_VALUE));
-
 		if (NullSafe.equals(toggleMarked, Boolean.TRUE)) {
 			// Toggle marked
+			LinkedHashMap<IIdentifier, IRuntimeEntity<?>> updates = new LinkedHashMap<IIdentifier, IRuntimeEntity<?>>();
 			switch (status) {
 			case later:
 			case normal:
 				status = Status.marked;
-				container.remove(need);
-				tree.removeScreen(nameOfLater(id));
+				{
+					INeed remove = shoppingContext.getData().getUtils()
+							.create(INeed.class);
+					remove.coordinates().setIdentifier(id);
+					remove.coordinates().setStatus(EntityStatus.Deleted);
+					updates.put(id, remove);
+				}
+				tree.removeScreen(nameOfLater(idAsString));
 				break;
 			case marked:
 				status = Status.normal;
-				container.restore(need);
+				{
+					INeed remove = shoppingContext.getData().getUtils()
+							.create(INeed.class);
+					remove.coordinates().setIdentifier(id);
+					remove.coordinates().setStatus(EntityStatus.Modified);
+					updates.put(id, remove);
+				}
 				addLaterAction(needName, shoppingContext);
 				break;
+			}
+			if (!updates.isEmpty()) {
+				shoppingContext.getData().update(updates);
 			}
 		} else {
 			// Toggle later
@@ -234,8 +263,8 @@ public class Shopping implements IScreensContants, IRenderingConstants {
 		tree.setProperty(needName, IRenderingConstants.STATUS, newStatus);
 	}
 
-	protected void renderShopping(String root, IShoppingApplicationContext context)
-			throws Exception {
+	protected void renderShopping(String root,
+			IShoppingApplicationContext context) throws Exception {
 		ITreeOfScreens tree = clearRoot(root, context);
 		String itemsChild = name("Items");
 		tree.addScreen(itemsChild, root);
@@ -243,17 +272,16 @@ public class Shopping implements IScreensContants, IRenderingConstants {
 
 		// Render items
 		int index = 0;
-		for (INeed need : context.getData().getNeedsContainer().all()) {
-			final String needName = name("need of - " + need.getIdentifier());
+		for (INeed need : context.getData().getFinder().allNeed()) {
+			String id = getStringFromIdentifier(need, context);
+			final String needName = name("need of - " + id);
 			{
-				IItem item = context.getData().getItemsContainer()
-						.get(need.getIdentifier());
+				IItem item = need.getItem(context.getData().getFinder());
 				String name = needName;
 				tree.addScreen(name, itemsChild);
 				tree.setProperty(name, ORDER_INDEX, Integer.toString(index++));
-				tree.setProperty(name, LABEL,
-						item.getLabel());
-				tree.setProperty(needName, KEY, need.getIdentifier());
+				tree.setProperty(name, LABEL, item.getName());
+				tree.setProperty(needName, KEY, id);
 				tree.setProperty(needName, STATUS_ENUM_VALUE,
 						Status.normal.toString());
 				tree.setProperty(name, TYPE, TYPE_ACTION);
@@ -276,15 +304,6 @@ public class Shopping implements IScreensContants, IRenderingConstants {
 
 	}
 
-	protected boolean itemHasNeeds(String item, IShoppingApplicationContext context)
-			throws Exception {
-		for (@SuppressWarnings("unused")
-		INeed need : context.getData().getNeedsByItem(item)) {
-			return true;
-		}
-		return false;
-	}
-
 	protected void renderItems(String root, IShoppingApplicationContext context)
 			throws Exception {
 		ITreeOfScreens tree = clearRoot(root, context);
@@ -293,16 +312,18 @@ public class Shopping implements IScreensContants, IRenderingConstants {
 		tree.setProperty(itemsChild, ORDER_INDEX, "0");
 
 		int index = 0;
-		for (IItem item : context.getData().getItemsContainer().all()) {
-			String name = name("item - " + item.getIdentifier());
+		for (IItem item : context.getData().getFinder().allItem()) {
+			String idAsString = getStringFromIdentifier(item, context);
+			String name = name("item - " + idAsString);
 			tree.addScreen(name, itemsChild);
 			tree.setProperty(name, ORDER_INDEX, Integer.toString(index++));
-			tree.setProperty(name, LABEL, item.getLabel());
-			tree.setProperty(name, KEY, item.getIdentifier());
+			tree.setProperty(name, LABEL, item.getName());
+			tree.setProperty(name, KEY, idAsString);
 			tree.setProperty(name, TYPE, TYPE_ACTION);
 			tree.setProperty(name, INTERACTION, "true");
 			tree.setProperty(name, INTERACTION_JAVA, name);
-			boolean hasNeeds = itemsHasNeeds(item.getIdentifier(), context);
+			boolean hasNeeds = itemsHasNeeds(
+					item.coordinates().getIdentifier(), context);
 			AbstractToggleInteractionListener.setStatus(tree, name, hasNeeds);
 			tree.setProperty(name, TONE, hasNeeds ? TONE_VALUE_STRONG
 					: TONE_VALUE_NORMAL);
@@ -315,19 +336,29 @@ public class Shopping implements IScreensContants, IRenderingConstants {
 								throws Exception {
 							IShoppingApplicationContext shopping = getContext(context);
 							ITreeOfScreens tree = context.getTree();
-							IContainer<INeed> needs = shopping.getData()
-									.getNeedsContainer();
-							String item = tree.getProperty(screen, KEY);
-							// Clean needs.
-							for (INeed need : shopping.getData()
-									.getNeedsByItem(item)) {
-								needs.remove(need);
+							String itemAsString = tree.getProperty(screen, KEY);
+							IIdentifier itemAsId = getIdentifierFromString(
+									itemAsString, shopping);
 
+							// Clean needs.
+							LinkedHashMap<IIdentifier, IRuntimeEntity<?>> updates = new LinkedHashMap<IIdentifier, IRuntimeEntity<?>>();
+							for (INeed need : shopping.getData().getFinder()
+									.findAllNeedFromIItem(itemAsId)) {
+								need.coordinates().setStatus(
+										EntityStatus.Deleted);
+								updates.put(need.coordinates().getIdentifier(),
+										need);
 							}
 							// Create it if selected.
 							if (status) {
-								INeed created = needs.create();
-								created.setItem(item);
+								INeed need = shopping.getData().getUtils()
+										.create(INeed.class);
+								need.setItem(itemAsId);
+								updates.put(need.coordinates().getIdentifier(),
+										need);
+							}
+							if (!updates.isEmpty()) {
+								shopping.getData().update(updates);
 							}
 							tree.setProperty(screen, TONE,
 									status ? TONE_VALUE_STRONG
@@ -338,9 +369,10 @@ public class Shopping implements IScreensContants, IRenderingConstants {
 
 	}
 
-	private boolean itemsHasNeeds(String identifier, IShoppingApplicationContext context) {
-		// TODO Auto-generated method stub
-		return false;
+	private boolean itemsHasNeeds(IIdentifier identifier,
+			IShoppingApplicationContext context) throws Exception {
+		return context.getData().getFinder().findAllNeedFromIItem(identifier)
+				.iterator().hasNext();
 	}
 
 	public IScreensConfiguration sample(IScreensClientDescriptor client)
@@ -352,7 +384,7 @@ public class Shopping implements IScreensContants, IRenderingConstants {
 				tree, interactions);
 		context.setClient(client);
 		context.setContext(config);
-		context.setData(new SampleShoppingData());
+		context.setData(Sample.getSampleContext());
 		context.setLocale(Locale.getDefault());
 		context.getContext().getAttributes().put(KEY, context);
 		String root = name("Root");
