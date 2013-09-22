@@ -1,4 +1,4 @@
-package com.th3l4b.android.helloworld;
+package com.th3l4b.android.testbed;
 
 import java.util.Date;
 
@@ -15,7 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-public class TextFieldAndButton extends Activity {
+public class Testbed extends Activity {
 
 	private int _count;
 	private LinearLayout _main;
@@ -39,7 +39,7 @@ public class TextFieldAndButton extends Activity {
 		_main.setOrientation(LinearLayout.VERTICAL);
 
 		TextView text = new TextView(this);
-		text.setText("Hello Text!");
+		text.setText(com.th3l4b.android.screens.Main.TEST);
 		_main.addView(text);
 
 		EditText field = new EditText(this);
@@ -48,7 +48,7 @@ public class TextFieldAndButton extends Activity {
 		field.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 			@Override
 			public boolean onEditorAction(TextView arg0, int arg1, KeyEvent arg2) {
-				TextView text = new TextView(TextFieldAndButton.this);
+				TextView text = new TextView(Testbed.this);
 				text.setText(Integer.toString(_count++) + " Input: "
 						+ arg0.getText());
 				_main.addView(text);
@@ -60,7 +60,7 @@ public class TextFieldAndButton extends Activity {
 		 *
 		 * @Override public void onTextChanged(CharSequence arg0, int arg1, int
 		 * arg2, int arg3) { TextView text = new
-		 * TextView(TextFieldAndButton.this);
+		 * TextView(Testbed.this);
 		 * text.setText(Integer.toString(_count++) + " Input: " + arg0);
 		 * _main.addView(text); }
 		 *
@@ -77,7 +77,7 @@ public class TextFieldAndButton extends Activity {
 
 			@Override
 			public void onClick(View arg0) {
-				TextView text = new TextView(TextFieldAndButton.this);
+				TextView text = new TextView(Testbed.this);
 				text.setText(Integer.toString(_count++) + " Click: "
 						+ new Date());
 				_main.addView(text);
