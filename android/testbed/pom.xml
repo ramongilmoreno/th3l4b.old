@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.th3lab.android</groupId>
+    <groupId>com.th3l4b.android</groupId>
     <artifactId>testbed</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>apk</packaging>
@@ -20,7 +20,7 @@
             <scope>provided</scope>
         </dependency>
 	<dependency>
-		<groupId>com.th3lab.android</groupId>
+		<groupId>com.th3l4b.android</groupId>
 		<artifactId>screens</artifactId>
 		<version>1.0-SNAPSHOT</version>
 	</dependency>
@@ -49,7 +49,8 @@
                 <configuration>
                     <sdk>
                         <!-- platform or api level (api level 16 = platform 4.1)-->
-                        <platform>4.3</platform>
+                        <!-- <platform>4.3</platform> -->
+                        <platform>2.2</platform>
                     </sdk>
                 </configuration>
             </plugin>

@@ -13,5 +13,7 @@ public interface IRenderingConstants {
 	public static final String STATUS_VALUE_GOOD = STATUS + ".good";
 	public static final String STATUS_VALUE_NORMAL = STATUS + ".normal";
 	public static final String STATUS_VALUE_BAD = STATUS + ".bad";
-
+	
+	public static final String CONTAINER_PREFIX = PREFIX + ".container";
+	public static final String CONTAINER_LIST = CONTAINER_PREFIX + ".list";
 }

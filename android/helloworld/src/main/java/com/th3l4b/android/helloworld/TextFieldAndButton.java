@@ -6,7 +6,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -22,7 +21,7 @@ public class TextFieldAndButton extends Activity {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
 	 */
 	@Override
@@ -57,16 +56,16 @@ public class TextFieldAndButton extends Activity {
 		});
 		/*
 		 * field.addTextChangedListener(new TextWatcher() {
-		 *
+		 * 
 		 * @Override public void onTextChanged(CharSequence arg0, int arg1, int
 		 * arg2, int arg3) { TextView text = new
 		 * TextView(TextFieldAndButton.this);
 		 * text.setText(Integer.toString(_count++) + " Input: " + arg0);
 		 * _main.addView(text); }
-		 *
+		 * 
 		 * @Override public void beforeTextChanged(CharSequence arg0, int arg1,
 		 * int arg2, int arg3) { }
-		 *
+		 * 
 		 * @Override public void afterTextChanged(Editable arg0) { } });
 		 */
 		_main.addView(field);

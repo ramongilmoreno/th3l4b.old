@@ -42,3 +42,17 @@ Hago:
 Y ya da OK. Voy a desplegarlo con:
 
     mvn android:deploy
+
+Para depurar: ejecutar Android Debug Bridge:
+
+	$ adb
+
+Que deja hacer cosas como "adb shell" para conectarse a la shell del terminal Android.
+
+Luego el Dalvik Debug Monitor Server:
+
+	$ ddms
+
+Que enlaza procesos a puertos para hacer "Remote debug" en Eclipse. 8700 el principal y otros secuenciales a partir de 8600 para cada proceso que tiene el terminal Android corriendo.
+
+En Android, arrancar la aplicación "Dev settings", y en la opción "Select debug app" elegir la que queremos depurar, luego marcar "Wait for debugger". Así cuando se arranque la aplicación, pondrá un mensaje pidiendo que se conecte el debugger. En Eclipse crear una configuración de debug "Remote" y poner el puerto 8700; al conectarse la aplicación arrancará y se detendrá en los breakpoints. 

@@ -10,11 +10,21 @@ import com.th3l4b.common.data.nullsafe.NullSafe;
  */
 public abstract class AbstractUITypeEditorSupport<T> {
 
+	protected String _screen;
 	protected String _value = "";
 	protected boolean _enabled = true;
 	protected List<IEditorListener> _listeners = new ArrayList<IEditorListener>();
 
-	public void resetOrDispose() {
+	public AbstractUITypeEditorSupport(String screen) {
+		resetOrDispose(screen);
+	}
+	
+	public String getScreen() {
+		return _screen;
+	}
+
+	public void resetOrDispose(String screen) {
+		_screen = screen;
 		_value = "";
 		_enabled = true;
 		_listeners.clear();
@@ -24,9 +34,9 @@ public abstract class AbstractUITypeEditorSupport<T> {
 
 	public abstract T fromString(String value) throws Exception;
 
-	public abstract void setUIValue(T value) throws Exception;
+	protected abstract void setUIValue(T value) throws Exception;
 
-	public abstract T getUIValue() throws Exception;
+	protected abstract T getUIValue() throws Exception;
 
 	public void setValue(String value) throws Exception {
 		_value = value;
@@ -62,8 +72,15 @@ public abstract class AbstractUITypeEditorSupport<T> {
 	protected void notifyValueChanged() throws Exception {
 		String value = getValue();
 		for (IEditorListener l : _listeners) {
-			l.valueChanged(value);
+			l.valueChanged(getScreen(), value);
 		}
 	}
 
+	public void addEditorListener(IEditorListener listener) throws Exception {
+		_listeners.add(listener);
+	}
+
+	public void removeEditorListener(IEditorListener listener) throws Exception {
+		_listeners.remove(listener);
+	}
 }

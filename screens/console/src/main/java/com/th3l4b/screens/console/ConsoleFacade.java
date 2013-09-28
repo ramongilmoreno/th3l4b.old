@@ -25,11 +25,9 @@ public class ConsoleFacade {
 		return _defaultRenderer;
 	}
 
-	public void handle(
-			String source,
-			ICommandsInput input,
-			IScreensConfiguration context, IConsoleScreensClientDescriptor client)
-			throws Exception {
+	public void handle(String source, ICommandsInput input,
+			IScreensConfiguration context,
+			IConsoleScreensClientDescriptor client) throws Exception {
 
 		PrintWriter out = client.getWriter();
 		PrintWriter iout = IndentedWriter.get(out);
@@ -47,19 +45,17 @@ public class ConsoleFacade {
 			ArrayList<String> list = new ArrayList<String>();
 			for (String s : TreeUtils.dfs(AsTree.getTree(tree))) {
 				String type = tree.getProperty(s, IScreensContants.TYPE);
+				String label = renderer.getLabel(s, context, client);
 				if (NullSafe.equals(type, IScreensContants.TYPE_FIELD)) {
-					iout.println("Set field " + list.size() + " - "
-							+ renderer.getLabel(s, context, client));
+					iout.println("Set field " + list.size() + " - " + label);
 					list.add(s);
 				} else if (NullSafe.equals(type, IScreensContants.TYPE_ACTION)) {
 					IInteractionListener i = context.getInteractions().get(s);
 					if (i != null) {
 
-						iout.println("Do action " + list.size() + " - "
-								+ renderer.getLabel(s, context, client));
+						iout.println("Do action " + list.size() + " - " + label);
 						list.add(s);
 					}
-
 				}
 			}
 
@@ -92,7 +88,8 @@ public class ConsoleFacade {
 								} else {
 									context.getInteractions()
 											.get(javaInteraction)
-											.handleInteraction(found, context, client);
+											.handleInteraction(found, context,
+													client);
 								}
 							} else {
 								out.println("Index of is not an action.");
