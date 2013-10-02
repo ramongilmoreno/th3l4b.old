@@ -18,20 +18,41 @@ public class EditTextFieldForType<T> extends AbstractUITypeEditorSupport<T> {
 		super(screen);
 		_type = type;
 		_editText = new EditText(client.getActivity());
+		final Runnable runnable = new Runnable() {
+			@Override
+			public void run() {
+				try {
+					uiValueChanged();
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+			}
+		};
+		
+		
 		// http://stackoverflow.com/questions/5099814/knowing-when-edit-text-is-done-being-edited
+		// http://stackoverflow.com/questions/11641670/similar-function-swingutilities-invokelater-in-android
 		_editText
 				.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 					@Override
 					public boolean onEditorAction(TextView arg0, int arg1,
 							KeyEvent arg2) {
-						try {
-							uiValueChanged();
-						} catch (Exception e) {
-							throw new RuntimeException(e);
-						}
+						runnable.run();
 						return true;
 					}
 				});
+//		_editText
+//				.setOnFocusChangeListener(new TextView.OnFocusChangeListener() {
+//					@Override
+//					public void onFocusChange(View arg0, boolean arg1) {
+//						try {
+//							uiValueChanged();
+//						} catch (Exception e) {
+//							throw new RuntimeException(e);
+//						}
+//					}
+//				});
+
 		client.getViewGroup().addView(_editText);
 	}
 

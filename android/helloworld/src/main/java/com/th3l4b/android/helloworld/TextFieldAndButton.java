@@ -41,19 +41,30 @@ public class TextFieldAndButton extends Activity {
 		text.setText("Hello World!");
 		_main.addView(text);
 
-		EditText field = new EditText(this);
+		final EditText field = new EditText(this);
 		field.setText("Hello World!");
 		// http://stackoverflow.com/questions/5099814/knowing-when-edit-text-is-done-being-edited
 		field.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 			@Override
 			public boolean onEditorAction(TextView arg0, int arg1, KeyEvent arg2) {
 				TextView text = new TextView(TextFieldAndButton.this);
-				text.setText(Integer.toString(_count++) + " Input: "
-						+ arg0.getText());
+				text.setText(Integer.toString(_count++)
+						+ "Editor action - input: " + arg0.getText());
 				_main.addView(text);
 				return true;
 			}
 		});
+		field.setOnFocusChangeListener(new TextView.OnFocusChangeListener() {
+			@Override
+			public void onFocusChange(View arg0, boolean arg1) {
+				TextView text = new TextView(TextFieldAndButton.this);
+				text.setText(Integer.toString(_count++)
+						+ "Focus change - input: "
+						+ ((TextView) arg0).getText());
+				_main.addView(text);
+			}
+		});
+
 		/*
 		 * field.addTextChangedListener(new TextWatcher() {
 		 * 

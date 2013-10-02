@@ -9,6 +9,8 @@ import com.th3l4b.apps.shopping.base.codegen.srm.IShoppingContext;
 import com.th3l4b.apps.shopping.base.codegen.srm.IShoppingEntity;
 import com.th3l4b.apps.shopping.base.codegen.srm.IShoppingFinder;
 import com.th3l4b.common.data.nullsafe.NullSafe;
+import com.th3l4b.common.data.predicate.IPredicate;
+import com.th3l4b.common.data.predicate.PredicateUtils;
 import com.th3l4b.screens.base.IRenderingConstants;
 import com.th3l4b.screens.base.IScreensContants;
 import com.th3l4b.screens.base.ITreeOfScreens;
@@ -52,7 +54,9 @@ public class Shopping implements IScreensContants, IRenderingConstants {
 
 	protected ITreeOfScreens clearRoot(final String root,
 			IShoppingApplication application, boolean atIndex) throws Exception {
-		ITreeOfScreens tree = application.getScreens().getTree();
+		IScreensConfiguration screens = application.getScreens();
+		screens.getInteractions().clear();
+		ITreeOfScreens tree = screens.getTree();
 		for (String c : tree.children(root)) {
 			tree.removeScreen(c);
 		}
@@ -67,17 +71,14 @@ public class Shopping implements IScreensContants, IRenderingConstants {
 			tree.setProperty(name, TYPE, TYPE_ACTION);
 			tree.setProperty(name, INTERACTION, "true");
 			tree.setProperty(name, INTERACTION_JAVA, name);
-			application.getScreens().getInteractions()
-					.put(name, new IInteractionListener() {
-						@Override
-						public void handleInteraction(String screen,
-								IScreensConfiguration context,
-								IScreensClientDescriptor client)
-								throws Exception {
-							renderIndex(root,
-									Shopping.this.getApplication(context));
-						}
-					});
+			screens.getInteractions().put(name, new IInteractionListener() {
+				@Override
+				public void handleInteraction(String screen,
+						IScreensConfiguration context,
+						IScreensClientDescriptor client) throws Exception {
+					renderIndex(root, Shopping.this.getApplication(context));
+				}
+			});
 		}
 
 		return tree;
@@ -265,6 +266,67 @@ public class Shopping implements IScreensContants, IRenderingConstants {
 		tree.setProperty(needName, IRenderingConstants.STATUS, newStatus);
 	}
 
+	protected void renderAdd(final String root, IShoppingApplication application)
+			throws Exception {
+		ITreeOfScreens tree = clearRoot(root, application);
+		String add = name("Add item");
+		tree.addScreen(add, root);
+		tree.setProperty(add, ORDER_INDEX, "0");
+		tree.setProperty(add, IScreensContants.LABEL, "Add item");
+
+		final String nameField = name("Name");
+		tree.addScreen(nameField, add);
+		tree.setProperty(nameField, ORDER_INDEX, "1");
+		tree.setProperty(nameField, TYPE, TYPE_FIELD);
+
+		String ok = name("Add");
+		tree.addScreen(ok, add);
+		tree.setProperty(ok, IScreensContants.LABEL, "Add");
+		tree.setProperty(ok, ORDER_INDEX, "2");
+		tree.setProperty(ok, TYPE, TYPE_ACTION);
+		tree.setProperty(ok, INTERACTION_JAVA, ok);
+		tree.setProperty(ok, INTERACTION, "true");
+		application.getScreens().getInteractions()
+				.put(ok, new IInteractionListener() {
+					@Override
+					public void handleInteraction(String screen,
+							IScreensConfiguration context,
+							IScreensClientDescriptor client) throws Exception {
+						String name = context.getTree().getProperty(nameField,
+								IScreensContants.VALUE);
+						if ((name != null) && (name.trim().length() > 0)) {
+							IShoppingApplication application = getApplication(context);
+							LinkedHashMap<IIdentifier, IRuntimeEntity<?>> updates = new LinkedHashMap<IIdentifier, IRuntimeEntity<?>>();
+							IItem item = application.getData().getUtils()
+									.create(IItem.class);
+							item.setName(name);
+							updates.put(item.coordinates().getIdentifier(),
+									item);
+							application.getData().update(updates);
+							renderItems(root, getApplication(context));
+						}
+					}
+				});
+
+		String cancel = name("Cancel");
+		tree.addScreen(cancel, add);
+		tree.setProperty(cancel, IScreensContants.LABEL, "Cancel");
+		tree.setProperty(cancel, ORDER_INDEX, "3");
+		tree.setProperty(cancel, TYPE, TYPE_ACTION);
+		tree.setProperty(cancel, INTERACTION_JAVA, cancel);
+		tree.setProperty(cancel, INTERACTION, "true");
+		application.getScreens().getInteractions()
+				.put(cancel, new IInteractionListener() {
+					@Override
+					public void handleInteraction(String screen,
+							IScreensConfiguration context,
+							IScreensClientDescriptor client) throws Exception {
+						renderItems(root, getApplication(context));
+					}
+				});
+
+	}
+
 	protected void renderShopping(String root, IShoppingApplication application)
 			throws Exception {
 		ITreeOfScreens tree = clearRoot(root, application);
@@ -309,14 +371,58 @@ public class Shopping implements IScreensContants, IRenderingConstants {
 
 	protected void renderItems(String root, IShoppingApplication context)
 			throws Exception {
+		renderItems(context.getData().getFinder().allItem(), root, context);
+	}
+
+	protected void renderItems(Iterable<IItem> items, final String root,
+			IShoppingApplication context) throws Exception {
 		ITreeOfScreens tree = clearRoot(root, context);
+		renderSearch(root, context, new ISearchInteractionListener() {
+			@Override
+			public void handleInteraction(final String searchValue,
+					String screen, IScreensConfiguration context,
+					IScreensClientDescriptor client) throws Exception {
+				IShoppingApplication application = getApplication(context);
+				Iterable<IItem> filtered = PredicateUtils.filter(application
+						.getData().getFinder().allItem(),
+						new IPredicate<IItem>() {
+							@Override
+							public boolean accept(IItem t) throws Exception {
+								String n = t.getName();
+								if (n == null) {
+									n = "";
+								}
+								return n.indexOf(searchValue) != -1;
+							}
+						});
+				renderItems(filtered, root, application);
+			}
+		});
+
+		String addButton = name("Add");
+		tree.addScreen(addButton, root);
+		tree.setProperty(addButton, LABEL, "Add");
+		tree.setProperty(addButton, ORDER_INDEX, "1");
+		tree.setProperty(addButton, TYPE, TYPE_ACTION);
+		tree.setProperty(addButton, INTERACTION_JAVA, addButton);
+		tree.setProperty(addButton, INTERACTION, "true");
+		context.getScreens().getInteractions()
+				.put(addButton, new IInteractionListener() {
+					@Override
+					public void handleInteraction(String screen,
+							IScreensConfiguration context,
+							IScreensClientDescriptor client) throws Exception {
+						renderAdd(root, getApplication(context));
+					}
+				});
+
 		String itemsChild = name("Items");
 		tree.addScreen(itemsChild, root);
-		tree.setProperty(itemsChild, ORDER_INDEX, "0");
+		tree.setProperty(itemsChild, LABEL, "Items");
+		tree.setProperty(itemsChild, ORDER_INDEX, "2");
 
 		int index = 0;
-		IShoppingFinder finder = context.getData().getFinder();
-		for (IItem item : finder.allItem()) {
+		for (IItem item : items) {
 			String idAsString = getStringFromIdentifier(item, context);
 			String name = name("item - " + idAsString);
 			tree.addScreen(name, itemsChild);
@@ -372,6 +478,67 @@ public class Shopping implements IScreensContants, IRenderingConstants {
 					});
 		}
 
+	}
+
+	public interface ISearchInteractionListener {
+		void handleInteraction(String searchValue, String screen,
+				IScreensConfiguration context, IScreensClientDescriptor client)
+				throws Exception;
+	}
+
+	/**
+	 * Simple class to manage searches.
+	 */
+	public static class SearchInteractionListener implements
+			IInteractionListener {
+
+		private String _searchFieldName;
+		private ISearchInteractionListener _listener;
+
+		public SearchInteractionListener(String searchFieldName,
+				ISearchInteractionListener listener) {
+			_searchFieldName = searchFieldName;
+			_listener = listener;
+		}
+
+		@Override
+		public void handleInteraction(String screen,
+				IScreensConfiguration context, IScreensClientDescriptor client)
+				throws Exception {
+			String value = context.getTree().getProperty(_searchFieldName,
+					IScreensContants.VALUE);
+			if (value == null) {
+				value = "";
+			}
+			_listener.handleInteraction(value, screen, context, client);
+		}
+	}
+
+	protected void renderSearch(String root, IShoppingApplication application,
+			ISearchInteractionListener listener) throws Exception {
+		ITreeOfScreens tree = application.getScreens().getTree();
+		String search = name("Search");
+		tree.addScreen(search, root);
+		tree.setProperty(search, ORDER_INDEX, "0");
+		tree.setProperty(search, IScreensContants.LABEL, "Search");
+
+		String searchField = name("Search field");
+		tree.addScreen(searchField, search);
+		tree.setProperty(searchField, ORDER_INDEX, "1");
+		tree.setProperty(searchField, TYPE, TYPE_FIELD);
+
+		String searchButton = name("Search button");
+		tree.addScreen(searchButton, search);
+		tree.setProperty(searchButton, IScreensContants.LABEL, "Search");
+		tree.setProperty(searchButton, ORDER_INDEX, "2");
+		tree.setProperty(searchButton, TYPE, TYPE_ACTION);
+		tree.setProperty(searchButton, INTERACTION_JAVA, searchButton);
+		tree.setProperty(searchButton, INTERACTION, "true");
+		application
+				.getScreens()
+				.getInteractions()
+				.put(searchButton,
+						new SearchInteractionListener(searchField, listener));
 	}
 
 	private boolean itemsHasNeeds(IIdentifier identifier,
