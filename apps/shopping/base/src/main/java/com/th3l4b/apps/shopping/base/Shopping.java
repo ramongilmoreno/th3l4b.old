@@ -332,6 +332,7 @@ public class Shopping implements IScreensContants, IRenderingConstants {
 		ITreeOfScreens tree = clearRoot(root, application);
 		String itemsChild = name("Items");
 		tree.addScreen(itemsChild, root);
+		tree.setProperty(itemsChild, LABEL, "Items");
 		tree.setProperty(itemsChild, ORDER_INDEX, "0");
 
 		// Render items

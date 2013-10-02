@@ -106,6 +106,8 @@ define("com/th3l4b/screens/web/javascript-runtime",
 			context.renderer.renderField(current, newNode, context);
 		} else if (type == constants.typeAction) {
 			context.renderer.renderAction(current, newNode, context);
+		} else {
+			context.renderer.renderDefault(current, newNode, context);
 		}
 		
 		if (GLOBAL_DEBUG_FLAG) {

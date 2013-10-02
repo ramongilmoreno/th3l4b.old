@@ -70,9 +70,18 @@ define('com/th3l4b/screens/web/javascript-runtime-renderer', function () {
 		return r2;
 	};
 
+	var renderDefault = function (screen, node, context) {
+                var v = context.tree.getProperty(screen, "com.th3l4b.screens.base.label");
+                if (v) {
+                	var text = context.document.createTextNode(v);
+                	node.appendChild(text);
+		}
+	};
+
 	return {
 		renderField: renderField,
-		renderAction: renderAction
+		renderAction: renderAction,
+		renderDefault: renderDefault
 	};
 
 });
