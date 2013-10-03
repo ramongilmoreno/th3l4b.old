@@ -1,10 +1,12 @@
 package com.th3l4b.android.screens;
 
 import android.text.Editable;
-import android.view.KeyEvent;
+import android.text.TextWatcher;
+//import android.view.KeyEvent;
 import android.widget.EditText;
-import android.widget.TextView;
+//import android.widget.TextView;
 
+import com.th3l4b.common.java.AbstractRunnableThrowsException;
 import com.th3l4b.types.runtime.IJavaRuntimeType;
 import com.th3l4b.types.runtime.ui.AbstractUITypeEditorSupport;
 
@@ -18,41 +20,41 @@ public class EditTextFieldForType<T> extends AbstractUITypeEditorSupport<T> {
 		super(screen);
 		_type = type;
 		_editText = new EditText(client.getActivity());
-		final Runnable runnable = new Runnable() {
+		final Runnable runnable = new AbstractRunnableThrowsException() {
 			@Override
-			public void run() {
-				try {
-					uiValueChanged();
-				} catch (Exception e) {
-					throw new RuntimeException(e);
-				}
+			protected void runWithException() throws Exception {
+				uiValueChanged();
 			}
 		};
-		
-		
+
 		// http://stackoverflow.com/questions/5099814/knowing-when-edit-text-is-done-being-edited
 		// http://stackoverflow.com/questions/11641670/similar-function-swingutilities-invokelater-in-android
-		_editText
-				.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-					@Override
-					public boolean onEditorAction(TextView arg0, int arg1,
-							KeyEvent arg2) {
-						runnable.run();
-						return true;
-					}
-				});
+		_editText.addTextChangedListener(new TextWatcher() {
+			@Override
+			public void afterTextChanged(Editable arg0) {
+				runnable.run();
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence arg0, int arg1,
+					int arg2, int arg3) {
+			}
+
+			@Override
+			public void onTextChanged(CharSequence arg0, int arg1, int arg2,
+					int arg3) {
+			}
+
+		});
 //		_editText
-//				.setOnFocusChangeListener(new TextView.OnFocusChangeListener() {
+//				.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 //					@Override
-//					public void onFocusChange(View arg0, boolean arg1) {
-//						try {
-//							uiValueChanged();
-//						} catch (Exception e) {
-//							throw new RuntimeException(e);
-//						}
+//					public boolean onEditorAction(TextView arg0, int arg1,
+//							KeyEvent arg2) {
+//						runnable.run();
+//						return true;
 //					}
 //				});
-
 		client.getViewGroup().addView(_editText);
 	}
 

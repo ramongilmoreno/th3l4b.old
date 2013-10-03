@@ -266,8 +266,8 @@ public class Shopping implements IScreensContants, IRenderingConstants {
 		tree.setProperty(needName, IRenderingConstants.STATUS, newStatus);
 	}
 
-	protected void renderAdd(final String root, IShoppingApplication application)
-			throws Exception {
+	protected void renderAdd(final String root, String value,
+			IShoppingApplication application) throws Exception {
 		ITreeOfScreens tree = clearRoot(root, application);
 		String add = name("Add item");
 		tree.addScreen(add, root);
@@ -278,8 +278,9 @@ public class Shopping implements IScreensContants, IRenderingConstants {
 		tree.addScreen(nameField, add);
 		tree.setProperty(nameField, ORDER_INDEX, "1");
 		tree.setProperty(nameField, TYPE, TYPE_FIELD);
+		tree.setProperty(nameField, VALUE, value);
 
-		String ok = name("Add");
+		String ok = name("Add it");
 		tree.addScreen(ok, add);
 		tree.setProperty(ok, IScreensContants.LABEL, "Add");
 		tree.setProperty(ok, ORDER_INDEX, "2");
@@ -413,7 +414,11 @@ public class Shopping implements IScreensContants, IRenderingConstants {
 					public void handleInteraction(String screen,
 							IScreensConfiguration context,
 							IScreensClientDescriptor client) throws Exception {
-						renderAdd(root, getApplication(context));
+						renderAdd(
+								root,
+								context.getTree().getProperty(
+										name(SEARCH_FIELD), VALUE),
+								getApplication(context));
 					}
 				});
 
@@ -515,15 +520,17 @@ public class Shopping implements IScreensContants, IRenderingConstants {
 		}
 	}
 
+	public static final String SEARCH_FIELD = "Search field";
+
 	protected void renderSearch(String root, IShoppingApplication application,
 			ISearchInteractionListener listener) throws Exception {
 		ITreeOfScreens tree = application.getScreens().getTree();
 		String search = name("Search");
 		tree.addScreen(search, root);
 		tree.setProperty(search, ORDER_INDEX, "0");
-		tree.setProperty(search, IScreensContants.LABEL, "Search");
+		tree.setProperty(search, IScreensContants.LABEL, "Enter input");
 
-		String searchField = name("Search field");
+		String searchField = name(SEARCH_FIELD);
 		tree.addScreen(searchField, search);
 		tree.setProperty(searchField, ORDER_INDEX, "1");
 		tree.setProperty(searchField, TYPE, TYPE_FIELD);

@@ -51,8 +51,8 @@ public class AndroidRenderView {
 										.get(java)
 										.handleInteraction(screen,
 												configuration, client);
+								runnable.run();
 							}
-							runnable.run();
 						} catch (Exception e) {
 							throw new RuntimeException(e);
 						}
@@ -82,10 +82,14 @@ public class AndroidRenderView {
 				applyStatusAndTone(tree, screen, button);
 				client.getViewGroup().addView(button);
 			} else {
-				TextView text = new TextView(client.getActivity());
-				text.setText(getLabel(screen, configuration));
-				applyStatusAndTone(tree, screen, text);
-				client.getViewGroup().addView(text);
+				String label = configuration.getTree().getProperty(screen,
+						IScreensContants.LABEL);
+				if (label != null) {
+					TextView text = new TextView(client.getActivity());
+					text.setText(label);
+					applyStatusAndTone(tree, screen, text);
+					client.getViewGroup().addView(text);
+				}
 			}
 		}
 	}

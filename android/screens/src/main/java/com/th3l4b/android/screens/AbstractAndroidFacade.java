@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
+import com.th3l4b.common.java.AbstractRunnableThrowsException;
 import com.th3l4b.screens.base.utils.IScreensConfiguration;
 
 public abstract class AbstractAndroidFacade {
@@ -38,17 +39,13 @@ public abstract class AbstractAndroidFacade {
 	protected void render(final IScreensConfiguration configuration,
 			final IAndroidScreensClientDescriptor client) throws Exception {
 		AndroidRenderView renderer = new AndroidRenderView();
-		renderer.render(configuration, client, new Runnable() {
-			@Override
-			public void run() {
-				try {
-					main.removeAllViews();
-					render(configuration, client);
-				} catch (Exception e) {
-					throw new RuntimeException(e);
-				}
-			}
-		});
+		renderer.render(configuration, client,
+				new AbstractRunnableThrowsException() {
+					@Override
+					protected void runWithException() throws Exception {
+						main.removeAllViews();
+						render(configuration, client);
+					}
+				});
 	}
-
 }
