@@ -14,6 +14,11 @@ public interface IRenderingConstants {
 	public static final String STATUS_VALUE_NORMAL = STATUS + ".normal";
 	public static final String STATUS_VALUE_BAD = STATUS + ".bad";
 	
-	public static final String CONTAINER_PREFIX = PREFIX + ".container";
-	public static final String CONTAINER_LIST = CONTAINER_PREFIX + ".list";
+	public static final String CONTAINER = PREFIX + ".container";
+	public static final String CONTAINER_LIST = CONTAINER + ".list";
+	
+	public static final String CONTAINER_TABLE = CONTAINER + ".table";
+	public static final String CONTAINER_TABLE_ROWS = CONTAINER_TABLE + ".rows";
+	public static final String CONTAINER_TABLE_ROW = CONTAINER_TABLE + ".row";
+	public static final String CONTAINER_TABLE_HEADER = CONTAINER_TABLE + ".header";
 }

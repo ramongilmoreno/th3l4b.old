@@ -156,13 +156,14 @@ public class Shopping implements IScreensContants, IRenderingConstants {
 		normal, later, marked
 	};
 
-	protected void addLaterAction(final String needName,
+	protected void addLaterAction(final String needName, final String needRow,
 			IShoppingApplication context) throws Exception {
 		ITreeOfScreens tree = context.getScreens().getTree();
 		String id = tree.getProperty(needName, KEY);
 		String name = nameOfLater(id);
-		tree.addScreen(name, needName);
+		tree.addScreen(name, needRow);
 		tree.setProperty(name, LABEL, localizedLabel("Later", context));
+		tree.setProperty(name, ORDER_INDEX, Integer.toString(2));
 		tree.setProperty(name, TYPE, TYPE_ACTION);
 		tree.setProperty(name, INTERACTION, "true");
 		tree.setProperty(name, INTERACTION_JAVA, name);
@@ -172,8 +173,8 @@ public class Shopping implements IScreensContants, IRenderingConstants {
 					public void handleInteraction(String screen,
 							IScreensConfiguration context,
 							IScreensClientDescriptor client) throws Exception {
-						updateNeed(needName, context, client, Boolean.FALSE,
-								Boolean.TRUE);
+						updateNeed(needName, needRow, context, client,
+								Boolean.FALSE, Boolean.TRUE);
 					}
 				});
 
@@ -190,9 +191,9 @@ public class Shopping implements IScreensContants, IRenderingConstants {
 				.identifierToString(entity.coordinates().getIdentifier());
 	}
 
-	protected void updateNeed(String needName, IScreensConfiguration context,
-			IScreensClientDescriptor client, Boolean toggleMarked,
-			Boolean toggleLater) throws Exception {
+	protected void updateNeed(String needName, String needRow,
+			IScreensConfiguration context, IScreensClientDescriptor client,
+			Boolean toggleMarked, Boolean toggleLater) throws Exception {
 		ITreeOfScreens tree = context.getTree();
 		IShoppingApplication application = getApplication(context);
 		String idAsString = tree.getProperty(needName, KEY);
@@ -224,7 +225,7 @@ public class Shopping implements IScreensContants, IRenderingConstants {
 					remove.coordinates().setStatus(EntityStatus.Modified);
 					updates.put(id, remove);
 				}
-				addLaterAction(needName, application);
+				addLaterAction(needName, needRow, application);
 				break;
 			}
 			if (!updates.isEmpty()) {
@@ -336,24 +337,33 @@ public class Shopping implements IScreensContants, IRenderingConstants {
 		tree.setProperty(itemsChild, LABEL, "Items");
 		tree.setProperty(itemsChild, ORDER_INDEX, "0");
 
+		String itemsTable = name("Items table");
+		tree.addScreen(itemsTable, itemsChild);
+		tree.setProperty(itemsTable, IRenderingConstants.CONTAINER,
+				IRenderingConstants.CONTAINER_TABLE);
+
 		// Render items
 		int index = 0;
 		IShoppingFinder finder = application.getData().getFinder();
 		for (INeed need : finder.allNeed()) {
 			String id = getStringFromIdentifier(need, application);
+			final String needRow = name("row - " + id);
+			tree.addScreen(needRow, itemsTable);
+			tree.setProperty(needRow, ORDER_INDEX, Integer.toString(index++));
+
 			final String needName = name("need of - " + id);
 			{
 				IItem item = need.getItem(finder);
 				String name = needName;
-				tree.addScreen(name, itemsChild);
-				tree.setProperty(name, ORDER_INDEX, Integer.toString(index++));
+				tree.addScreen(name, needRow);
+				tree.setProperty(name, ORDER_INDEX, Integer.toString(1));
 				tree.setProperty(name, LABEL, item.getName());
-				tree.setProperty(needName, KEY, id);
-				tree.setProperty(needName, STATUS_ENUM_VALUE,
-						Status.normal.toString());
 				tree.setProperty(name, TYPE, TYPE_ACTION);
 				tree.setProperty(name, INTERACTION, "true");
 				tree.setProperty(name, INTERACTION_JAVA, name);
+				tree.setProperty(name, KEY, id);
+				tree.setProperty(name, STATUS_ENUM_VALUE,
+						Status.normal.toString());
 				application.getScreens().getInteractions()
 						.put(name, new IInteractionListener() {
 							@Override
@@ -361,12 +371,12 @@ public class Shopping implements IScreensContants, IRenderingConstants {
 									IScreensConfiguration context,
 									IScreensClientDescriptor client)
 									throws Exception {
-								updateNeed(needName, context, client,
+								updateNeed(needName, needRow, context, client,
 										Boolean.TRUE, Boolean.FALSE);
 							}
 						});
 			}
-			addLaterAction(needName, application);
+			addLaterAction(needName, needRow, application);
 		}
 
 	}
@@ -427,14 +437,25 @@ public class Shopping implements IScreensContants, IRenderingConstants {
 		tree.setProperty(itemsChild, LABEL, "Items");
 		tree.setProperty(itemsChild, ORDER_INDEX, "2");
 
+		String itemsTable = name("Items table");
+		tree.addScreen(itemsTable, itemsChild);
+		tree.setProperty(itemsTable, IRenderingConstants.CONTAINER,
+				IRenderingConstants.CONTAINER_TABLE);
+
 		int index = 0;
 		for (IItem item : items) {
 			String idAsString = getStringFromIdentifier(item, context);
+			String itemRow = name("row - " + idAsString);
+			tree.addScreen(itemRow, itemsTable);
+			tree.setProperty(itemRow, ORDER_INDEX, Integer.toString(index++));
+			tree.setProperty(itemRow, IRenderingConstants.CONTAINER,
+					IRenderingConstants.CONTAINER_TABLE_ROW);
+
 			String name = name("item - " + idAsString);
-			tree.addScreen(name, itemsChild);
-			tree.setProperty(name, ORDER_INDEX, Integer.toString(index++));
+			tree.addScreen(name, itemRow);
 			tree.setProperty(name, LABEL, item.getName());
 			tree.setProperty(name, KEY, idAsString);
+			tree.setProperty(name, ORDER_INDEX, Integer.toString(0));
 			tree.setProperty(name, TYPE, TYPE_ACTION);
 			tree.setProperty(name, INTERACTION, "true");
 			tree.setProperty(name, INTERACTION_JAVA, name);

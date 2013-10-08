@@ -12,6 +12,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 public class TextFieldAndButton extends Activity {
@@ -94,6 +96,51 @@ public class TextFieldAndButton extends Activity {
 			}
 		});
 		_main.addView(button);
+
+		// Add a table at the end of the main view.
+		TableLayout table = new TableLayout(this);
+		table.setLayoutParams(new TableLayout.LayoutParams(
+				TableLayout.LayoutParams.MATCH_PARENT,
+				TableLayout.LayoutParams.MATCH_PARENT));
+		TableRow.LayoutParams col1Layout = new TableRow.LayoutParams(
+				0,
+				TableRow.LayoutParams.WRAP_CONTENT);
+		col1Layout.weight = 1;
+		TableRow.LayoutParams col2Layout = new TableRow.LayoutParams(
+				TableRow.LayoutParams.WRAP_CONTENT,
+				TableRow.LayoutParams.WRAP_CONTENT);
+		{
+			TableRow row = new TableRow(this);
+			{
+				TextView text1 = new TextView(this);
+				text1.setText("First short");
+				text1.setLayoutParams(col1Layout);
+				row.addView(text1);
+			}
+			{
+				TextView text1 = new TextView(this);
+				text1.setText("First");
+				text1.setLayoutParams(col2Layout);
+				row.addView(text1);
+			}
+			table.addView(row);
+		}
+		{
+			TableRow row = new TableRow(this);
+			{
+				TextView text1 = new TextView(this);
+				text1.setText("Second");
+				text1.setLayoutParams(col1Layout);
+				row.addView(text1);
+			}
+			{
+				TextView text1 = new TextView(this);
+				text1.setText("Second short");
+				row.addView(text1);
+			}
+			table.addView(row);
+		}
+		_main.addView(table);
 
 		// http://stackoverflow.com/questions/4055537/android-linearlayout-scroll
 		// http://developer.android.com/reference/android/view/ViewGroup.LayoutParams.html
