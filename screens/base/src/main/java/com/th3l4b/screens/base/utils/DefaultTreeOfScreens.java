@@ -49,6 +49,7 @@ public class DefaultTreeOfScreens implements ITreeOfScreens {
 		}
 		Collections.sort(r, new Comparator<String>() {
 			HashMap<String, Integer> _cache = new HashMap<String, Integer>();
+
 			private Integer cache(String a) throws Exception {
 				Integer i = _cache.get(a);
 				if (i != null) {
@@ -103,10 +104,10 @@ public class DefaultTreeOfScreens implements ITreeOfScreens {
 
 			@Override
 			public Iterable<String> getChildren(String node) throws Exception {
-				return DefaultTreeOfScreens.this.children(screen);
+				return DefaultTreeOfScreens.this.children(node);
 			}
 		};
-		for (String s: TreeUtils.dfs(tree)) {
+		for (String s : TreeUtils.dfs(tree)) {
 			_parents.remove(s);
 			_properties.remove(s);
 		}
