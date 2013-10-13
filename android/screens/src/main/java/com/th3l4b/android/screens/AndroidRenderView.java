@@ -14,13 +14,13 @@ import android.widget.TextView;
 
 import com.th3l4b.common.data.nullsafe.NullSafe;
 import com.th3l4b.screens.base.IRenderingConstants;
-import com.th3l4b.screens.base.IScreensContants;
+import com.th3l4b.screens.base.IScreensConstants;
 import com.th3l4b.screens.base.ITreeOfScreens;
 import com.th3l4b.screens.base.utils.IScreensConfiguration;
 import com.th3l4b.types.runtime.basicset.StringType;
 import com.th3l4b.types.runtime.ui.IEditorListener;
 
-public class AndroidRenderView implements IScreensContants, IRenderingConstants {
+public class AndroidRenderView implements IScreensConstants, IRenderingConstants {
 	public String getLabel(String item, IScreensConfiguration context)
 			throws Exception {
 		String r = context.getTree().getProperty(item, LABEL);

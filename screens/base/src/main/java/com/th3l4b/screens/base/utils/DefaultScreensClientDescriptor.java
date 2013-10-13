@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.Locale;
 
 import com.th3l4b.common.propertied.DefaultPropertied;
-import com.th3l4b.screens.base.IScreensContants;
+import com.th3l4b.screens.base.IScreensConstants;
 
 public class DefaultScreensClientDescriptor extends DefaultPropertied implements
 		IScreensClientDescriptor {
@@ -15,7 +15,7 @@ public class DefaultScreensClientDescriptor extends DefaultPropertied implements
 
 	/**
 	 * Creates a default client for the
-	 * {@link IScreensContants#INTERACTION_JAVA} language and for the
+	 * {@link IScreensConstants#INTERACTION_JAVA} language and for the
 	 * {@link Locale#getDefault()} locale;
 	 */
 	public DefaultScreensClientDescriptor() {
@@ -23,7 +23,7 @@ public class DefaultScreensClientDescriptor extends DefaultPropertied implements
 		locales.add(Locale.getDefault());
 		this.setLocales(locales);
 		ArrayList<String> languages = new ArrayList<String>();
-		languages.add(IScreensContants.INTERACTION_JAVA);
+		languages.add(IScreensConstants.INTERACTION_JAVA);
 		this.setLanguages(languages);
 	}
 

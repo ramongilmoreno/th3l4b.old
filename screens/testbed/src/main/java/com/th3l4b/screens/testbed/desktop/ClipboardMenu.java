@@ -6,7 +6,7 @@ import java.util.Locale;
 import java.util.Random;
 
 import com.th3l4b.common.data.nullsafe.NullSafe;
-import com.th3l4b.screens.base.IScreensContants;
+import com.th3l4b.screens.base.IScreensConstants;
 import com.th3l4b.screens.base.ITreeOfScreens;
 import com.th3l4b.screens.base.interaction.IInteractionListener;
 import com.th3l4b.screens.base.utils.DefaultScreensConfiguration;
@@ -14,7 +14,7 @@ import com.th3l4b.screens.base.utils.DefaultTreeOfScreens;
 import com.th3l4b.screens.base.utils.IScreensClientDescriptor;
 import com.th3l4b.screens.base.utils.IScreensConfiguration;
 
-public class ClipboardMenu implements IScreensContants {
+public class ClipboardMenu implements IScreensConstants {
 
 	public static IScreensConfiguration create(IScreensClientDescriptor client)
 			throws Exception {

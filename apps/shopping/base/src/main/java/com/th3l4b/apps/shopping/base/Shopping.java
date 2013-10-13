@@ -12,7 +12,7 @@ import com.th3l4b.common.data.nullsafe.NullSafe;
 import com.th3l4b.common.data.predicate.IPredicate;
 import com.th3l4b.common.data.predicate.PredicateUtils;
 import com.th3l4b.screens.base.IRenderingConstants;
-import com.th3l4b.screens.base.IScreensContants;
+import com.th3l4b.screens.base.IScreensConstants;
 import com.th3l4b.screens.base.ITreeOfScreens;
 import com.th3l4b.screens.base.addon.AbstractToggleInteractionListener;
 import com.th3l4b.screens.base.interaction.IInteractionListener;
@@ -25,7 +25,7 @@ import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.srm.runtime.IModelUtils;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
 
-public class Shopping implements IScreensContants, IRenderingConstants {
+public class Shopping implements IScreensConstants, IRenderingConstants {
 
 	private static final String KEY = Shopping.class.getPackage().getName();
 	private static final String STATUS_ENUM_VALUE = KEY + ".status";
@@ -273,7 +273,7 @@ public class Shopping implements IScreensContants, IRenderingConstants {
 		String add = name("Add item");
 		tree.addScreen(add, root);
 		tree.setProperty(add, ORDER_INDEX, "0");
-		tree.setProperty(add, IScreensContants.LABEL, "Add item");
+		tree.setProperty(add, IScreensConstants.LABEL, "Add item");
 
 		final String nameField = name("Name");
 		tree.addScreen(nameField, add);
@@ -283,7 +283,7 @@ public class Shopping implements IScreensContants, IRenderingConstants {
 
 		String ok = name("Add it");
 		tree.addScreen(ok, add);
-		tree.setProperty(ok, IScreensContants.LABEL, "Add");
+		tree.setProperty(ok, IScreensConstants.LABEL, "Add");
 		tree.setProperty(ok, ORDER_INDEX, "2");
 		tree.setProperty(ok, TYPE, TYPE_ACTION);
 		tree.setProperty(ok, INTERACTION_JAVA, ok);
@@ -295,7 +295,7 @@ public class Shopping implements IScreensContants, IRenderingConstants {
 							IScreensConfiguration context,
 							IScreensClientDescriptor client) throws Exception {
 						String name = context.getTree().getProperty(nameField,
-								IScreensContants.VALUE);
+								IScreensConstants.VALUE);
 						if ((name != null) && (name.trim().length() > 0)) {
 							IShoppingApplication application = getApplication(context);
 							LinkedHashMap<IIdentifier, IRuntimeEntity<?>> updates = new LinkedHashMap<IIdentifier, IRuntimeEntity<?>>();
@@ -312,7 +312,7 @@ public class Shopping implements IScreensContants, IRenderingConstants {
 
 		String cancel = name("Cancel");
 		tree.addScreen(cancel, add);
-		tree.setProperty(cancel, IScreensContants.LABEL, "Cancel");
+		tree.setProperty(cancel, IScreensConstants.LABEL, "Cancel");
 		tree.setProperty(cancel, ORDER_INDEX, "3");
 		tree.setProperty(cancel, TYPE, TYPE_ACTION);
 		tree.setProperty(cancel, INTERACTION_JAVA, cancel);
@@ -533,7 +533,7 @@ public class Shopping implements IScreensContants, IRenderingConstants {
 				IScreensConfiguration context, IScreensClientDescriptor client)
 				throws Exception {
 			String value = context.getTree().getProperty(_searchFieldName,
-					IScreensContants.VALUE);
+					IScreensConstants.VALUE);
 			if (value == null) {
 				value = "";
 			}
@@ -549,7 +549,7 @@ public class Shopping implements IScreensContants, IRenderingConstants {
 		String search = name("Search");
 		tree.addScreen(search, root);
 		tree.setProperty(search, ORDER_INDEX, "0");
-		tree.setProperty(search, IScreensContants.LABEL, "Enter input");
+		tree.setProperty(search, IScreensConstants.LABEL, "Enter input");
 
 		String searchField = name(SEARCH_FIELD);
 		tree.addScreen(searchField, search);
@@ -558,7 +558,7 @@ public class Shopping implements IScreensContants, IRenderingConstants {
 
 		String searchButton = name("Search button");
 		tree.addScreen(searchButton, search);
-		tree.setProperty(searchButton, IScreensContants.LABEL, "Search");
+		tree.setProperty(searchButton, IScreensConstants.LABEL, "Search");
 		tree.setProperty(searchButton, ORDER_INDEX, "2");
 		tree.setProperty(searchButton, TYPE, TYPE_ACTION);
 		tree.setProperty(searchButton, INTERACTION_JAVA, searchButton);

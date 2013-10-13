@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.th3l4b.screens.base.IScreensContants;
+import com.th3l4b.screens.base.IScreensConstants;
 import com.th3l4b.screens.base.utils.DefaultTreeOfScreens;
 
-public class TreeOfScreensTest implements IScreensContants {
+public class TreeOfScreensTest implements IScreensConstants {
 
 	private String[] toArray(Iterable<String> it) {
 		ArrayList<String> r = new ArrayList<String>();

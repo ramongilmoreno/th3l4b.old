@@ -1,12 +1,12 @@
 package com.th3l4b.screens.console.renderer;
 
 import com.th3l4b.common.data.nullsafe.NullSafe;
-import com.th3l4b.screens.base.IScreensContants;
+import com.th3l4b.screens.base.IScreensConstants;
 import com.th3l4b.screens.base.utils.IScreensConfiguration;
 import com.th3l4b.screens.console.IConsoleScreensClientDescriptor;
 
 public class DefaultConsoleRenderer extends AbstractDelegatedConsoleRenderer
-		implements IScreensContants {
+		implements IScreensConstants {
 
 	SimpleConsoleRenderer _simple = new SimpleConsoleRenderer();
 	ButtonConsoleRenderer _button = new ButtonConsoleRenderer();

@@ -60,8 +60,8 @@ public abstract class AbstractScreensServlet extends HttpServlet {
 			}
 			client.setLocales(locales);
 			ArrayList<String> languages = new ArrayList<String>();
-			languages.add(IScreensContants.INTERACTION_JAVA);
-			languages.add(IScreensContants.INTERACTION_JAVASCRIPT);
+			languages.add(IScreensConstants.INTERACTION_JAVA);
+			languages.add(IScreensConstants.INTERACTION_JAVASCRIPT);
 			client.setLanguages(languages);
 			client.setRequest(request);
 
@@ -99,7 +99,7 @@ public abstract class AbstractScreensServlet extends HttpServlet {
 				ITreeOfScreens original = context.getTree();
 				context.setTree(tree);
 				String action2 = tree.getProperty(action,
-						IScreensContants.INTERACTION_JAVA);
+						IScreensConstants.INTERACTION_JAVA);
 				Map<String, IInteractionListener> interactions = context
 						.getInteractions();
 				IInteractionListener interaction = interactions.get(action2);

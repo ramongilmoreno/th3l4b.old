@@ -2,7 +2,7 @@ package com.th3l4b.screens.console.renderer;
 
 import com.th3l4b.common.data.nullsafe.NullSafe;
 import com.th3l4b.screens.base.IRenderingConstants;
-import com.th3l4b.screens.base.IScreensContants;
+import com.th3l4b.screens.base.IScreensConstants;
 import com.th3l4b.screens.base.ITreeOfScreens;
 import com.th3l4b.screens.base.utils.IScreensConfiguration;
 import com.th3l4b.screens.console.IConsoleScreensClientDescriptor;
@@ -11,7 +11,7 @@ public class SimpleConsoleRenderer implements IConsoleRenderer {
 
 	public String getLabel(String item, IScreensConfiguration context,
 			IConsoleScreensClientDescriptor client) throws Exception {
-		String r = context.getTree().getProperty(item, IScreensContants.LABEL);
+		String r = context.getTree().getProperty(item, IScreensConstants.LABEL);
 		if (r == null) {
 			r = item;
 		}

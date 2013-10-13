@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import com.th3l4b.common.data.nullsafe.NullSafe;
 import com.th3l4b.common.data.tree.TreeUtils;
 import com.th3l4b.common.text.IndentedWriter;
-import com.th3l4b.screens.base.IScreensContants;
+import com.th3l4b.screens.base.IScreensConstants;
 import com.th3l4b.screens.base.ITreeOfScreens;
 import com.th3l4b.screens.base.interaction.IInteractionListener;
 import com.th3l4b.screens.base.utils.AsTree;
@@ -44,12 +44,12 @@ public class ConsoleFacade {
 
 			ArrayList<String> list = new ArrayList<String>();
 			for (String s : TreeUtils.dfs(AsTree.getTree(tree))) {
-				String type = tree.getProperty(s, IScreensContants.TYPE);
+				String type = tree.getProperty(s, IScreensConstants.TYPE);
 				String label = renderer.getLabel(s, context, client);
-				if (NullSafe.equals(type, IScreensContants.TYPE_FIELD)) {
+				if (NullSafe.equals(type, IScreensConstants.TYPE_FIELD)) {
 					iout.println("Set field " + list.size() + " - " + label);
 					list.add(s);
-				} else if (NullSafe.equals(type, IScreensContants.TYPE_ACTION)) {
+				} else if (NullSafe.equals(type, IScreensConstants.TYPE_ACTION)) {
 					IInteractionListener i = context.getInteractions().get(s);
 					if (i != null) {
 
@@ -76,12 +76,12 @@ public class ConsoleFacade {
 						} else {
 							String found = list.get(index);
 							if (NullSafe.equals(tree.getProperty(found,
-									IScreensContants.TYPE),
-									IScreensContants.TYPE_ACTION)) {
+									IScreensConstants.TYPE),
+									IScreensConstants.TYPE_ACTION)) {
 								// Locate the Java implementation
 								String javaInteraction = tree.getProperty(
 										found,
-										IScreensContants.INTERACTION_JAVA);
+										IScreensConstants.INTERACTION_JAVA);
 								if (javaInteraction == null) {
 									out.println("Could not find the Java interaction for screen: "
 											+ found);
@@ -111,9 +111,9 @@ public class ConsoleFacade {
 						} else {
 							String found = list.get(index);
 							if (NullSafe.equals(tree.getProperty(found,
-									IScreensContants.TYPE),
-									IScreensContants.TYPE_FIELD)) {
-								tree.setProperty(found, IScreensContants.VALUE,
+									IScreensConstants.TYPE),
+									IScreensConstants.TYPE_FIELD)) {
+								tree.setProperty(found, IScreensConstants.VALUE,
 										command[2]);
 								IInteractionListener i = context
 										.getInteractions().get(found);

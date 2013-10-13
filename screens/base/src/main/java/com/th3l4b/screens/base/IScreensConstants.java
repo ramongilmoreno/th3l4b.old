@@ -1,7 +1,7 @@
 package com.th3l4b.screens.base;
 
-public interface IScreensContants {
-	public static final String PREFIX = IScreensContants.class.getPackage()
+public interface IScreensConstants {
+	public static final String PREFIX = IScreensConstants.class.getPackage()
 			.getName();
 	public static final String TYPE_PREFIX = PREFIX + ".type";
 	public static final String TYPE = TYPE_PREFIX;

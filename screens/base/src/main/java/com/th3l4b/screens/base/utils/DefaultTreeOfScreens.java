@@ -12,7 +12,7 @@ import com.th3l4b.common.data.nullsafe.NullSafe;
 import com.th3l4b.common.data.tree.AbstractUnmodifiableTree;
 import com.th3l4b.common.data.tree.ITree;
 import com.th3l4b.common.data.tree.TreeUtils;
-import com.th3l4b.screens.base.IScreensContants;
+import com.th3l4b.screens.base.IScreensConstants;
 import com.th3l4b.screens.base.ITreeOfScreens;
 
 public class DefaultTreeOfScreens implements ITreeOfScreens {
@@ -57,7 +57,7 @@ public class DefaultTreeOfScreens implements ITreeOfScreens {
 				} else {
 					i = new Integer(Integer.MAX_VALUE);
 					String p = DefaultTreeOfScreens.this.getProperty(a,
-							IScreensContants.ORDER_INDEX);
+							IScreensConstants.ORDER_INDEX);
 					if (p != null) {
 						try {
 							i = Integer.parseInt(p);
