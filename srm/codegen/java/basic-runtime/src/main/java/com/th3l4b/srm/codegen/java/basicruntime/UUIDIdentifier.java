@@ -9,39 +9,40 @@ import com.th3l4b.srm.runtime.IIdentifier;
  */
 public class UUIDIdentifier implements IIdentifier {
 
-	private Class<?> _clazz;
 	private long _msb, _lsb;
 
-	public UUIDIdentifier(Class<?> clazz) {
+	public UUIDIdentifier() {
 		UUID uuid = UUID.randomUUID();
-		init(clazz, uuid.getMostSignificantBits(),
-				uuid.getLeastSignificantBits());
+		init(uuid.getMostSignificantBits(), uuid.getLeastSignificantBits());
 	}
 
-	public UUIDIdentifier(Class<?> clazz, long msb, long lsb) {
-		init(clazz, msb, lsb);
+	public UUIDIdentifier(long msb, long lsb) {
+		init(msb, lsb);
 	}
 
-	public UUIDIdentifier(String s, ClassLoader loader)
-			throws NumberFormatException, ClassNotFoundException {
+	public UUIDIdentifier(String s) throws NumberFormatException,
+			ClassNotFoundException {
 		String[] split = s.split(" ");
-		init(loader.loadClass(split[0]),
-				Long.parseLong(split[1], Character.MAX_RADIX),
-				Long.parseLong(split[2], Character.MAX_RADIX));
+		init(Long.parseLong(split[0], Character.MAX_RADIX),
+				Long.parseLong(split[1], Character.MAX_RADIX));
 	}
 
-	private void init(Class<?> clazz, long msb, long lsb) {
-		if (clazz == null) {
-			throw new NullPointerException("Class cannot be null");
-		}
-		_clazz = clazz;
+	private void init(long msb, long lsb) {
 		_msb = msb;
 		_lsb = lsb;
+	}
+	
+	public long getMsb() {
+		return _msb;
+	}
+	
+	public long getLsb() {
+		return _lsb;
 	}
 
 	@Override
 	public int hashCode() {
-		long r = ((long) _clazz.hashCode()) ^ _msb ^ _lsb;
+		long r = _msb ^ _lsb;
 		return new Long(r).hashCode();
 	}
 
@@ -65,8 +66,7 @@ public class UUIDIdentifier implements IIdentifier {
 	 * {@link #UUIDIdentifier(String, ClassLoader)} constructor.
 	 */
 	public static String toString(UUIDIdentifier i) {
-		return i._clazz.getName() + " "
-				+ Long.toString(i._msb, Character.MAX_RADIX) + " "
+		return Long.toString(i._msb, Character.MAX_RADIX) + " "
 				+ Long.toString(i._lsb, Character.MAX_RADIX);
 
 	}
@@ -77,8 +77,7 @@ public class UUIDIdentifier implements IIdentifier {
 		} else if ((a == null) || (b == null)) {
 			return false;
 		} else {
-			return b._clazz.getName().equals(a._clazz.getName())
-					&& (b._msb == a._msb) && (b._lsb == a._lsb);
+			return (b._msb == a._msb) && (b._lsb == a._lsb);
 		}
 	}
 

@@ -9,7 +9,7 @@ import com.th3l4b.srm.runtime.IRuntimeEntity;
 public abstract class AbstractRuntimeEntity<T extends IRuntimeEntity<T>>
 		implements IRuntimeEntity<T> {
 
-	protected IIdentifier __identifier = new UUIDIdentifier(clazz());
+	protected IIdentifier __identifier = new UUIDIdentifier();
 	protected EntityStatus __status = EntityStatus.New;
 	private ICoordinates _coordinates;
 

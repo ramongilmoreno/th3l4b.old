@@ -31,7 +31,7 @@ public abstract class AbstractModelUtils implements IModelUtils {
 	protected static <T extends IRuntimeEntity<T>> T initialize(Class<T> clazz,
 			T entity) throws Exception {
 		ICoordinates coordinates = entity.coordinates();
-		coordinates.setIdentifier(new UUIDIdentifier(clazz));
+		coordinates.setIdentifier(new UUIDIdentifier());
 		coordinates.setStatus(EntityStatus.New);
 		return entity;
 	}
@@ -44,7 +44,7 @@ public abstract class AbstractModelUtils implements IModelUtils {
 			Object... args) throws Exception {
 		Long msb = (Long) args[0];
 		Long lsb = (Long) args[1];
-		return new UUIDIdentifier(clazz, msb.longValue(), lsb.longValue());
+		return new UUIDIdentifier(msb.longValue(), lsb.longValue());
 	}
 
 	@Override
@@ -64,7 +64,7 @@ public abstract class AbstractModelUtils implements IModelUtils {
 
 	@Override
 	public IIdentifier identifierFromString(String id) throws Exception {
-		return new UUIDIdentifier(id, whichClassLoader());
+		return new UUIDIdentifier(id);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -86,18 +86,6 @@ public abstract class AbstractModelUtils implements IModelUtils {
 		target.coordinates()
 				.setIdentifier(source.coordinates().getIdentifier());
 		target.coordinates().setStatus(source.coordinates().getStatus());
-	}
-
-	/**
-	 * This utility allows specifying different class loaders. This default
-	 * implementation class {@link #getClass()} then
-	 * {@link Class#getClassLoader()}. Usually this implementation get an
-	 * appropriate class loader from the non abstract class that instantiates
-	 * this object, but in the case this is not enough, this method allows
-	 * overriding that behavior.
-	 */
-	protected ClassLoader whichClassLoader() throws Exception {
-		return getClass().getClassLoader();
 	}
 
 	@Override
