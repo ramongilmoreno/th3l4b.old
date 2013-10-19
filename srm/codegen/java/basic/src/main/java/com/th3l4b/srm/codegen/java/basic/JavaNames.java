@@ -74,18 +74,6 @@ public class JavaNames {
 	}
 
 	
-	public String abstractInMemoryContext(INormalizedModel model) throws Exception {
-		return "Abstract"
-				+ valueOrProperty(javaIdentifier(model.getName()) + "Context",
-						model);
-	}
-
-	public String finderInMemory(INormalizedModel model) throws Exception {
-		return "Abstract"
-				+ valueOrProperty(javaIdentifier(model.getName())
-						+ "InMemoryFinder", model);
-	}
-
 	public String modelUtils(INormalizedModel model) throws Exception {
 		return ""
 				+ valueOrProperty(javaIdentifier(model.getName())

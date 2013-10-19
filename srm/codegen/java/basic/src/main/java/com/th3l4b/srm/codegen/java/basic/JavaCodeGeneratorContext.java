@@ -6,10 +6,7 @@ public class JavaCodeGeneratorContext extends CodeGeneratorContext {
 
 	private String _package;
 
-	private JavaNames _javaNames;
-
-	public JavaCodeGeneratorContext() {
-	}
+	private JavaNames _javaNames = new JavaNames();
 
 	public String getPackage() {
 		return _package;
@@ -29,6 +26,7 @@ public class JavaCodeGeneratorContext extends CodeGeneratorContext {
 
 	public void copyTo(JavaCodeGeneratorContext to) throws Exception {
 		super.copyTo(to);
+		to.setJavaNames(getJavaNames());
 		to.setPackage(getPackage());
 	}
 

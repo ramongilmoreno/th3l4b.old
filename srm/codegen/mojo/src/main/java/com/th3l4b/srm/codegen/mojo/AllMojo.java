@@ -20,7 +20,8 @@ import com.th3l4b.srm.codegen.base.CodeGeneratorContext;
 import com.th3l4b.srm.codegen.base.FileUtils;
 import com.th3l4b.srm.codegen.java.basic.JavaCodeGenerator;
 import com.th3l4b.srm.codegen.java.basic.JavaCodeGeneratorContext;
-import com.th3l4b.srm.codegen.java.basic.JavaNames;
+import com.th3l4b.srm.codegen.java.basic.storage.inmemory.JavaInMemoryCodeGenerator;
+import com.th3l4b.srm.codegen.java.basic.storage.inmemory.JavaInMemoryCodeGeneratorContext;
 import com.th3l4b.srm.parser.ParserUtils;
 import com.th3l4b.types.base.basicset.BasicSetTypesContext;
 
@@ -161,32 +162,35 @@ public class AllMojo extends AbstractMojo {
 			JavaCodeGeneratorContext javaContext = new JavaCodeGeneratorContext();
 			context.copyTo(javaContext);
 			javaContext.setOutput(new File(context.getOutput(), "java"));
-			javaContext.setJavaNames(new JavaNames());
 			javaContext.setPackage(_package);
-			JavaCodeGenerator java = new JavaCodeGenerator();
+			JavaCodeGenerator javaCodegen = new JavaCodeGenerator();
 			javaContext.getLog().message(
 					TextUtils.toPrintable("Producing entities..."));
-			java.modelEntity(normalized, javaContext);
+			javaCodegen.modelEntity(normalized, javaContext);
 			for (INormalizedEntity ne : normalized.items()) {
-				java.entity(ne, normalized, javaContext);
-				java.entityImpl(ne, normalized, javaContext);
+				javaCodegen.entity(ne, normalized, javaContext);
+				javaCodegen.entityImpl(ne, normalized, javaContext);
 			}
 			javaContext.getLog().message(
 					TextUtils.toPrintable("Entities production finished."));
 			javaContext.getLog().message(
 					TextUtils.toPrintable("Producing finder..."));
-			java.finder(normalized, javaContext);
-			java.finderInMemory(normalized, javaContext);
+			javaCodegen.finder(normalized, javaContext);
+
+			JavaInMemoryCodeGenerator inMemoryCodegen = new JavaInMemoryCodeGenerator();
+			JavaInMemoryCodeGeneratorContext inMemoryContext = new JavaInMemoryCodeGeneratorContext();
+			javaContext.copyTo(inMemoryContext);
+			inMemoryCodegen.finderInMemory(normalized, inMemoryContext);
 			javaContext.getLog().message(
 					TextUtils.toPrintable("Finder finished."));
 			javaContext.getLog().message(
 					TextUtils.toPrintable("Producing model utils..."));
-			java.modelUtils(normalized, javaContext);
+			javaCodegen.modelUtils(normalized, javaContext);
 			javaContext.getLog().message(
 					TextUtils.toPrintable("Model utils finished."));
 			javaContext.getLog().message(
 					TextUtils.toPrintable("Producing context interface..."));
-			java.context(normalized, javaContext);
+			javaCodegen.context(normalized, javaContext);
 			javaContext.getLog().message(
 					TextUtils.toPrintable("Context interface finished."));
 			javaContext
@@ -194,7 +198,8 @@ public class AllMojo extends AbstractMojo {
 					.message(
 							TextUtils
 									.toPrintable("Producing abstract in memory context..."));
-			java.abstractInMemoryContext(normalized, javaContext);
+			inMemoryCodegen
+					.abstractInMemoryContext(normalized, inMemoryContext);
 			javaContext
 					.getLog()
 					.message(
