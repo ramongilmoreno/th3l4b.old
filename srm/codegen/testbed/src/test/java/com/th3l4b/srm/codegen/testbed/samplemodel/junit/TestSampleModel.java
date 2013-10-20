@@ -9,8 +9,8 @@ import org.junit.Test;
 
 import com.th3l4b.srm.codegen.testbed.samplemodel.IDepartment;
 import com.th3l4b.srm.codegen.testbed.samplemodel.IOfficeFinder;
-import com.th3l4b.srm.codegen.testbed.samplemodel.basicruntime.AbstractOfficeInMemoryFinder;
 import com.th3l4b.srm.codegen.testbed.samplemodel.basicruntime.OfficeModelUtils;
+import com.th3l4b.srm.codegen.testbed.samplemodel.inmemory.AbstractOfficeInMemoryFinder;
 import com.th3l4b.srm.runtime.EntityStatus;
 import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.srm.runtime.IRuntimeEntity;

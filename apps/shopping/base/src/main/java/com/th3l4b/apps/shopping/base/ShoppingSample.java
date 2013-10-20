@@ -7,16 +7,15 @@ import com.th3l4b.apps.shopping.base.codegen.srm.IItem;
 import com.th3l4b.apps.shopping.base.codegen.srm.INeed;
 import com.th3l4b.apps.shopping.base.codegen.srm.IShoppingContext;
 import com.th3l4b.apps.shopping.base.codegen.srm.IStore;
-import com.th3l4b.apps.shopping.base.codegen.srm.basicruntime.AbstractShoppingContext;
+import com.th3l4b.apps.shopping.base.codegen.srm.inmemory.AbstractShoppingInMemorySRMContext;
 import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
 
 public class ShoppingSample {
 
-	public static IShoppingContext getSampleContext()
-			throws Exception {
+	public static IShoppingContext getSampleContext() throws Exception {
 		final LinkedHashMap<IIdentifier, IRuntimeEntity<?>> r = new LinkedHashMap<IIdentifier, IRuntimeEntity<?>>();
-		IShoppingContext context = new AbstractShoppingContext() {
+		IShoppingContext context = new AbstractShoppingInMemorySRMContext() {
 			@Override
 			protected Map<IIdentifier, IRuntimeEntity<?>> getEntities()
 					throws Exception {
