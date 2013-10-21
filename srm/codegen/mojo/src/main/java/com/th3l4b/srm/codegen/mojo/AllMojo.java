@@ -22,6 +22,8 @@ import com.th3l4b.srm.codegen.java.basic.JavaCodeGenerator;
 import com.th3l4b.srm.codegen.java.basic.JavaCodeGeneratorContext;
 import com.th3l4b.srm.codegen.java.basic.storage.inmemory.JavaInMemoryCodeGenerator;
 import com.th3l4b.srm.codegen.java.basic.storage.inmemory.JavaInMemoryCodeGeneratorContext;
+import com.th3l4b.srm.codegen.java.jdbc.JDBCCodeGenerator;
+import com.th3l4b.srm.codegen.java.jdbc.JDBCCodeGeneratorContext;
 import com.th3l4b.srm.parser.ParserUtils;
 import com.th3l4b.types.base.basicset.BasicSetTypesContext;
 
@@ -176,11 +178,6 @@ public class AllMojo extends AbstractMojo {
 			javaContext.getLog().message(
 					TextUtils.toPrintable("Producing finder..."));
 			javaCodegen.finder(normalized, javaContext);
-
-			JavaInMemoryCodeGenerator inMemoryCodegen = new JavaInMemoryCodeGenerator();
-			JavaInMemoryCodeGeneratorContext inMemoryContext = new JavaInMemoryCodeGeneratorContext();
-			javaContext.copyTo(inMemoryContext);
-			inMemoryCodegen.finderInMemory(normalized, inMemoryContext);
 			javaContext.getLog().message(
 					TextUtils.toPrintable("Finder finished."));
 			javaContext.getLog().message(
@@ -193,6 +190,22 @@ public class AllMojo extends AbstractMojo {
 			javaCodegen.context(normalized, javaContext);
 			javaContext.getLog().message(
 					TextUtils.toPrintable("Context interface finished."));
+
+			// In memory
+			JavaInMemoryCodeGenerator inMemoryCodegen = new JavaInMemoryCodeGenerator();
+			JavaInMemoryCodeGeneratorContext inMemoryContext = new JavaInMemoryCodeGeneratorContext();
+			javaContext.copyTo(inMemoryContext);
+			javaContext
+					.getLog()
+					.message(
+							TextUtils
+									.toPrintable("Producing abstract in memory finder..."));
+			inMemoryCodegen.finderInMemory(normalized, inMemoryContext);
+			javaContext
+					.getLog()
+					.message(
+							TextUtils
+									.toPrintable("Abstract in memory finder finished."));
 			javaContext
 					.getLog()
 					.message(
@@ -205,6 +218,39 @@ public class AllMojo extends AbstractMojo {
 					.message(
 							TextUtils
 									.toPrintable("Abstract in memory context finished."));
+
+			// JDBC
+			JDBCCodeGenerator jdbcCodegen = new JDBCCodeGenerator();
+			JDBCCodeGeneratorContext jdbcContext = new JDBCCodeGeneratorContext();
+			javaContext.copyTo(jdbcContext);
+			javaContext.getLog().message(
+					TextUtils.toPrintable("Producing abstract JDBC finder..."));
+			jdbcCodegen.finderJDBC(normalized, jdbcContext);
+			javaContext.getLog().message(
+					TextUtils.toPrintable("Abstract jdbc JDBC finished."));
+
+			for (INormalizedEntity entity : normalized.items()) {
+				javaContext.getLog().message(
+						TextUtils.toPrintable("Producing JDBC parser for "
+								+ entity.getName() + "..."));
+				jdbcCodegen.entityParser(entity, normalized, jdbcContext);
+				javaContext.getLog().message(
+						TextUtils.toPrintable("JDBC parser finished."));
+
+			}
+
+			// javaContext
+			// .getLog()
+			// .message(
+			// TextUtils
+			// .toPrintable("Producing abstract JDBC context..."));
+			// jdbcCodegen
+			// .abstractJDBCContext(normalized, jdbcContext);
+			// javaContext
+			// .getLog()
+			// .message(
+			// TextUtils
+			// .toPrintable("Abstract JDBC context finished."));
 
 		} catch (Exception e) {
 			throw new MojoExecutionException("Could not generate code", e);

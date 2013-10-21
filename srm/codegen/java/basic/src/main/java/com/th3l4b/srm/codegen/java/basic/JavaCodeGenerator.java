@@ -91,11 +91,11 @@ public class JavaCodeGenerator {
 	public void entityImpl(final INormalizedEntity entity,
 			final INormalizedModel model, final JavaCodeGeneratorContext context)
 			throws Exception {
-		final JavaNames javaNames = context.getJavaNames();
-		final String clazz = javaNames.nameImpl(entity);
-		final String iclazz = javaNames.fqn(javaNames.nameInterface(entity),
+		final JavaNames names = context.getJavaNames();
+		final String clazz = names.nameImpl(entity);
+		final String iclazz = names.fqn(names.nameInterface(entity),
 				context);
-		final String pkg = javaNames.packageForImpl(context);
+		final String pkg = names.packageForImpl(context);
 		FileUtils.java(context, pkg, clazz, new AbstractPrintable() {
 			@Override
 			protected void printWithException(PrintWriter out) throws Exception {
@@ -109,7 +109,7 @@ public class JavaCodeGenerator {
 
 				// Create attributes
 				for (IField field : entity.items()) {
-					String name = javaNames.name(field);
+					String name = names.name(field);
 					String clazz = context.getTypes().get(field.getType())
 							.getProperties()
 							.get(ITypesConstants.PROPERTY_JAVA_CLASS);
@@ -118,7 +118,7 @@ public class JavaCodeGenerator {
 				}
 				for (INormalizedManyToOneRelationship rel : entity
 						.relationships().items()) {
-					String name = javaNames.nameOfDirect(rel, model);
+					String name = names.nameOfDirect(rel, model);
 					String clazz = IIdentifier.class.getName();
 					iout.println("protected " + clazz + " _value_" + name + ";");
 					iout.println("protected boolean _isSet_" + name + ";");
@@ -127,7 +127,7 @@ public class JavaCodeGenerator {
 
 				// Implement accessors
 				for (IField field : entity.items()) {
-					String name = javaNames.name(field);
+					String name = names.name(field);
 					String clazz = context.getTypes().get(field.getType())
 							.getProperties()
 							.get(ITypesConstants.PROPERTY_JAVA_CLASS);
@@ -145,22 +145,22 @@ public class JavaCodeGenerator {
 				// Fill relationships
 				for (INormalizedManyToOneRelationship rel : entity
 						.relationships().items()) {
-					String name = javaNames.nameOfDirect(rel, model);
+					String name = names.nameOfDirect(rel, model);
 					String getter = "get" + name;
 					String setter = "set" + name;
-					String clazz = javaNames.nameInterface(model.get(rel
+					String clazz = names.nameInterface(model.get(rel
 							.getTo()));
-					String fqn = javaNames.fqn(clazz, context);
+					String fqn = names.fqn(clazz, context);
 					iout.println("public " + IIdentifier.class.getName() + " "
 							+ getter + " () throws "
 							+ Exception.class.getName() + " { return _value_"
 							+ name + "; }");
 					iout.println("public " + fqn + " " + getter + " ("
-							+ javaNames.fqn(javaNames.finder(model), context)
+							+ names.fqn(names.finder(model), context)
 							+ " accessor) throws " + Exception.class.getName()
 							+ " { return _value_" + name
 							+ " != null ? accessor.get"
-							+ javaNames.name(model.get(rel.getTo()))
+							+ names.name(model.get(rel.getTo()))
 							+ "(_value_" + name + ") : null; }");
 					iout.println("public void " + setter + " ("
 							+ IIdentifier.class.getName() + " arg) throws "

@@ -13,6 +13,9 @@ import com.th3l4b.srm.codegen.base.names.CamelUtils;
 
 public class JavaNames {
 
+	public static final String IDENTIFIER = JavaNames.class.getPackage()
+			.getName() + ".identifier";
+
 	/**
 	 * Creates a Java identifier out of the given input name.
 	 */
@@ -22,9 +25,12 @@ public class JavaNames {
 
 	protected String valueOrProperty(String value, IPropertied propertied)
 			throws Exception {
+		return valueOrProperty(value, IDENTIFIER, propertied);
+	}
+
+	protected String valueOrProperty(String value, String property,
+			IPropertied propertied) throws Exception {
 		Map<String, String> map = propertied.getProperties();
-		String property = JavaNames.class.getPackage().getName()
-				+ ".identifier";
 		if (map.containsKey(property)) {
 			return map.get(property);
 		} else {
@@ -51,7 +57,7 @@ public class JavaNames {
 	public String nameInterface(INormalizedEntity entity) throws Exception {
 		return "I" + name(entity);
 	}
-	
+
 	public String nameImpl(INormalizedEntity entity) throws Exception {
 		return "Default"
 				+ valueOrProperty(javaIdentifier(entity.getName()), entity);
@@ -73,7 +79,6 @@ public class JavaNames {
 						model);
 	}
 
-	
 	public String modelUtils(INormalizedModel model) throws Exception {
 		return ""
 				+ valueOrProperty(javaIdentifier(model.getName())
