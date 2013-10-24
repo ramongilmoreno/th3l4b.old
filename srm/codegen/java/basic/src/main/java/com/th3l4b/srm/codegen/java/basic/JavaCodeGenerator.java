@@ -93,8 +93,7 @@ public class JavaCodeGenerator {
 			throws Exception {
 		final JavaNames names = context.getJavaNames();
 		final String clazz = names.nameImpl(entity);
-		final String iclazz = names.fqn(names.nameInterface(entity),
-				context);
+		final String iclazz = names.fqn(names.nameInterface(entity), context);
 		final String pkg = names.packageForImpl(context);
 		FileUtils.java(context, pkg, clazz, new AbstractPrintable() {
 			@Override
@@ -148,8 +147,7 @@ public class JavaCodeGenerator {
 					String name = names.nameOfDirect(rel, model);
 					String getter = "get" + name;
 					String setter = "set" + name;
-					String clazz = names.nameInterface(model.get(rel
-							.getTo()));
+					String clazz = names.nameInterface(model.get(rel.getTo()));
 					String fqn = names.fqn(clazz, context);
 					iout.println("public " + IIdentifier.class.getName() + " "
 							+ getter + " () throws "
@@ -160,8 +158,8 @@ public class JavaCodeGenerator {
 							+ " accessor) throws " + Exception.class.getName()
 							+ " { return _value_" + name
 							+ " != null ? accessor.get"
-							+ names.name(model.get(rel.getTo()))
-							+ "(_value_" + name + ") : null; }");
+							+ names.name(model.get(rel.getTo())) + "(_value_"
+							+ name + ") : null; }");
 					iout.println("public void " + setter + " ("
 							+ IIdentifier.class.getName() + " arg) throws "
 							+ Exception.class.getName() + " { _isSet_" + name
@@ -232,11 +230,14 @@ public class JavaCodeGenerator {
 								String clazzMany = javaNames.nameInterface(ne);
 								String clazzOne = javaNames.nameInterface(model
 										.get(rel.getTo()));
-								String leading = Iterable.class.getName() + "<"
+								String leading = Iterable.class.getName()
+										+ "<"
 										+ javaNames.fqn(clazzMany, context)
 										+ "> findAll"
 										+ javaNames.nameOfReverse(rel, model)
-										+ "From" + clazzOne + "(";
+										+ "From"
+										+ javaNames.name(model.get(rel.getTo()))
+										+ "(";
 								iout.println(leading
 										+ javaNames.fqn(clazzOne, context)
 										+ " from) throws Exception;");

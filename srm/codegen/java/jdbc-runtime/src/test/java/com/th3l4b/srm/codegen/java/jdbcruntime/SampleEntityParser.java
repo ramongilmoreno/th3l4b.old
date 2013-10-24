@@ -4,9 +4,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 import com.th3l4b.types.runtime.IJDBCRuntimeType;
-import com.th3l4b.types.runtime.IJavaRuntimeTypesContext;
+import com.th3l4b.types.runtime.IJDBCRuntimeTypesContext;
 
-public class SampleEntityParser implements IJDBCEntityParser<ISampleEntity> {
+public class SampleEntityParser extends AbstractJDBCEntityParser<ISampleEntity> {
+
+	private IJDBCRuntimeType<String> _field_Field1;
+
+	public SampleEntityParser(IJDBCIdentifierParser ids,
+			IJDBCStatusParser status, IJDBCRuntimeTypesContext types) {
+		super(ids, status);
+		_field_Field1 = types.get("string", String.class);
+	}
 
 	@Override
 	public String table() throws Exception {
@@ -36,20 +44,15 @@ public class SampleEntityParser implements IJDBCEntityParser<ISampleEntity> {
 	}
 
 	@Override
-	public void parse(ISampleEntity entity, int index, ResultSet result,
-			IJDBCIdentifierParser ids, IJavaRuntimeTypesContext types)
+	protected void parseRest(ISampleEntity entity, int index, ResultSet result)
 			throws Exception {
-		entity.setField1(((IJDBCRuntimeType<?>) types.get("string",
-				String.class)).fromResultSet(index++, result, String.class));
+		entity.setField1(_field_Field1.fromResultSet(index++, result));
 	}
 
 	@Override
-	public void set(ISampleEntity entity, int index,
-			PreparedStatement statement, IJDBCIdentifierParser ids,
-			IJavaRuntimeTypesContext types) throws Exception {
-		((IJDBCRuntimeType<?>) types.get("string", String.class))
-				.toPreparedStatement(entity.getField1(), index++, statement,
-						String.class);
+	protected void setRest(ISampleEntity entity, int index,
+			PreparedStatement statement) throws Exception {
+		_field_Field1.toPreparedStatement(entity.getField1(), index++, statement, String.class);
 
 	}
 

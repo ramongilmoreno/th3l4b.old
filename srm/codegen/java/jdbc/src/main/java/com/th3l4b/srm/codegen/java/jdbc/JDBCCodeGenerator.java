@@ -1,9 +1,9 @@
 package com.th3l4b.srm.codegen.java.jdbc;
 
 import java.io.PrintWriter;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.Map;
 
 import com.th3l4b.common.text.AbstractPrintable;
 import com.th3l4b.common.text.IndentedWriter;
@@ -13,16 +13,99 @@ import com.th3l4b.srm.base.normalized.INormalizedEntity;
 import com.th3l4b.srm.base.normalized.INormalizedManyToOneRelationship;
 import com.th3l4b.srm.base.normalized.INormalizedModel;
 import com.th3l4b.srm.codegen.base.FileUtils;
+import com.th3l4b.srm.codegen.java.basic.JavaNames;
+import com.th3l4b.srm.codegen.java.jdbcruntime.AbstractJDBCEntityParser;
 import com.th3l4b.srm.codegen.java.jdbcruntime.AbstractJDBCFinder;
 import com.th3l4b.srm.codegen.java.jdbcruntime.AbstractJDBCSRMContext;
-import com.th3l4b.srm.codegen.java.jdbcruntime.IJDBCEntityParser;
+import com.th3l4b.srm.codegen.java.jdbcruntime.DefaultJDBCEntityParserContext;
+import com.th3l4b.srm.codegen.java.jdbcruntime.IJDBCEntityParserContext;
 import com.th3l4b.srm.codegen.java.jdbcruntime.IJDBCIdentifierParser;
+import com.th3l4b.srm.codegen.java.jdbcruntime.IJDBCStatusParser;
 import com.th3l4b.srm.runtime.IIdentifier;
-import com.th3l4b.srm.runtime.IModelUtils;
-import com.th3l4b.srm.runtime.IRuntimeEntity;
-import com.th3l4b.types.runtime.IJavaRuntimeTypesContext;
+import com.th3l4b.types.base.ITypesConstants;
+import com.th3l4b.types.runtime.IJDBCRuntimeType;
+import com.th3l4b.types.runtime.IJDBCRuntimeTypesContext;
 
 public class JDBCCodeGenerator {
+
+	public void finder(final INormalizedModel model,
+			final JDBCCodeGeneratorContext context) throws Exception {
+		final JDBCNames names = context.getJDBCNames();
+		final JavaNames javaNames = context.getJavaNames();
+		final String clazz = names.finderJDBC(model);
+		final String pkg = names.packageForJDBC(context);
+		FileUtils.java(context, pkg, clazz, new AbstractPrintable() {
+			@Override
+			protected void printWithException(PrintWriter out) throws Exception {
+				PrintWriter iout = IndentedWriter.get(out);
+				PrintWriter iiout = IndentedWriter.get(iout);
+				out.println("package " + pkg + ";");
+				out.println();
+				out.println("public abstract class " + clazz + " extends "
+						+ AbstractJDBCFinder.class.getName() + " implements "
+						+ names.fqn(names.finder(model), context) + " {");
+
+				// Get the entities (individually or all)
+				for (INormalizedEntity ne : model.items()) {
+					String neClazz = javaNames.fqn(javaNames.nameInterface(ne),
+							context);
+					iout.println("public " + neClazz + " get"
+							+ javaNames.name(ne) + "("
+							+ IIdentifier.class.getName()
+							+ " id) throws Exception {");
+					iiout.println("return find(" + neClazz + ".class, id);");
+					iout.println("}");
+				}
+
+				for (INormalizedEntity ne : model.items()) {
+					String neClazz = javaNames.fqn(javaNames.nameInterface(ne),
+							context);
+					iout.println("public " + Iterable.class.getName() + "<"
+							+ neClazz + "> all" + javaNames.name(ne)
+							+ "() throws Exception {");
+					iiout.println("return all(" + neClazz + ".class);");
+					iout.println("}");
+				}
+
+				// And the relationships
+				for (INormalizedEntity ne : model.items()) {
+					for (INormalizedManyToOneRelationship rel : ne
+							.relationships().items()) {
+						String clazzMany = javaNames.fqn(
+								javaNames.nameInterface(ne), context);
+						String clazzOne = javaNames.fqn(
+								javaNames.nameInterface(model.get(rel.getTo())),
+								context);
+						String leading = "public " + Iterable.class.getName()
+								+ "<" + clazzMany + "> findAll"
+								+ javaNames.nameOfReverse(rel, model) + "From"
+								+ javaNames.name(model.get(rel.getTo())) + "(";
+						iout.println(leading + clazzOne
+								+ " from) throws Exception {");
+						iiout.println("return from != null ? findAll"
+								+ javaNames.nameOfReverse(rel, model)
+								+ "From"
+								+ javaNames.name(model.get(rel.getTo()))
+								+ "(from.coordinates().getIdentifier()) : null;");
+						iout.println("}");
+						iout.println(leading + IIdentifier.class.getName()
+								+ " from) throws Exception {");
+						iiout.println("return find(" + clazzMany
+								+ ".class, from, \"" + names.column(rel, model)
+								+ "\");");
+						iout.println("}");
+					}
+				}
+				out.println("}");
+				iiout.flush();
+				iout.flush();
+			}
+		});
+	}
+
+	private String fieldName(IField f, JDBCNames names) throws Exception {
+		return "_field_" + names.name(f);
+	}
 
 	public void entityParser(final INormalizedEntity entity,
 			final INormalizedModel model, final JDBCCodeGeneratorContext context)
@@ -39,9 +122,37 @@ public class JDBCCodeGenerator {
 				out.println();
 				String entityInterface = names.fqn(names.nameInterface(entity),
 						context);
-				out.println("public class " + clazz + " implements "
-						+ IJDBCEntityParser.class.getName() + "<"
+				out.println("public class " + clazz + " extends "
+						+ AbstractJDBCEntityParser.class.getName() + "<"
 						+ entityInterface + "> {");
+				out.println();
+				for (IField field : entity.items()) {
+					String name = fieldName(field, names);
+					String clazz = context.getTypes().get(field.getType())
+							.getProperties()
+							.get(ITypesConstants.PROPERTY_JAVA_CLASS);
+					iout.println("private " + IJDBCRuntimeType.class.getName()
+							+ "<" + clazz + "> " + name + ";");
+				}
+				out.println();
+				iout.println("public " + clazz + "("
+						+ IJDBCIdentifierParser.class.getName() + " ids, "
+						+ IJDBCStatusParser.class.getName() + " status, "
+						+ IJDBCRuntimeTypesContext.class.getName()
+						+ " types) {");
+				iiout.println("super(ids, status);");
+				for (IField field : entity.items()) {
+					String name = fieldName(field, names);
+					String clazz = context.getTypes().get(field.getType())
+							.getProperties()
+							.get(ITypesConstants.PROPERTY_JAVA_CLASS);
+					iiout.println(name + " = types.get(\""
+							+ TextUtils.escapeJavaString(field.getName())
+							+ "\", " + clazz + ".class);");
+				}
+				iout.println("}");
+				iout.println();
+
 				iout.println("public " + String.class.getName()
 						+ " table() throws " + Exception.class.getName()
 						+ " { return \""
@@ -94,20 +205,17 @@ public class JDBCCodeGenerator {
 				iout.println("public " + String.class.getName()
 						+ "[] fieldsColumns() throws "
 						+ Exception.class.getName() + " { return COLUMNS; }");
-				iout.println("public void parse(" + entityInterface
+				iout.println("public void parseRest(" + entityInterface
 						+ " entity, int index, " + ResultSet.class.getName()
-						+ " result, " + IJDBCIdentifierParser.class.getName()
-						+ " ids, " + IJavaRuntimeTypesContext.class.getName()
-						+ " types) throws " + Exception.class.getName() + " {");
+						+ " result) throws " + Exception.class.getName() + " {");
 				iiout.println("throw new "
 						+ UnsupportedOperationException.class.getName() + "();");
 				iout.println("}");
-				iout.println("public void set(" + entityInterface
+				iout.println("public void setRest(" + entityInterface
 						+ " entity, int index, "
-						+ PreparedStatement.class.getName() + " statement, "
-						+ IJDBCIdentifierParser.class.getName() + " ids, "
-						+ IJavaRuntimeTypesContext.class.getName()
-						+ " types) throws " + Exception.class.getName() + " {");
+						+ PreparedStatement.class.getName()
+						+ " statement) throws " + Exception.class.getName()
+						+ " {");
 				iiout.println("throw new "
 						+ UnsupportedOperationException.class.getName() + "();");
 				iout.println("}");
@@ -119,10 +227,10 @@ public class JDBCCodeGenerator {
 		});
 	}
 
-	public void finderJDBC(final INormalizedModel model,
+	public void parsers(final INormalizedModel model,
 			final JDBCCodeGeneratorContext context) throws Exception {
 		final JDBCNames names = context.getJDBCNames();
-		final String clazz = names.finderJDBC(model);
+		final String clazz = names.parsersJDBC(model);
 		final String pkg = names.packageForJDBC(context);
 		FileUtils.java(context, pkg, clazz, new AbstractPrintable() {
 			@Override
@@ -131,22 +239,23 @@ public class JDBCCodeGenerator {
 				PrintWriter iiout = IndentedWriter.get(iout);
 				out.println("package " + pkg + ";");
 				out.println();
-				out.println("public abstract class " + clazz + " extends "
-						+ AbstractJDBCFinder.class.getName() + " implements "
-						+ names.fqn(names.finder(model), context) + " {");
+				out.println("public class " + clazz + " extends "
+						+ DefaultJDBCEntityParserContext.class.getName() + " {");
 
 				// Setup parsers in constructor
-				iout.println("public " + clazz + " () throws "
-						+ Exception.class.getName() + " {");
+				iout.println("public " + clazz + " ("
+						+ IJDBCIdentifierParser.class.getName() + " ids, "
+						+ IJDBCStatusParser.class.getName() + " status, "
+						+ IJDBCRuntimeTypesContext.class.getName()
+						+ " types) throws " + Exception.class.getName() + " {");
 				for (INormalizedEntity entity : model.items()) {
 					iiout.println("putEntityParser(new "
 							+ names.fqnJDBC(names.parserJDBC(entity), context)
-							+ " (), "
+							+ " (ids, status, types), "
 							+ names.fqn(names.nameInterface(entity), context)
 							+ ".class);");
 				}
 				iout.println("}");
-
 				out.println("}");
 				iiout.flush();
 				iout.flush();
@@ -154,7 +263,7 @@ public class JDBCCodeGenerator {
 		});
 	}
 
-	public void abstractJDBCContext(final INormalizedModel model,
+	public void context(final INormalizedModel model,
 			final JDBCCodeGeneratorContext context) throws Exception {
 		final JDBCNames names = context.getJDBCNames();
 		final String clazz = names.abstractJDBCContext(model);
@@ -173,33 +282,48 @@ public class JDBCCodeGenerator {
 				PrintWriter iiout = IndentedWriter.get(iout);
 				PrintWriter iiiout = IndentedWriter.get(iiout);
 				PrintWriter iiiiout = IndentedWriter.get(iiiout);
-				iout.println("protected " + IModelUtils.class.getName()
-						+ " createUtils() throws Exception {");
+
+				iout.println("protected "
+						+ IJDBCEntityParserContext.class.getName()
+						+ " createParsers() throws Exception {");
 				iiout.println("return new "
-						+ names.fqnImpl(names.modelUtils(model), context)
-						+ "();");
+						+ names.fqnImpl(names.parsersJDBC(model), context)
+						+ "(getIdentifierParser(), getStatusParser(), getTypes());");
 				iout.println("}");
 				out.println();
 
 				iout.println("protected " + finderClass
 						+ " createFinder() throws Exception {");
 				iiout.println("return new "
-						+ names.fqnImpl(context.getJDBCNames()
-								.finderJDBC(model), context) + "() {");
-				iiiout.println("protected " + Map.class.getName() + "<"
-						+ IIdentifier.class.getName() + ", "
-						+ IRuntimeEntity.class.getName()
-						+ "<?>> getEntities() throws Exception {");
-				iiiiout.println("return " + clazz + ".this.getEntities();");
-				iiiout.println("}");
+						+ names.fqnImpl(names.finderJDBC(model), context)
+						+ "() {");
+
+				iiiout.println(delegated(Connection.class, "Connection", clazz));
+				iiiout.println(delegated(IJDBCIdentifierParser.class,
+						"IdentifierParser", clazz));
+				iiiout.println(delegated(IJDBCStatusParser.class,
+						"StatusParser", clazz));
+				iiiout.println(delegated(IJDBCRuntimeTypesContext.class,
+						"Types", clazz));
+				iiiout.println(delegated(IJDBCEntityParserContext.class,
+						"Parsers", clazz));
 				iiout.println("};");
 				iout.println("}");
 				out.println("}");
 
+				iiiiout.flush();
+				iiiout.flush();
 				iiout.flush();
 				iout.flush();
 			}
 		});
+	}
+
+	private String delegated(Class<?> clazz, String attribute,
+			String parentClass) {
+		return "protected " + clazz.getName() + " get" + attribute
+				+ "() throws " + Exception.class.getName() + " { return "
+				+ clazz + ".this.get" + attribute + "(); }";
 	}
 
 }

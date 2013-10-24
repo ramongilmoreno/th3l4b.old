@@ -7,7 +7,7 @@ public class JavaCodeGeneratorContext extends CodeGeneratorContext {
 	private String _package;
 
 	private JavaNames _javaNames = new JavaNames();
-
+	
 	public String getPackage() {
 		return _package;
 	}

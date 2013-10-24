@@ -225,13 +225,23 @@ public class AllMojo extends AbstractMojo {
 			javaContext.copyTo(jdbcContext);
 			javaContext.getLog().message(
 					TextUtils.toPrintable("Producing abstract JDBC finder..."));
-			jdbcCodegen.finderJDBC(normalized, jdbcContext);
+			jdbcCodegen.finder(normalized, jdbcContext);
 			javaContext.getLog().message(
-					TextUtils.toPrintable("Abstract jdbc JDBC finished."));
+					TextUtils.toPrintable("Abstract JDBC finder finished."));
+			javaContext.getLog().message(
+					TextUtils.toPrintable("Producing abstract JDBC context..."));
+			jdbcCodegen.finder(normalized, jdbcContext);
+			javaContext.getLog().message(
+					TextUtils.toPrintable("Abstract JDBC context finished."));
 
+			javaContext.getLog().message(
+					TextUtils.toPrintable("Producing JDBC entity parsers..."));
+			jdbcCodegen.parsers(normalized, jdbcContext);
+			javaContext.getLog().message(
+					TextUtils.toPrintable("JDBC entity parsers finished."));
 			for (INormalizedEntity entity : normalized.items()) {
 				javaContext.getLog().message(
-						TextUtils.toPrintable("Producing JDBC parser for "
+						TextUtils.toPrintable("Producing JDBC parser for entity: "
 								+ entity.getName() + "..."));
 				jdbcCodegen.entityParser(entity, normalized, jdbcContext);
 				javaContext.getLog().message(

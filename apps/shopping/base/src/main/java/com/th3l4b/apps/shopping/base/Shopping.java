@@ -481,7 +481,7 @@ public class Shopping implements IScreensConstants, IRenderingConstants {
 							LinkedHashMap<IIdentifier, IRuntimeEntity<?>> updates = new LinkedHashMap<IIdentifier, IRuntimeEntity<?>>();
 							IShoppingContext data = application.getData();
 							for (INeed need : data.getFinder()
-									.findAllNeedFromIItem(itemAsId)) {
+									.findAllNeedFromItem(itemAsId)) {
 								need.coordinates().setStatus(
 										EntityStatus.Deleted);
 								updates.put(need.coordinates().getIdentifier(),
@@ -572,7 +572,7 @@ public class Shopping implements IScreensConstants, IRenderingConstants {
 
 	private boolean itemsHasNeeds(IIdentifier identifier,
 			IShoppingApplication context) throws Exception {
-		return context.getData().getFinder().findAllNeedFromIItem(identifier)
+		return context.getData().getFinder().findAllNeedFromItem(identifier)
 				.iterator().hasNext();
 	}
 

@@ -26,7 +26,7 @@ public class TestSampleModel {
 	@Test
 	public void test() throws Exception {
 		final LinkedHashMap<IIdentifier, IRuntimeEntity<?>> map = new LinkedHashMap<IIdentifier, IRuntimeEntity<?>>();
-		
+
 		OfficeModelUtils utils = new OfficeModelUtils();
 		IDepartment dept1 = put(utils.create(IDepartment.class), map);
 		dept1.coordinates().setStatus(EntityStatus.Persisted);
@@ -46,11 +46,11 @@ public class TestSampleModel {
 				return map;
 			}
 		};
-		
+
 		HashSet<IDepartment> children = new HashSet<IDepartment>();
 		children.add(dept2);
 		children.add(dept3);
-		for (IDepartment d: finder.findAllChildrenFromIDepartment(dept1)) {
+		for (IDepartment d : finder.findAllChildrenFromDepartment(dept1)) {
 			Assert.assertTrue("Unexpected child: " + d, children.contains(d));
 			children.remove(d);
 		}

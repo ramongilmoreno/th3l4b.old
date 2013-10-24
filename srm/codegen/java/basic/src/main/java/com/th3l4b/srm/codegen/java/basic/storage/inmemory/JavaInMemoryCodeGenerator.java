@@ -103,7 +103,7 @@ public class JavaInMemoryCodeGenerator {
 								.getTo()));
 						String methodName = "findAll"
 								+ names.nameOfReverse(rel, model) + "From"
-								+ clazzOne;
+								+ names.name(model.get(rel.getTo()));
 						String leading = "public " + Iterable.class.getName()
 								+ "<" + names.fqn(clazzMany, context) + "> "
 								+ methodName + "(";

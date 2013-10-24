@@ -52,14 +52,19 @@ public class JDBCNames extends JavaNames {
 
 	public String finderJDBC(INormalizedModel model) throws Exception {
 		return "Abstract"
-				+ valueOrProperty(javaIdentifier(model.getName()) + "JDBCFinder",
-						model);
+				+ valueOrProperty(javaIdentifier(model.getName())
+						+ "JDBCFinder", model);
 	}
 
 	public String abstractJDBCContext(INormalizedModel model) throws Exception {
 		return "Abstract"
 				+ valueOrProperty(javaIdentifier(model.getName())
 						+ "JDBCContext", model);
+	}
+
+	public String parsersJDBC(INormalizedModel model) throws Exception {
+		return valueOrProperty(javaIdentifier(model.getName()) + "JDBCParsers",
+				model);
 	}
 
 }
