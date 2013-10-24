@@ -1,0 +1,2 @@
+#!/bin/bash
+mvn org.mortbay.jetty:jetty-maven-plugin:run
