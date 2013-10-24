@@ -57,6 +57,8 @@ public class AllMojo extends AbstractMojo {
 	 */
 	private boolean _overwrite = true;
 
+	private String _lastProduct;
+
 	public File getInput() {
 		return _input;
 	}
@@ -87,6 +89,22 @@ public class AllMojo extends AbstractMojo {
 
 	public void setOverwrite(boolean overwrite) {
 		_overwrite = overwrite;
+	}
+
+	private void startProduct(String product,
+			JavaCodeGeneratorContext javaContext) throws Exception {
+		_lastProduct = product;
+		javaContext.getLog()
+				.message(
+						TextUtils.toPrintable("Start producing " + _lastProduct
+								+ "..."));
+	}
+
+	private void endProduct(JavaCodeGeneratorContext javaContext)
+			throws Exception {
+		javaContext.getLog().message(
+				TextUtils.toPrintable(_lastProduct + " finished."));
+		_lastProduct = null;
 	}
 
 	public void execute() throws MojoExecutionException {
@@ -166,86 +184,53 @@ public class AllMojo extends AbstractMojo {
 			javaContext.setOutput(new File(context.getOutput(), "java"));
 			javaContext.setPackage(_package);
 			JavaCodeGenerator javaCodegen = new JavaCodeGenerator();
-			javaContext.getLog().message(
-					TextUtils.toPrintable("Producing entities..."));
+			startProduct("Entities", javaContext);
 			javaCodegen.modelEntity(normalized, javaContext);
 			for (INormalizedEntity ne : normalized.items()) {
 				javaCodegen.entity(ne, normalized, javaContext);
 				javaCodegen.entityImpl(ne, normalized, javaContext);
 			}
-			javaContext.getLog().message(
-					TextUtils.toPrintable("Entities production finished."));
-			javaContext.getLog().message(
-					TextUtils.toPrintable("Producing finder..."));
+			endProduct(javaContext);
+			startProduct("Finder", javaContext);
 			javaCodegen.finder(normalized, javaContext);
-			javaContext.getLog().message(
-					TextUtils.toPrintable("Finder finished."));
-			javaContext.getLog().message(
-					TextUtils.toPrintable("Producing model utils..."));
+			endProduct(javaContext);
+			startProduct("Model utils", javaContext);
 			javaCodegen.modelUtils(normalized, javaContext);
-			javaContext.getLog().message(
-					TextUtils.toPrintable("Model utils finished."));
-			javaContext.getLog().message(
-					TextUtils.toPrintable("Producing context interface..."));
+			endProduct(javaContext);
+			startProduct("Context interface", javaContext);
 			javaCodegen.context(normalized, javaContext);
-			javaContext.getLog().message(
-					TextUtils.toPrintable("Context interface finished."));
+			endProduct(javaContext);
 
 			// In memory
 			JavaInMemoryCodeGenerator inMemoryCodegen = new JavaInMemoryCodeGenerator();
 			JavaInMemoryCodeGeneratorContext inMemoryContext = new JavaInMemoryCodeGeneratorContext();
 			javaContext.copyTo(inMemoryContext);
-			javaContext
-					.getLog()
-					.message(
-							TextUtils
-									.toPrintable("Producing abstract in memory finder..."));
+			startProduct("Abstract in memory finder", javaContext);
 			inMemoryCodegen.finderInMemory(normalized, inMemoryContext);
-			javaContext
-					.getLog()
-					.message(
-							TextUtils
-									.toPrintable("Abstract in memory finder finished."));
-			javaContext
-					.getLog()
-					.message(
-							TextUtils
-									.toPrintable("Producing abstract in memory context..."));
+			endProduct(javaContext);
+			startProduct("Abstract in memory context", javaContext);
 			inMemoryCodegen
 					.abstractInMemoryContext(normalized, inMemoryContext);
-			javaContext
-					.getLog()
-					.message(
-							TextUtils
-									.toPrintable("Abstract in memory context finished."));
+			endProduct(javaContext);
 
 			// JDBC
 			JDBCCodeGenerator jdbcCodegen = new JDBCCodeGenerator();
 			JDBCCodeGeneratorContext jdbcContext = new JDBCCodeGeneratorContext();
 			javaContext.copyTo(jdbcContext);
-			javaContext.getLog().message(
-					TextUtils.toPrintable("Producing abstract JDBC finder..."));
+			startProduct("Abstract JDBC finder", javaContext);
 			jdbcCodegen.finder(normalized, jdbcContext);
-			javaContext.getLog().message(
-					TextUtils.toPrintable("Abstract JDBC finder finished."));
-			javaContext.getLog().message(
-					TextUtils.toPrintable("Producing abstract JDBC context..."));
+			endProduct(javaContext);
+			startProduct("Abstract JDBC context", javaContext);
 			jdbcCodegen.finder(normalized, jdbcContext);
-			javaContext.getLog().message(
-					TextUtils.toPrintable("Abstract JDBC context finished."));
-
-			javaContext.getLog().message(
-					TextUtils.toPrintable("Producing JDBC entity parsers..."));
+			endProduct(javaContext);
+			startProduct("JDBC entities parsers", javaContext);
 			jdbcCodegen.parsers(normalized, jdbcContext);
-			javaContext.getLog().message(
-					TextUtils.toPrintable("JDBC entity parsers finished."));
+			endProduct(javaContext);
 			for (INormalizedEntity entity : normalized.items()) {
-				javaContext.getLog().message(
-						TextUtils.toPrintable("Producing JDBC parser for entity: "
-								+ entity.getName() + "..."));
+				startProduct("JDBC parser for entity: " + entity.getName(),
+						javaContext);
 				jdbcCodegen.entityParser(entity, normalized, jdbcContext);
-				javaContext.getLog().message(
-						TextUtils.toPrintable("JDBC parser finished."));
+				endProduct(javaContext);
 
 			}
 
