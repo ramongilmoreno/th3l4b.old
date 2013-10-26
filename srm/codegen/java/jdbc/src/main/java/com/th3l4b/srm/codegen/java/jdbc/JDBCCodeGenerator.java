@@ -111,8 +111,9 @@ public class JDBCCodeGenerator {
 			final INormalizedModel model, final JDBCCodeGeneratorContext context)
 			throws Exception {
 		final JDBCNames names = context.getJDBCNames();
+		final JavaNames javaNames = context.getJavaNames();
 		final String clazz = names.parserJDBC(entity);
-		final String pkg = names.packageForJDBC(context);
+		final String pkg = names.packageForJDBCParsers(context);
 		FileUtils.java(context, pkg, clazz, new AbstractPrintable() {
 			@Override
 			protected void printWithException(PrintWriter out) throws Exception {
@@ -147,7 +148,7 @@ public class JDBCCodeGenerator {
 							.getProperties()
 							.get(ITypesConstants.PROPERTY_JAVA_CLASS);
 					iiout.println(name + " = types.get(\""
-							+ TextUtils.escapeJavaString(field.getName())
+							+ TextUtils.escapeJavaString(field.getType())
 							+ "\", " + clazz + ".class);");
 				}
 				iout.println("}");
@@ -208,16 +209,41 @@ public class JDBCCodeGenerator {
 				iout.println("public void parseRest(" + entityInterface
 						+ " entity, int index, " + ResultSet.class.getName()
 						+ " result) throws " + Exception.class.getName() + " {");
-				iiout.println("throw new "
-						+ UnsupportedOperationException.class.getName() + "();");
+				for (IField field : entity.items()) {
+					iiout.println("entity.set" + javaNames.name(field) + "("
+							+ fieldName(field, names)
+							+ ".fromResultSet(index++, result));");
+				}
+				for (INormalizedManyToOneRelationship rel : entity
+						.relationships().items()) {
+					iiout.println("entity.set"
+							+ javaNames.nameOfDirect(rel, model)
+							+ "(getIdsParser().parse(index++, result));");
+				}
+
 				iout.println("}");
 				iout.println("public void setRest(" + entityInterface
 						+ " entity, int index, "
 						+ PreparedStatement.class.getName()
 						+ " statement) throws " + Exception.class.getName()
 						+ " {");
-				iiout.println("throw new "
-						+ UnsupportedOperationException.class.getName() + "();");
+				for (IField field : entity.items()) {
+					iiout.println(fieldName(field, names)
+							+ ".toPreparedStatement(entity.get"
+							+ javaNames.name(field)
+							+ "(), index++, statement, "
+							+ context.getTypes().get(field.getType())
+									.getProperties()
+									.get(ITypesConstants.PROPERTY_JAVA_CLASS)
+							+ ".class);");
+				}
+				for (INormalizedManyToOneRelationship rel : entity
+						.relationships().items()) {
+					iiout.println("getIdsParser().set(entity.get"
+							+ javaNames.nameOfDirect(rel, model)
+							+ "(), index++, statement);");
+				}
+
 				iout.println("}");
 				out.println("}");
 				iiout.flush();
@@ -250,8 +276,8 @@ public class JDBCCodeGenerator {
 						+ " types) throws " + Exception.class.getName() + " {");
 				for (INormalizedEntity entity : model.items()) {
 					iiout.println("putEntityParser(new "
-							+ names.fqnJDBC(names.parserJDBC(entity), context)
-							+ " (ids, status, types), "
+							+ names.fqnJDBCParsers(names.parserJDBC(entity),
+									context) + " (ids, status, types), "
 							+ names.fqn(names.nameInterface(entity), context)
 							+ ".class);");
 				}
@@ -287,7 +313,8 @@ public class JDBCCodeGenerator {
 						+ IJDBCEntityParserContext.class.getName()
 						+ " createParsers() throws Exception {");
 				iiout.println("return new "
-						+ names.fqnImpl(names.parsersJDBC(model), context)
+						+ names.fqnJDBCParsers(names.parsersJDBC(model),
+								context)
 						+ "(getIdentifierParser(), getStatusParser(), getTypes());");
 				iout.println("}");
 				out.println();

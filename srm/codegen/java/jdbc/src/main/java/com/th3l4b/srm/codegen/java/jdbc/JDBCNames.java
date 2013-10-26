@@ -23,6 +23,15 @@ public class JDBCNames extends JavaNames {
 		return packageForJDBC(context) + "." + clazz;
 	}
 
+	public String packageForJDBCParsers(JavaCodeGeneratorContext context) {
+		return packageForJDBC(context) + ".parsers";
+	}
+
+	public String fqnJDBCParsers(String clazz, JavaCodeGeneratorContext context) {
+		return packageForJDBCParsers(context) + "." + clazz;
+	}
+	
+	
 	public String parserJDBC(INormalizedEntity entity) throws Exception {
 		return valueOrProperty(javaIdentifier(entity.getName()) + "Parser",
 				entity);

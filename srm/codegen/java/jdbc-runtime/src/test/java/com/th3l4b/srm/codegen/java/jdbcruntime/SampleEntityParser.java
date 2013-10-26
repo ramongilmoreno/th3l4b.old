@@ -47,13 +47,14 @@ public class SampleEntityParser extends AbstractJDBCEntityParser<ISampleEntity> 
 	protected void parseRest(ISampleEntity entity, int index, ResultSet result)
 			throws Exception {
 		entity.setField1(_field_Field1.fromResultSet(index++, result));
+		entity.setRelation(getIdsParser().parse(index++, result));
 	}
 
 	@Override
 	protected void setRest(ISampleEntity entity, int index,
 			PreparedStatement statement) throws Exception {
 		_field_Field1.toPreparedStatement(entity.getField1(), index++, statement, String.class);
-
+		getIdsParser().set(entity.getRelation(), index++, statement);
 	}
 
 }
