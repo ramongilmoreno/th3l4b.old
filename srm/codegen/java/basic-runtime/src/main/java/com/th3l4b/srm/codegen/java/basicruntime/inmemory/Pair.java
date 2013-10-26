@@ -1,4 +1,4 @@
-package com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory;
+package com.th3l4b.srm.codegen.java.basicruntime.inmemory;
 
 public class Pair {
 	String _clazz;

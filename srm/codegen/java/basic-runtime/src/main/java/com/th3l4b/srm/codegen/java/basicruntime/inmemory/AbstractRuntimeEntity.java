@@ -1,4 +1,4 @@
-package com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory;
+package com.th3l4b.srm.codegen.java.basicruntime.inmemory;
 
 import com.th3l4b.srm.codegen.java.basicruntime.UUIDIdentifier;
 import com.th3l4b.srm.runtime.EntityStatus;

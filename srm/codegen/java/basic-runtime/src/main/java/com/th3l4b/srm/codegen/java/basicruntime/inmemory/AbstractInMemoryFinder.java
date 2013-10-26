@@ -1,4 +1,4 @@
-package com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory;
+package com.th3l4b.srm.codegen.java.basicruntime.inmemory;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;

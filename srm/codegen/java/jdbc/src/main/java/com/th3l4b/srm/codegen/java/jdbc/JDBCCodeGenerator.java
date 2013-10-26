@@ -43,7 +43,7 @@ public class JDBCCodeGenerator {
 				out.println();
 				out.println("public abstract class " + clazz + " extends "
 						+ AbstractJDBCFinder.class.getName() + " implements "
-						+ names.fqn(names.finder(model), context) + " {");
+						+ names.fqnBase(names.finder(model), context) + " {");
 
 				// Get the entities (individually or all)
 				for (INormalizedEntity ne : model.items()) {
@@ -299,11 +299,11 @@ public class JDBCCodeGenerator {
 			protected void printWithException(PrintWriter out) throws Exception {
 				out.println("package " + pkg + ";");
 				out.println();
-				String finderClass = names.fqn(names.finder(model), context);
+				String finderClass = names.fqnBase(names.finder(model), context);
 				out.println("public abstract class " + clazz + " extends "
 						+ AbstractJDBCSRMContext.class.getName() + "<"
 						+ finderClass + "> implements "
-						+ names.fqn(names.context(model), context) + " {");
+						+ names.fqnBase(names.context(model), context) + " {");
 				PrintWriter iout = IndentedWriter.get(out);
 				PrintWriter iiout = IndentedWriter.get(iout);
 				PrintWriter iiiout = IndentedWriter.get(iiout);

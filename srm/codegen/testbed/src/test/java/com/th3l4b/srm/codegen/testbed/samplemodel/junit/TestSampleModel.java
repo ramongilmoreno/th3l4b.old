@@ -8,8 +8,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.th3l4b.srm.codegen.testbed.samplemodel.IDepartment;
-import com.th3l4b.srm.codegen.testbed.samplemodel.IOfficeFinder;
-import com.th3l4b.srm.codegen.testbed.samplemodel.basicruntime.OfficeModelUtils;
+import com.th3l4b.srm.codegen.testbed.samplemodel.base.DefaultOfficeModelUtils;
+import com.th3l4b.srm.codegen.testbed.samplemodel.base.IOfficeFinder;
 import com.th3l4b.srm.codegen.testbed.samplemodel.inmemory.AbstractOfficeInMemoryFinder;
 import com.th3l4b.srm.runtime.EntityStatus;
 import com.th3l4b.srm.runtime.IIdentifier;
@@ -27,7 +27,7 @@ public class TestSampleModel {
 	public void test() throws Exception {
 		final LinkedHashMap<IIdentifier, IRuntimeEntity<?>> map = new LinkedHashMap<IIdentifier, IRuntimeEntity<?>>();
 
-		OfficeModelUtils utils = new OfficeModelUtils();
+		DefaultOfficeModelUtils utils = new DefaultOfficeModelUtils();
 		IDepartment dept1 = put(utils.create(IDepartment.class), map);
 		dept1.coordinates().setStatus(EntityStatus.Persisted);
 		dept1.setName("Department #1");

@@ -5,8 +5,8 @@ import java.util.Map;
 
 import com.th3l4b.apps.shopping.base.codegen.srm.IItem;
 import com.th3l4b.apps.shopping.base.codegen.srm.INeed;
-import com.th3l4b.apps.shopping.base.codegen.srm.IShoppingContext;
 import com.th3l4b.apps.shopping.base.codegen.srm.IStore;
+import com.th3l4b.apps.shopping.base.codegen.srm.base.IShoppingContext;
 import com.th3l4b.apps.shopping.base.codegen.srm.inmemory.AbstractShoppingInMemorySRMContext;
 import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.srm.runtime.IRuntimeEntity;

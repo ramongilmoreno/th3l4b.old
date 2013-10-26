@@ -12,7 +12,7 @@ import com.th3l4b.srm.base.normalized.INormalizedModel;
 import com.th3l4b.srm.codegen.base.FileUtils;
 import com.th3l4b.srm.codegen.java.basicruntime.AbstractModelUtils;
 import com.th3l4b.srm.codegen.java.basicruntime.ISRMContext;
-import com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory.AbstractRuntimeEntity;
+import com.th3l4b.srm.codegen.java.basicruntime.inmemory.AbstractRuntimeEntity;
 import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
 import com.th3l4b.types.base.ITypesConstants;
@@ -31,9 +31,12 @@ public class JavaCodeGenerator {
 						PrintWriter iout = IndentedWriter.get(out);
 						out.println("package " + context.getPackage() + ";");
 						out.println();
-						out.println("public interface " + clazz + " extends "
-								+ javaNames.modelEntity(model) + "<" + clazz
-								+ "> {");
+						out.println("public interface "
+								+ clazz
+								+ " extends "
+								+ javaNames.fqnBase(
+										javaNames.modelEntity(model), context)
+								+ "<" + clazz + "> {");
 
 						// Fill attributes
 						for (IField field : entity.items()) {
@@ -67,8 +70,9 @@ public class JavaCodeGenerator {
 									+ " "
 									+ getter
 									+ " ("
-									+ javaNames.fqn(javaNames.finder(model),
-											context) + " accessor) throws "
+									+ javaNames.fqnBase(
+											javaNames.finder(model), context)
+									+ " accessor) throws "
 									+ Exception.class.getName() + ";");
 							iout.println("void " + setter + " ("
 									+ IIdentifier.class.getName()
@@ -154,7 +158,7 @@ public class JavaCodeGenerator {
 							+ Exception.class.getName() + " { return _value_"
 							+ name + "; }");
 					iout.println("public " + fqn + " " + getter + " ("
-							+ names.fqn(names.finder(model), context)
+							+ names.fqnBase(names.finder(model), context)
 							+ " accessor) throws " + Exception.class.getName()
 							+ " { return _value_" + name
 							+ " != null ? accessor.get"
@@ -192,13 +196,14 @@ public class JavaCodeGenerator {
 			final JavaCodeGeneratorContext context) throws Exception {
 		final JavaNames javaNames = context.getJavaNames();
 		final String clazz = javaNames.finder(model);
-		FileUtils.java(context, context.getPackage(), clazz,
+		FileUtils.java(context, javaNames.packageForBase(context), clazz,
 				new AbstractPrintable() {
 					@Override
 					protected void printWithException(PrintWriter out)
 							throws Exception {
 						PrintWriter iout = IndentedWriter.get(out);
-						out.println("package " + context.getPackage() + ";");
+						out.println("package "
+								+ javaNames.packageForBase(context) + ";");
 						out.println();
 						out.println("public interface " + clazz + " {");
 
@@ -258,7 +263,7 @@ public class JavaCodeGenerator {
 			final JavaCodeGeneratorContext context) throws Exception {
 		final JavaNames javaNames = context.getJavaNames();
 		final String clazz = javaNames.modelUtils(model);
-		final String pkg = javaNames.packageForImpl(context);
+		final String pkg = javaNames.packageForBase(context);
 		FileUtils.java(context, pkg, clazz, new AbstractPrintable() {
 			@Override
 			protected void printWithException(PrintWriter out) throws Exception {
@@ -319,7 +324,7 @@ public class JavaCodeGenerator {
 			final JavaCodeGeneratorContext context) throws Exception {
 		final JavaNames javaNames = context.getJavaNames();
 		final String clazz = javaNames.modelEntity(model);
-		final String pkg = context.getPackage();
+		final String pkg = javaNames.packageForBase(context);
 		FileUtils.java(context, pkg, clazz, new AbstractPrintable() {
 			@Override
 			protected void printWithException(PrintWriter out) throws Exception {
@@ -337,7 +342,7 @@ public class JavaCodeGenerator {
 			final JavaCodeGeneratorContext context) throws Exception {
 		final JavaNames javaNames = context.getJavaNames();
 		final String clazz = javaNames.context(model);
-		final String pkg = context.getPackage();
+		final String pkg = javaNames.packageForBase(context);
 		FileUtils.java(context, pkg, clazz, new AbstractPrintable() {
 			@Override
 			protected void printWithException(PrintWriter out) throws Exception {
@@ -345,7 +350,7 @@ public class JavaCodeGenerator {
 				out.println();
 				out.println("public interface " + clazz + " extends "
 						+ ISRMContext.class.getName() + "<"
-						+ javaNames.fqn(javaNames.finder(model), context)
+						+ javaNames.fqnBase(javaNames.finder(model), context)
 						+ "> {");
 				out.println("}");
 			}

@@ -43,11 +43,19 @@ public class JavaNames {
 	}
 
 	public String packageForImpl(JavaCodeGeneratorContext context) {
-		return context.getPackage() + ".basicruntime";
+		return packageForBase(context) + ".impl";
 	}
 
 	public String fqnImpl(String clazz, JavaCodeGeneratorContext context) {
 		return packageForImpl(context) + "." + clazz;
+	}
+
+	public String packageForBase(JavaCodeGeneratorContext context) {
+		return context.getPackage() + ".base";
+	}
+
+	public String fqnBase(String clazz, JavaCodeGeneratorContext context) {
+		return packageForBase(context) + "." + clazz;
 	}
 
 	public String name(INormalizedEntity entity) throws Exception {
@@ -80,7 +88,7 @@ public class JavaNames {
 	}
 
 	public String modelUtils(INormalizedModel model) throws Exception {
-		return ""
+		return "Default"
 				+ valueOrProperty(javaIdentifier(model.getName())
 						+ "ModelUtils", model);
 	}

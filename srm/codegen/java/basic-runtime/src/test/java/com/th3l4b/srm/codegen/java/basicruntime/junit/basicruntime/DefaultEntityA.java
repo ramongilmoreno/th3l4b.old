@@ -1,9 +1,9 @@
 package com.th3l4b.srm.codegen.java.basicruntime.junit.basicruntime;
 
+import com.th3l4b.srm.codegen.java.basicruntime.inmemory.AbstractRuntimeEntity;
 import com.th3l4b.srm.codegen.java.basicruntime.junit.IEntityA;
 import com.th3l4b.srm.codegen.java.basicruntime.junit.IEntityB;
 import com.th3l4b.srm.codegen.java.basicruntime.junit.ITestFinder;
-import com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory.AbstractRuntimeEntity;
 import com.th3l4b.srm.runtime.IIdentifier;
 
 public class DefaultEntityA extends AbstractRuntimeEntity<IEntityA> implements

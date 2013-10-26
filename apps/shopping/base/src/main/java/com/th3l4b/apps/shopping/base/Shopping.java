@@ -5,9 +5,9 @@ import java.util.Locale;
 
 import com.th3l4b.apps.shopping.base.codegen.srm.IItem;
 import com.th3l4b.apps.shopping.base.codegen.srm.INeed;
-import com.th3l4b.apps.shopping.base.codegen.srm.IShoppingContext;
-import com.th3l4b.apps.shopping.base.codegen.srm.IShoppingEntity;
-import com.th3l4b.apps.shopping.base.codegen.srm.IShoppingFinder;
+import com.th3l4b.apps.shopping.base.codegen.srm.base.IShoppingContext;
+import com.th3l4b.apps.shopping.base.codegen.srm.base.IShoppingEntity;
+import com.th3l4b.apps.shopping.base.codegen.srm.base.IShoppingFinder;
 import com.th3l4b.common.data.nullsafe.NullSafe;
 import com.th3l4b.common.data.predicate.IPredicate;
 import com.th3l4b.common.data.predicate.PredicateUtils;

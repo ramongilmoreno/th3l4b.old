@@ -10,10 +10,10 @@ import com.th3l4b.srm.base.normalized.INormalizedEntity;
 import com.th3l4b.srm.base.normalized.INormalizedManyToOneRelationship;
 import com.th3l4b.srm.base.normalized.INormalizedModel;
 import com.th3l4b.srm.codegen.base.FileUtils;
-import com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory.AbstractInMemoryFinder;
-import com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory.AbstractInMemorySRMContext;
-import com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory.AbstractPredicateOfRelationship;
-import com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory.Pair;
+import com.th3l4b.srm.codegen.java.basicruntime.inmemory.AbstractInMemoryFinder;
+import com.th3l4b.srm.codegen.java.basicruntime.inmemory.AbstractInMemorySRMContext;
+import com.th3l4b.srm.codegen.java.basicruntime.inmemory.AbstractPredicateOfRelationship;
+import com.th3l4b.srm.codegen.java.basicruntime.inmemory.Pair;
 import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.srm.runtime.IModelUtils;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
@@ -36,7 +36,7 @@ public class JavaInMemoryCodeGenerator {
 				out.println("public abstract class " + clazz + " extends "
 						+ AbstractInMemoryFinder.class.getName()
 						+ " implements "
-						+ names.fqn(names.finder(model), context) + " {");
+						+ names.fqnBase(names.finder(model), context) + " {");
 
 				// Setup finders in constructor
 				iout.println("public " + clazz + " () {");
@@ -144,11 +144,11 @@ public class JavaInMemoryCodeGenerator {
 			protected void printWithException(PrintWriter out) throws Exception {
 				out.println("package " + pkg + ";");
 				out.println();
-				String finderClass = names.fqn(names.finder(model), context);
+				String finderClass = names.fqnBase(names.finder(model), context);
 				out.println("public abstract class " + clazz + " extends "
 						+ AbstractInMemorySRMContext.class.getName() + "<"
 						+ finderClass + "> implements "
-						+ names.fqn(names.context(model), context) + " {");
+						+ names.fqnBase(names.context(model), context) + " {");
 				PrintWriter iout = IndentedWriter.get(out);
 				PrintWriter iiout = IndentedWriter.get(iout);
 				PrintWriter iiiout = IndentedWriter.get(iiout);
@@ -156,7 +156,7 @@ public class JavaInMemoryCodeGenerator {
 				iout.println("protected " + IModelUtils.class.getName()
 						+ " createUtils() throws Exception {");
 				iiout.println("return new "
-						+ names.fqnImpl(names.modelUtils(model), context)
+						+ names.fqnBase(names.modelUtils(model), context)
 						+ "();");
 				iout.println("}");
 				out.println();

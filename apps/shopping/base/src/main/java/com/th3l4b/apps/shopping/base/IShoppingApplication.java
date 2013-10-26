@@ -2,7 +2,7 @@ package com.th3l4b.apps.shopping.base;
 
 import java.util.Locale;
 
-import com.th3l4b.apps.shopping.base.codegen.srm.IShoppingContext;
+import com.th3l4b.apps.shopping.base.codegen.srm.base.IShoppingContext;
 import com.th3l4b.screens.base.utils.IScreensClientDescriptor;
 import com.th3l4b.screens.base.utils.IScreensConfiguration;
 

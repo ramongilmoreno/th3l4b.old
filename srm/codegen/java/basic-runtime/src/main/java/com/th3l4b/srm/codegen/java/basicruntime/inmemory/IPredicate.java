@@ -1,4 +1,4 @@
-package com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory;
+package com.th3l4b.srm.codegen.java.basicruntime.inmemory;
 
 public interface IPredicate<T> {
 	boolean accept (T arg) throws Exception;

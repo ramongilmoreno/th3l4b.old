@@ -1,6 +1,6 @@
 package com.th3l4b.srm.codegen.java.jdbcruntime;
 
-import com.th3l4b.srm.codegen.java.basicruntime.storage.inmemory.AbstractRuntimeEntity;
+import com.th3l4b.srm.codegen.java.basicruntime.inmemory.AbstractRuntimeEntity;
 import com.th3l4b.srm.runtime.IIdentifier;
 
 public class DefaultSampleEntity extends AbstractRuntimeEntity<ISampleEntity>
