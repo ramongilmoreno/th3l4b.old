@@ -20,10 +20,12 @@ import com.th3l4b.srm.codegen.base.CodeGeneratorContext;
 import com.th3l4b.srm.codegen.base.FileUtils;
 import com.th3l4b.srm.codegen.java.basic.JavaCodeGenerator;
 import com.th3l4b.srm.codegen.java.basic.JavaCodeGeneratorContext;
-import com.th3l4b.srm.codegen.java.basic.storage.inmemory.JavaInMemoryCodeGenerator;
-import com.th3l4b.srm.codegen.java.basic.storage.inmemory.JavaInMemoryCodeGeneratorContext;
+import com.th3l4b.srm.codegen.java.basic.inmemory.JavaInMemoryCodeGenerator;
+import com.th3l4b.srm.codegen.java.basic.inmemory.JavaInMemoryCodeGeneratorContext;
 import com.th3l4b.srm.codegen.java.jdbc.JDBCCodeGenerator;
 import com.th3l4b.srm.codegen.java.jdbc.JDBCCodeGeneratorContext;
+import com.th3l4b.srm.codegen.java.jdbc.SQLCodeGenerator;
+import com.th3l4b.srm.codegen.java.jdbc.SQLCodeGeneratorContext;
 import com.th3l4b.srm.parser.ParserUtils;
 import com.th3l4b.types.base.basicset.BasicSetTypesContext;
 
@@ -91,18 +93,17 @@ public class AllMojo extends AbstractMojo {
 		_overwrite = overwrite;
 	}
 
-	private void startProduct(String product,
-			JavaCodeGeneratorContext javaContext) throws Exception {
+	private void startProduct(String product, CodeGeneratorContext context)
+			throws Exception {
 		_lastProduct = product;
-		javaContext.getLog()
+		context.getLog()
 				.message(
 						TextUtils.toPrintable("Start producing " + _lastProduct
 								+ "..."));
 	}
 
-	private void endProduct(JavaCodeGeneratorContext javaContext)
-			throws Exception {
-		javaContext.getLog().message(
+	private void endProduct(CodeGeneratorContext context) throws Exception {
+		context.getLog().message(
 				TextUtils.toPrintable(_lastProduct + " finished."));
 		_lastProduct = null;
 	}
@@ -205,47 +206,42 @@ public class AllMojo extends AbstractMojo {
 			JavaInMemoryCodeGenerator inMemoryCodegen = new JavaInMemoryCodeGenerator();
 			JavaInMemoryCodeGeneratorContext inMemoryContext = new JavaInMemoryCodeGeneratorContext();
 			javaContext.copyTo(inMemoryContext);
-			startProduct("Abstract in memory finder", javaContext);
+			startProduct("Abstract in memory finder", inMemoryContext);
 			inMemoryCodegen.finderInMemory(normalized, inMemoryContext);
-			endProduct(javaContext);
-			startProduct("Abstract in memory context", javaContext);
+			endProduct(inMemoryContext);
+			startProduct("Abstract in memory context", inMemoryContext);
 			inMemoryCodegen
 					.abstractInMemoryContext(normalized, inMemoryContext);
-			endProduct(javaContext);
+			endProduct(inMemoryContext);
 
 			// JDBC
 			JDBCCodeGenerator jdbcCodegen = new JDBCCodeGenerator();
 			JDBCCodeGeneratorContext jdbcContext = new JDBCCodeGeneratorContext();
 			javaContext.copyTo(jdbcContext);
-			startProduct("Abstract JDBC finder", javaContext);
+			startProduct("Abstract JDBC finder", jdbcContext);
 			jdbcCodegen.finder(normalized, jdbcContext);
-			endProduct(javaContext);
-			startProduct("Abstract JDBC context", javaContext);
-			jdbcCodegen.finder(normalized, jdbcContext);
-			endProduct(javaContext);
-			startProduct("JDBC entities parsers", javaContext);
+			endProduct(jdbcContext);
+			startProduct("Abstract JDBC context", jdbcContext);
+			jdbcCodegen.context(normalized, jdbcContext);
+			endProduct(jdbcContext);
+			startProduct("JDBC entities parsers", jdbcContext);
 			jdbcCodegen.parsers(normalized, jdbcContext);
-			endProduct(javaContext);
+			endProduct(jdbcContext);
 			for (INormalizedEntity entity : normalized.items()) {
 				startProduct("JDBC parser for entity: " + entity.getName(),
-						javaContext);
+						jdbcContext);
 				jdbcCodegen.entityParser(entity, normalized, jdbcContext);
-				endProduct(javaContext);
+				endProduct(jdbcContext);
 
 			}
 
-			// javaContext
-			// .getLog()
-			// .message(
-			// TextUtils
-			// .toPrintable("Producing abstract JDBC context..."));
-			// jdbcCodegen
-			// .abstractJDBCContext(normalized, jdbcContext);
-			// javaContext
-			// .getLog()
-			// .message(
-			// TextUtils
-			// .toPrintable("Abstract JDBC context finished."));
+			// SQL code generator
+			SQLCodeGenerator sqlCodegen = new SQLCodeGenerator();
+			SQLCodeGeneratorContext sqlContext = new SQLCodeGeneratorContext();
+			javaContext.copyTo(sqlContext);
+			startProduct("SQL files", sqlContext);
+			sqlCodegen.sql(normalized, sqlContext);
+			endProduct(sqlContext);
 
 		} catch (Exception e) {
 			throw new MojoExecutionException("Could not generate code", e);

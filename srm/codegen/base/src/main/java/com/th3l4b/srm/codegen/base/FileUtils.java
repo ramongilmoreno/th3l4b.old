@@ -11,35 +11,29 @@ import com.th3l4b.common.text.TextUtils;
 
 public class FileUtils {
 
+	/**
+	 * Creates a file at the {@link CodeGeneratorContext#getOutput()} directory.
+	 * 
+	 * @param context
+	 * @param file
+	 * @param printable
+	 * @return
+	 * @throws Exception
+	 */
 	public static boolean overwriteIfOlder(CodeGeneratorContext context,
 			String file, IPrintable printable) throws Exception {
 		// Ensure dir exists.
-		File dir = context.getOutput();
+		File f = new File(context.getOutput(), file);
+		File dir = f.getAbsoluteFile().getParentFile();
 		if (!dir.exists() && !dir.mkdirs()) {
 			throw new IllegalStateException(
-					"Could not create all directories for packages: "
+					"Could not create directory for output: "
 							+ dir.getAbsolutePath());
 		}
-		File f = new File(dir, file);
-		CodeGeneratorContext nc = new CodeGeneratorContext();
-		context.copyTo(nc);
-		nc.setOutput(f);
-		String msg = null;
-		boolean r = overwriteIfOlder(nc, printable);
-		if (r) {
-			msg = "Generated";
-		} else {
-			msg = "Skipping. It is up to date";
-		}
-		nc.getLog().message(
-				TextUtils.toPrintable(msg + ": " + f.getAbsolutePath()));
-		return r;
-	}
 
-	public static boolean overwriteIfOlder(CodeGeneratorContext context,
-			IPrintable printable) throws Exception {
-		File f = context.getOutput();
 		long timestamp = context.getTimestamp();
+		String msg;
+		boolean r = false;
 		if (context.isOverwrite() || !f.exists()
 				|| (f.lastModified() <= timestamp)) {
 			FileOutputStream fos = new FileOutputStream(f);
@@ -56,12 +50,15 @@ public class FileUtils {
 			} finally {
 				fos.close();
 			}
-
-			return true;
+			msg = "Generated";
+			r = true;
 		} else {
-			return false;
+			msg = "Skipping. It is up to date";
 		}
 
+		context.getLog().message(
+				TextUtils.toPrintable(msg + ": " + f.getAbsolutePath()));
+		return r;
 	}
 
 	public static String asDirectories(String pkg) {

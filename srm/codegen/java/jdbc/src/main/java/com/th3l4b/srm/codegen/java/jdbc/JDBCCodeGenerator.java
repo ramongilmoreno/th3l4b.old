@@ -32,6 +32,7 @@ public class JDBCCodeGenerator {
 			final JDBCCodeGeneratorContext context) throws Exception {
 		final JDBCNames names = context.getJDBCNames();
 		final JavaNames javaNames = context.getJavaNames();
+		final SQLNames sqlNames = context.getSQLNames();
 		final String clazz = names.finderJDBC(model);
 		final String pkg = names.packageForJDBC(context);
 		FileUtils.java(context, pkg, clazz, new AbstractPrintable() {
@@ -91,8 +92,8 @@ public class JDBCCodeGenerator {
 						iout.println(leading + IIdentifier.class.getName()
 								+ " from) throws Exception {");
 						iiout.println("return find(" + clazzMany
-								+ ".class, from, \"" + names.column(rel, model)
-								+ "\");");
+								+ ".class, from, \""
+								+ sqlNames.column(rel, model) + "\");");
 						iout.println("}");
 					}
 				}
@@ -112,6 +113,7 @@ public class JDBCCodeGenerator {
 			throws Exception {
 		final JDBCNames names = context.getJDBCNames();
 		final JavaNames javaNames = context.getJavaNames();
+		final SQLNames sqlNames = context.getSQLNames();
 		final String clazz = names.parserJDBC(entity);
 		final String pkg = names.packageForJDBCParsers(context);
 		FileUtils.java(context, pkg, clazz, new AbstractPrintable() {
@@ -157,17 +159,17 @@ public class JDBCCodeGenerator {
 				iout.println("public " + String.class.getName()
 						+ " table() throws " + Exception.class.getName()
 						+ " { return \""
-						+ TextUtils.escapeJavaString(names.table(entity))
+						+ TextUtils.escapeJavaString(sqlNames.table(entity))
 						+ "\"; }");
 				iout.println("public " + String.class.getName()
 						+ " idColumn() throws " + Exception.class.getName()
 						+ " { return \""
-						+ TextUtils.escapeJavaString(names.id(entity))
+						+ TextUtils.escapeJavaString(sqlNames.id(entity))
 						+ "\"; }");
 				iout.println("public " + String.class.getName()
 						+ " statusColumn() throws " + Exception.class.getName()
 						+ " { return \""
-						+ TextUtils.escapeJavaString(names.status(entity))
+						+ TextUtils.escapeJavaString(sqlNames.status(entity))
 						+ "\"; }");
 				iout.println("public " + entityInterface + " create(Class<"
 						+ entityInterface + "> clazz) { return new "
@@ -183,7 +185,7 @@ public class JDBCCodeGenerator {
 						iiout.println(",");
 					}
 					iiout.print("\""
-							+ TextUtils.escapeJavaString(names.column(field))
+							+ TextUtils.escapeJavaString(sqlNames.column(field))
 							+ "\"");
 				}
 
@@ -196,7 +198,7 @@ public class JDBCCodeGenerator {
 						iiout.println(",");
 					}
 					iiout.print("\""
-							+ TextUtils.escapeJavaString(names.column(rel,
+							+ TextUtils.escapeJavaString(sqlNames.column(rel,
 									model)) + "\"");
 				}
 				if (!first) {
@@ -313,8 +315,7 @@ public class JDBCCodeGenerator {
 						+ IJDBCEntityParserContext.class.getName()
 						+ " createParsers() throws Exception {");
 				iiout.println("return new "
-						+ names.fqnJDBCParsers(names.parsersJDBC(model),
-								context)
+						+ names.fqnJDBC(names.parsersJDBC(model), context)
 						+ "(getIdentifierParser(), getStatusParser(), getTypes());");
 				iout.println("}");
 				out.println();
@@ -322,7 +323,7 @@ public class JDBCCodeGenerator {
 				iout.println("protected " + finderClass
 						+ " createFinder() throws Exception {");
 				iiout.println("return new "
-						+ names.fqnImpl(names.finderJDBC(model), context)
+						+ names.fqnJDBC(names.finderJDBC(model), context)
 						+ "() {");
 
 				iiiout.println(delegated(Connection.class, "Connection", clazz));
@@ -350,7 +351,7 @@ public class JDBCCodeGenerator {
 			String parentClass) {
 		return "protected " + clazz.getName() + " get" + attribute
 				+ "() throws " + Exception.class.getName() + " { return "
-				+ clazz + ".this.get" + attribute + "(); }";
+				+ parentClass + ".this.get" + attribute + "(); }";
 	}
 
 }

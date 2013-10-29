@@ -1,4 +1,4 @@
-package com.th3l4b.srm.codegen.java.basic.storage.inmemory;
+package com.th3l4b.srm.codegen.java.basic.inmemory;
 
 import com.th3l4b.srm.codegen.java.basic.JavaCodeGeneratorContext;
 

@@ -74,28 +74,32 @@ public class JavaNames {
 	public String name(IField field) throws Exception {
 		return valueOrProperty(javaIdentifier(field.getName()), field);
 	}
+	
+	public String name (INormalizedModel model) throws Exception {
+		return javaIdentifier(model.getName());
+	}
 
 	public String finder(INormalizedModel model) throws Exception {
 		return "I"
-				+ valueOrProperty(javaIdentifier(model.getName()) + "Finder",
+				+ valueOrProperty(name(model) + "Finder",
 						model);
 	}
 
 	public String context(INormalizedModel model) throws Exception {
 		return "I"
-				+ valueOrProperty(javaIdentifier(model.getName()) + "Context",
+				+ valueOrProperty(name(model) + "Context",
 						model);
 	}
 
 	public String modelUtils(INormalizedModel model) throws Exception {
 		return "Default"
-				+ valueOrProperty(javaIdentifier(model.getName())
+				+ valueOrProperty(name(model)
 						+ "ModelUtils", model);
 	}
 
 	public String modelEntity(INormalizedModel model) throws Exception {
 		return "I"
-				+ valueOrProperty(javaIdentifier(model.getName()) + "Entity",
+				+ valueOrProperty(name(model) + "Entity",
 						model);
 	}
 

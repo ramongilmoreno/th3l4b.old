@@ -19,6 +19,7 @@
         <module>parser</module>
     	<module>codegen</module>
     <module>runtime</module>
+    <module>database</module>
   </modules>
 
 </project>

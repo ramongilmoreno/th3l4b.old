@@ -1,4 +1,4 @@
-package com.th3l4b.srm.codegen.java.basic.storage.inmemory;
+package com.th3l4b.srm.codegen.java.basic.inmemory;
 
 import java.io.PrintWriter;
 import java.util.Map;

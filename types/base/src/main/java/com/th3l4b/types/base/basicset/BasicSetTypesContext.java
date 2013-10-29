@@ -14,6 +14,8 @@ import com.th3l4b.types.base.ITypesContext;
  * Implementation of the basi list of types.
  */
 public class BasicSetTypesContext {
+	
+	public static final String ID_TYPE_NAME = "id";
 
 	private static ITypesContext _default;
 
