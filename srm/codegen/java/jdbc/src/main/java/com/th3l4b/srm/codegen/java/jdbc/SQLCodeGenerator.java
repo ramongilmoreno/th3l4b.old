@@ -21,12 +21,12 @@ public class SQLCodeGenerator {
 			PrintWriter out) throws Exception {
 		SQLNames names = context.getSQLNames();
 		PrintWriter iout = IndentedWriter.get(out);
-		out.println("CREATE TABLE " + names.table(entity) + "(");
+		out.println("CREATE TABLE " + names.table(entity) + " (");
 		String idType = names.type(context.getIdentifierType(), database);
 		iout.println("" + names.id(entity) + " " + idType
 				+ " NOT NULL PRIMARY KEY;");
 		for (IField field : entity.items()) {
-			iout.print(""
+			iout.println(""
 					+ names.column(field)
 					+ " "
 					+ names.type(context.getTypes().get(field.getType()),
@@ -37,9 +37,9 @@ public class SQLCodeGenerator {
 			iout.println("" + names.column(rel, model) + " " + idType + ";");
 
 		}
-		iout.println();
 		iout.flush();
-		out.println(")");
+		out.println(")/");
+		out.println();
 	}
 
 	public void sql(final INormalizedModel model,
