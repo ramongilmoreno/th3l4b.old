@@ -11,6 +11,11 @@ Set these environment variables:
 	export ANDROID_HOME=/home/rgil/Ramon/aplicaciones/adt-bundle-linux-x86_64-20130917/sdk
 	export PATH=$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$JAVA_HOME/bin:$MAVEN_HOME/bin:$ANT_HOME/bin:$PHANTOMJS_HOME/bin:$PATH
 
+Ensure these API levels are found in Android SDK:
+
+	4.3 (API 18)
+	2.2 (API 8)
+
 Start the web application with:
 
 	$ cd th3l4b/screens/testbed

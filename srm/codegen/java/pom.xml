@@ -19,6 +19,8 @@
     <module>basic-runtime</module>
     <module>jdbc</module>
     <module>jdbc-runtime</module>
+    <module>android</module>
+    <module>android-runtime</module>
   </modules>
 
 </project>
