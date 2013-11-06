@@ -10,8 +10,20 @@
     >
         <property file="build.properties"/>
         <property file="${build.src.dir}/default.properties"/>
+        <property name="build.dir" value="target"/>
+        
+        <mkdir dir="${build.dir}"/>    
     </target>
     
+    <import file="${build.src.dir}/derby.build.xml"/>
     <import file="${build.src.dir}/maven.build.xml"/>
+    
+    
+    <target
+        name="clean"
+        depends="properties"
+    >
+        <delete dir="${build.dir}"/>
+    </target>
     
 </project>
