@@ -1,20 +1,12 @@
 package com.th3l4b.srm.codegen.mojo;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.PrintWriter;
 
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
-
-import com.th3l4b.common.log.AbstractLog;
-import com.th3l4b.common.log.ILogLevel;
 import com.th3l4b.common.text.IPrintable;
 import com.th3l4b.common.text.TextUtils;
 import com.th3l4b.srm.base.normalized.INormalizedEntity;
 import com.th3l4b.srm.base.normalized.INormalizedModel;
-import com.th3l4b.srm.base.normalized.Normalizer;
 import com.th3l4b.srm.base.original.IModel;
 import com.th3l4b.srm.codegen.base.CodeGeneratorContext;
 import com.th3l4b.srm.codegen.base.FileUtils;
@@ -26,226 +18,96 @@ import com.th3l4b.srm.codegen.java.jdbc.JDBCCodeGenerator;
 import com.th3l4b.srm.codegen.java.jdbc.JDBCCodeGeneratorContext;
 import com.th3l4b.srm.codegen.java.jdbc.SQLCodeGenerator;
 import com.th3l4b.srm.codegen.java.jdbc.SQLCodeGeneratorContext;
-import com.th3l4b.srm.parser.ParserUtils;
-import com.th3l4b.types.base.basicset.BasicSetTypesContext;
 
 /**
  * Generates all sources
  * 
  * @goal all
  */
-public class AllMojo extends AbstractMojo {
+public class AllMojo extends SRMAbstractMojo {
 
-	/**
-	 * @parameter alias="input"
-	 * @required
-	 */
-	private File _input = null;
-
-	/**
-	 * @parameter alias="output"
-	 * @required
-	 */
-	private File _output = null;
-
-	/**
-	 * @parameter alias="package"
-	 * @required
-	 */
-	private String _package = null;
-
-	/**
-	 * @parameter alias="overwrite" default-value="true"
-	 */
-	private boolean _overwrite = true;
-
-	private String _lastProduct;
-
-	public File getInput() {
-		return _input;
-	}
-
-	public void setInput(File input) {
-		_input = input;
-	}
-
-	public File getOutput() {
-		return _output;
-	}
-
-	public void setOutput(File output) {
-		_output = output;
-	}
-
-	public String getPackage() {
-		return _package;
-	}
-
-	public void setPackage(String package1) {
-		_package = package1;
-	}
-
-	public boolean isOverwrite() {
-		return _overwrite;
-	}
-
-	public void setOverwrite(boolean overwrite) {
-		_overwrite = overwrite;
-	}
-
-	private void startProduct(String product, CodeGeneratorContext context)
+	@Override
+	protected void execute(final IModel model,
+			final INormalizedModel normalized, CodeGeneratorContext context)
 			throws Exception {
-		_lastProduct = product;
-		context.getLog()
-				.message(
-						TextUtils.toPrintable("Start producing " + _lastProduct
-								+ "..."));
-	}
-
-	private void endProduct(CodeGeneratorContext context) throws Exception {
-		context.getLog().message(
-				TextUtils.toPrintable(_lastProduct + " finished."));
-		_lastProduct = null;
-	}
-
-	public void execute() throws MojoExecutionException {
-		try {
-			IModel model = null;
-			long ts = _input.lastModified();
-
-			// Parse input
-			FileInputStream fis = new FileInputStream(_input);
-			try {
-				model = ParserUtils.parse(fis);
-			} finally {
-				fis.close();
+		// Produce debug files
+		FileUtils.overwriteIfOlder(context, "model.txt", new IPrintable() {
+			@Override
+			public void print(PrintWriter out) {
+				TextUtils.print(model, out);
 			}
 
-			CodeGeneratorContext context = new CodeGeneratorContext();
-			context.setOutput(_output);
-			context.setTimestamp(ts);
-			context.setOverwrite(_overwrite);
-			context.setTypes(BasicSetTypesContext.get());
-			context.setLog(new AbstractLog() {
-				@Override
-				public void log(IPrintable item, ILogLevel level)
-						throws Exception {
-					String text = TextUtils.toString(item);
-
-					// Remove trailing CR/LF
-					text = text.replaceAll("[\\r\\n]*$", "");
-
-					Log log = getLog();
-					switch (level) {
-					case debug:
-						log.debug(text);
-						break;
-					case message:
-						log.info(text);
-						break;
-					case warning:
-						log.warn(text);
-						break;
-					default:
-						log.error(text);
-						break;
+		});
+		FileUtils.overwriteIfOlder(context, "model-normalized.txt",
+				new IPrintable() {
+					@Override
+					public void print(PrintWriter out) {
+						TextUtils.print(normalized, out);
 					}
-				}
-			});
-			{
-				// Produce debug files
-				final IModel fm = model;
-				FileUtils.overwriteIfOlder(context, "model.txt",
-						new IPrintable() {
-							@Override
-							public void print(PrintWriter out) {
-								TextUtils.print(fm, out);
-							}
 
-						});
-			}
-			// Normalize...
-			INormalizedModel normalized = Normalizer.normalize(model);
-			{
-				// Produce debug files
-				final INormalizedModel fm = normalized;
-				FileUtils.overwriteIfOlder(context, "model-normalized.txt",
-						new IPrintable() {
-							@Override
-							public void print(PrintWriter out) {
-								TextUtils.print(fm, out);
-							}
-
-						});
-			}
-
-			// Produce code.
-			JavaCodeGeneratorContext javaContext = new JavaCodeGeneratorContext();
-			context.copyTo(javaContext);
-			javaContext.setOutput(new File(context.getOutput(), "java"));
-			javaContext.setPackage(_package);
-			JavaCodeGenerator javaCodegen = new JavaCodeGenerator();
-			startProduct("Entities", javaContext);
-			javaCodegen.modelEntity(normalized, javaContext);
-			for (INormalizedEntity ne : normalized.items()) {
-				javaCodegen.entity(ne, normalized, javaContext);
-				javaCodegen.entityImpl(ne, normalized, javaContext);
-			}
-			endProduct(javaContext);
-			startProduct("Finder", javaContext);
-			javaCodegen.finder(normalized, javaContext);
-			endProduct(javaContext);
-			startProduct("Model utils", javaContext);
-			javaCodegen.modelUtils(normalized, javaContext);
-			endProduct(javaContext);
-			startProduct("Context interface", javaContext);
-			javaCodegen.context(normalized, javaContext);
-			endProduct(javaContext);
-
-			// In memory
-			JavaInMemoryCodeGenerator inMemoryCodegen = new JavaInMemoryCodeGenerator();
-			JavaInMemoryCodeGeneratorContext inMemoryContext = new JavaInMemoryCodeGeneratorContext();
-			javaContext.copyTo(inMemoryContext);
-			startProduct("Abstract in memory finder", inMemoryContext);
-			inMemoryCodegen.finderInMemory(normalized, inMemoryContext);
-			endProduct(inMemoryContext);
-			startProduct("Abstract in memory context", inMemoryContext);
-			inMemoryCodegen
-					.abstractInMemoryContext(normalized, inMemoryContext);
-			endProduct(inMemoryContext);
-
-			// JDBC
-			JDBCCodeGenerator jdbcCodegen = new JDBCCodeGenerator();
-			JDBCCodeGeneratorContext jdbcContext = new JDBCCodeGeneratorContext();
-			javaContext.copyTo(jdbcContext);
-			startProduct("Abstract JDBC finder", jdbcContext);
-			jdbcCodegen.finder(normalized, jdbcContext);
-			endProduct(jdbcContext);
-			startProduct("Abstract JDBC context", jdbcContext);
-			jdbcCodegen.context(normalized, jdbcContext);
-			endProduct(jdbcContext);
-			startProduct("JDBC entities parsers", jdbcContext);
-			jdbcCodegen.parsers(normalized, jdbcContext);
-			endProduct(jdbcContext);
-			for (INormalizedEntity entity : normalized.items()) {
-				startProduct("JDBC parser for entity: " + entity.getName(),
-						jdbcContext);
-				jdbcCodegen.entityParser(entity, normalized, jdbcContext);
-				endProduct(jdbcContext);
-
-			}
-
-			// SQL code generator
-			SQLCodeGenerator sqlCodegen = new SQLCodeGenerator();
-			SQLCodeGeneratorContext sqlContext = new SQLCodeGeneratorContext();
-			javaContext.copyTo(sqlContext);
-			startProduct("SQL files", sqlContext);
-			sqlCodegen.sql(normalized, sqlContext);
-			endProduct(sqlContext);
-
-		} catch (Exception e) {
-			throw new MojoExecutionException("Could not generate code", e);
+				});
+		// Produce code.
+		JavaCodeGeneratorContext javaContext = new JavaCodeGeneratorContext();
+		context.copyTo(javaContext);
+		javaContext.setOutput(new File(context.getOutput(), "java"));
+		javaContext.setPackage(getPackage());
+		JavaCodeGenerator javaCodegen = new JavaCodeGenerator();
+		startProduct("Entities", javaContext);
+		javaCodegen.modelEntity(normalized, javaContext);
+		for (INormalizedEntity ne : normalized.items()) {
+			javaCodegen.entity(ne, normalized, javaContext);
+			javaCodegen.entityImpl(ne, normalized, javaContext);
 		}
+		endProduct(javaContext);
+		startProduct("Finder", javaContext);
+		javaCodegen.finder(normalized, javaContext);
+		endProduct(javaContext);
+		startProduct("Model utils", javaContext);
+		javaCodegen.modelUtils(normalized, javaContext);
+		endProduct(javaContext);
+		startProduct("Context interface", javaContext);
+		javaCodegen.context(normalized, javaContext);
+		endProduct(javaContext);
+
+		// In memory
+		JavaInMemoryCodeGenerator inMemoryCodegen = new JavaInMemoryCodeGenerator();
+		JavaInMemoryCodeGeneratorContext inMemoryContext = new JavaInMemoryCodeGeneratorContext();
+		javaContext.copyTo(inMemoryContext);
+		startProduct("Abstract in memory finder", inMemoryContext);
+		inMemoryCodegen.finderInMemory(normalized, inMemoryContext);
+		endProduct(inMemoryContext);
+		startProduct("Abstract in memory context", inMemoryContext);
+		inMemoryCodegen.abstractInMemoryContext(normalized, inMemoryContext);
+		endProduct(inMemoryContext);
+
+		// JDBC
+		JDBCCodeGenerator jdbcCodegen = new JDBCCodeGenerator();
+		JDBCCodeGeneratorContext jdbcContext = new JDBCCodeGeneratorContext();
+		javaContext.copyTo(jdbcContext);
+		startProduct("Abstract JDBC finder", jdbcContext);
+		jdbcCodegen.finder(normalized, jdbcContext);
+		endProduct(jdbcContext);
+		startProduct("Abstract JDBC context", jdbcContext);
+		jdbcCodegen.context(normalized, jdbcContext);
+		endProduct(jdbcContext);
+		startProduct("JDBC entities parsers", jdbcContext);
+		jdbcCodegen.parsers(normalized, jdbcContext);
+		endProduct(jdbcContext);
+		for (INormalizedEntity entity : normalized.items()) {
+			startProduct("JDBC parser for entity: " + entity.getName(),
+					jdbcContext);
+			jdbcCodegen.entityParser(entity, normalized, jdbcContext);
+			endProduct(jdbcContext);
+
+		}
+
+		// SQL code generator
+		SQLCodeGenerator sqlCodegen = new SQLCodeGenerator();
+		SQLCodeGeneratorContext sqlContext = new SQLCodeGeneratorContext();
+		javaContext.copyTo(sqlContext);
+		startProduct("SQL files", sqlContext);
+		sqlCodegen.sql(normalized, sqlContext);
+		endProduct(sqlContext);
 
 	}
 }
