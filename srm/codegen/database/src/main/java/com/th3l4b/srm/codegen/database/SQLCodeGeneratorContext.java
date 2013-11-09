@@ -1,4 +1,4 @@
-package com.th3l4b.srm.codegen.java.jdbc;
+package com.th3l4b.srm.codegen.database;
 
 import com.th3l4b.srm.codegen.base.CodeGeneratorContext;
 import com.th3l4b.srm.database.BasicSetDatabaseTypesContext;

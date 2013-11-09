@@ -1,6 +1,7 @@
-package com.th3l4b.srm.codegen.java.jdbc;
+package com.th3l4b.srm.codegen.database;
 
 import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import com.th3l4b.common.text.AbstractPrintable;
 import com.th3l4b.common.text.IndentedWriter;
@@ -38,8 +39,19 @@ public class SQLCodeGenerator {
 
 		}
 		iout.flush();
-		out.println(")/");
-		out.println();
+		out.println(")");
+	}
+
+	public String createTableSingleLine(INormalizedEntity entity,
+			INormalizedModel model, IDatabaseType database,
+			SQLCodeGeneratorContext context) throws Exception {
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		createTable(entity, model, database, context, pw);
+		pw.flush();
+		sw.flush();
+		return sw.getBuffer().toString().replaceAll("\\s", " ")
+				.replaceAll("\\s[\\s]+", " ").trim();
 	}
 
 	public void sql(final INormalizedModel model,
@@ -55,6 +67,8 @@ public class SQLCodeGenerator {
 						throws Exception {
 					for (INormalizedEntity entity : model.items()) {
 						createTable(entity, model, database, context, out);
+						out.println("/");
+						out.println();
 					}
 				}
 			});

@@ -1,4 +1,4 @@
-package com.th3l4b.srm.codegen.java.jdbc;
+package com.th3l4b.srm.codegen.database;
 
 import com.th3l4b.srm.base.IField;
 import com.th3l4b.srm.base.normalized.INormalizedEntity;
@@ -10,7 +10,7 @@ import com.th3l4b.types.base.IType;
 
 public class SQLNames extends JavaNames {
 
-	private static final String PREFIX = "you.have.to.fix.this";
+	private static final String PREFIX = SQLNames.class.getPackage().getName();
 	public static final String MODEL = PREFIX + ".model";
 	public static final String TABLE = PREFIX + ".table";
 	public static final String COLUMN = PREFIX + ".column";
@@ -19,8 +19,7 @@ public class SQLNames extends JavaNames {
 	public static final String TYPE = PREFIX + ".type";
 
 	public String name(IDatabaseType database) throws Exception {
-		return valueOrProperty(javaIdentifier(database.getName()), MODEL,
-				database);
+		return database.getName();
 	}
 
 	public String table(INormalizedEntity entity) throws Exception {
@@ -46,9 +45,9 @@ public class SQLNames extends JavaNames {
 	}
 
 	public String type(IType type, IDatabaseType database) throws Exception {
-		String value = type.getProperties().get(TYPE);
+		String value = type.getProperties().get(TYPE + "." + name(database));
 		if (value == null) {
-			value = type.getProperties().get(TYPE + "." + name(database));
+			value = type.getProperties().get(TYPE);
 		}
 		if (value == null) {
 			throw new IllegalStateException(

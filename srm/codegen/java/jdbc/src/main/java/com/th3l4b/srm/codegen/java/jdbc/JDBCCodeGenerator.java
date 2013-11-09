@@ -13,6 +13,7 @@ import com.th3l4b.srm.base.normalized.INormalizedEntity;
 import com.th3l4b.srm.base.normalized.INormalizedManyToOneRelationship;
 import com.th3l4b.srm.base.normalized.INormalizedModel;
 import com.th3l4b.srm.codegen.base.FileUtils;
+import com.th3l4b.srm.codegen.database.SQLNames;
 import com.th3l4b.srm.codegen.java.basic.JavaNames;
 import com.th3l4b.srm.codegen.java.jdbcruntime.AbstractJDBCEntityParser;
 import com.th3l4b.srm.codegen.java.jdbcruntime.AbstractJDBCFinder;

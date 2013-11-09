@@ -10,14 +10,14 @@ import com.th3l4b.srm.base.normalized.INormalizedModel;
 import com.th3l4b.srm.base.original.IModel;
 import com.th3l4b.srm.codegen.base.CodeGeneratorContext;
 import com.th3l4b.srm.codegen.base.FileUtils;
+import com.th3l4b.srm.codegen.database.SQLCodeGenerator;
+import com.th3l4b.srm.codegen.database.SQLCodeGeneratorContext;
 import com.th3l4b.srm.codegen.java.basic.JavaCodeGenerator;
 import com.th3l4b.srm.codegen.java.basic.JavaCodeGeneratorContext;
 import com.th3l4b.srm.codegen.java.basic.inmemory.JavaInMemoryCodeGenerator;
 import com.th3l4b.srm.codegen.java.basic.inmemory.JavaInMemoryCodeGeneratorContext;
 import com.th3l4b.srm.codegen.java.jdbc.JDBCCodeGenerator;
 import com.th3l4b.srm.codegen.java.jdbc.JDBCCodeGeneratorContext;
-import com.th3l4b.srm.codegen.java.jdbc.SQLCodeGenerator;
-import com.th3l4b.srm.codegen.java.jdbc.SQLCodeGeneratorContext;
 
 /**
  * Generates all sources

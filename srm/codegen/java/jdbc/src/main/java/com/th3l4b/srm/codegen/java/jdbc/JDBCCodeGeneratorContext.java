@@ -1,5 +1,6 @@
 package com.th3l4b.srm.codegen.java.jdbc;
 
+import com.th3l4b.srm.codegen.database.SQLNames;
 import com.th3l4b.srm.codegen.java.basic.JavaCodeGeneratorContext;
 
 public class JDBCCodeGeneratorContext extends JavaCodeGeneratorContext {
