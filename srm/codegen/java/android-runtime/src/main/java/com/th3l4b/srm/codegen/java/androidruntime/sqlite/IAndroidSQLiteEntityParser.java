@@ -6,5 +6,5 @@ import android.database.Cursor;
 import com.th3l4b.srm.runtime.IDatabaseParser;
 
 public interface IAndroidSQLiteEntityParser<R> extends
-		IDatabaseParser<R, Cursor, ContentValues> {
+		IDatabaseParser<R, Cursor, ContentValues, Integer, Void> {
 }

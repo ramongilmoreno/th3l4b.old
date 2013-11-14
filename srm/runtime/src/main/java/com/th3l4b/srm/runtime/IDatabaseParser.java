@@ -1,8 +1,9 @@
 package com.th3l4b.srm.runtime;
 
-public interface IDatabaseParser<R, DBIN, DBOUT> {
+public interface IDatabaseParser<R, DBIN, DBOUT, ARGIN, ARGOUT> extends
+		IBaseParser<R, DBIN, DBOUT, ARGIN, ARGOUT> {
 
-	R create(Class<R> clazz);
+	R create();
 
 	String table() throws Exception;
 
@@ -11,9 +12,5 @@ public interface IDatabaseParser<R, DBIN, DBOUT> {
 	String statusColumn() throws Exception;
 
 	String[] fieldsColumns() throws Exception;
-
-	void parse(R entity, int index, DBIN result) throws Exception;
-
-	void set(R entity, int index, DBOUT statement) throws Exception;
 
 }

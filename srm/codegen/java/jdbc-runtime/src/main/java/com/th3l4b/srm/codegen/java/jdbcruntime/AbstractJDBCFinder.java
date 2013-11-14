@@ -23,9 +23,9 @@ public abstract class AbstractJDBCFinder {
 
 	protected abstract IJDBCEntityParserContext getParsers() throws Exception;
 
-	public <R extends IRuntimeEntity<R>> Iterable<R> find(
-			Class<R> resultClass, IIdentifier sourceIdentifier,
-			String relationshipColumnName) throws Exception {
+	public <R extends IRuntimeEntity<R>> Iterable<R> find(Class<R> resultClass,
+			IIdentifier sourceIdentifier, String relationshipColumnName)
+			throws Exception {
 		IJDBCEntityParser<R> parser = getParsers().getEntityParser(resultClass);
 		StringBuffer query = new StringBuffer("select ");
 		JDBCUtils.columnsAndFrom(parser, query);
@@ -40,8 +40,7 @@ public abstract class AbstractJDBCFinder {
 		ResultSet result = statement.executeQuery();
 		LinkedHashSet<R> r = new LinkedHashSet<R>();
 		while (result.next()) {
-			R entity = parser.create(resultClass);
-			parser.parse(entity, 1, result);
+			R entity = parser.parse(1, result);
 			r.add(entity);
 		}
 		result.close();
@@ -63,8 +62,7 @@ public abstract class AbstractJDBCFinder {
 		ResultSet result = statement.executeQuery();
 		R r = null;
 		if (result.next()) {
-			r = parser.create(clazz);
-			parser.parse(r, 1, result);
+			r = parser.parse(1, result);
 		}
 		result.close();
 		statement.close();
@@ -86,8 +84,7 @@ public abstract class AbstractJDBCFinder {
 		ResultSet result = statement.executeQuery();
 		LinkedHashSet<R> r = new LinkedHashSet<R>();
 		while (result.next()) {
-			R entity = parser.create(clazz);
-			parser.parse(entity, 1, result);
+			R entity = parser.parse(1, result);
 			r.add(entity);
 		}
 		result.close();

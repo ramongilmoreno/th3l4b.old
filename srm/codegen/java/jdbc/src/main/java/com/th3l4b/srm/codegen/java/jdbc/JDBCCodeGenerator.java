@@ -172,8 +172,8 @@ public class JDBCCodeGenerator {
 						+ " { return \""
 						+ TextUtils.escapeJavaString(sqlNames.status(entity))
 						+ "\"; }");
-				iout.println("public " + entityInterface + " create(Class<"
-						+ entityInterface + "> clazz) { return new "
+				iout.println("public " + entityInterface
+						+ " create() { return new "
 						+ names.fqnImpl(names.nameImpl(entity), context)
 						+ "(); }");
 				iout.println("private static final String[] COLUMNS = {");

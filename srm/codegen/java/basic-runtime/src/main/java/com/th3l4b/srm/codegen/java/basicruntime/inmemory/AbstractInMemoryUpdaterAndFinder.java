@@ -1,17 +1,17 @@
 package com.th3l4b.srm.codegen.java.basicruntime.inmemory;
 
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Map;
 
-import com.th3l4b.srm.codegen.java.basicruntime.update.IUpdateToolFinder;
+import com.th3l4b.srm.codegen.java.basicruntime.update.AbstractUpdateToolFinder;
 import com.th3l4b.srm.codegen.java.basicruntime.update.IUpdateToolUpdater;
 import com.th3l4b.srm.runtime.EntityStatus;
 import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.srm.runtime.IModelUtils;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
 
-public abstract class AbstractInMemoryUpdaterAndFinder implements
-		IUpdateToolUpdater, IUpdateToolFinder {
+public abstract class AbstractInMemoryUpdaterAndFinder extends
+		AbstractUpdateToolFinder implements IUpdateToolUpdater {
 
 	protected abstract Map<IIdentifier, IRuntimeEntity<?>> getEntities()
 			throws Exception;
@@ -50,18 +50,14 @@ public abstract class AbstractInMemoryUpdaterAndFinder implements
 	}
 
 	@Override
-	public Map<IIdentifier, IRuntimeEntity<?>> find(
-			Map<IIdentifier, IRuntimeEntity<?>> input, IModelUtils utils)
+	protected <T extends IRuntimeEntity<T>> void processEntity(
+			IRuntimeEntity<T> entity,
+			HashMap<IIdentifier, IRuntimeEntity<?>> r, IModelUtils utils)
 			throws Exception {
-
-		LinkedHashMap<IIdentifier, IRuntimeEntity<?>> r = new LinkedHashMap<IIdentifier, IRuntimeEntity<?>>();
-		Map<IIdentifier, IRuntimeEntity<?>> src = getEntities();
-		for (IIdentifier id : input.keySet()) {
-			IRuntimeEntity<?> e = src.get(id);
-			if (e != null) {
-				r.put(id, utils.clone(e));
-			}
+		IIdentifier id = entity.coordinates().getIdentifier();
+		IRuntimeEntity<?> e = getEntities().get(id);
+		if (e != null) {
+			r.put(id, utils.clone(e));
 		}
-		return r;
 	}
 }

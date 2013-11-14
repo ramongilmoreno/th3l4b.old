@@ -35,19 +35,23 @@ public abstract class AbstractJDBCEntityParser<R extends IRuntimeEntity<?>>
 	}
 
 	@Override
-	public void parse(R entity, int index, ResultSet result) throws Exception {
+	public R parse(Integer idx, ResultSet result) throws Exception {
+		int index = idx;
+		R entity = create();
 		ICoordinates coordinates = entity.coordinates();
 		coordinates.setIdentifier(getIdsParser().parse(index++, result));
 		coordinates.setStatus(getStatusParser().parse(index++, result));
 		parseRest(entity, index, result);
+		return entity;
 	}
 
 	protected abstract void parseRest(R entity, int index, ResultSet result)
 			throws Exception;
 
 	@Override
-	public void set(R entity, int index, PreparedStatement statement)
+	public void set(R entity, Integer idx, PreparedStatement statement)
 			throws Exception {
+		int index = idx;
 		ICoordinates coordinates = entity.coordinates();
 		getIdsParser().set(coordinates.getIdentifier(), index++, statement);
 		getStatusParser().set(coordinates.getStatus(), index++, statement);

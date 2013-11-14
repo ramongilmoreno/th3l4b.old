@@ -29,7 +29,7 @@ public class SampleEntityParser extends AbstractJDBCEntityParser<ISampleEntity> 
 	private static String[] COLUMNS = { "A", "B" };
 
 	@Override
-	public ISampleEntity create(Class<ISampleEntity> clazz) {
+	public ISampleEntity create() {
 		return new DefaultSampleEntity();
 	}
 
