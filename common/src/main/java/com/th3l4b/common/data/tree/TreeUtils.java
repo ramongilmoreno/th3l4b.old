@@ -1,11 +1,15 @@
 package com.th3l4b.common.data.tree;
 
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Stack;
 
 import com.th3l4b.common.data.nullsafe.NullSafe;
 import com.th3l4b.common.data.predicate.IPredicate;
+import com.th3l4b.common.text.IPrintable;
+import com.th3l4b.common.text.IndentedWriter;
+import com.th3l4b.common.text.TextUtils;
 
 public class TreeUtils {
 
@@ -174,19 +178,20 @@ public class TreeUtils {
 		return null;
 	}
 
-	public static <T> ITree<T> subtree(ITree<T> ITree, T node) throws Exception {
-		DefaultTree<T> r = new DefaultTree<T>();
-		r.setRoot(node);
-		fill(r, node, ITree);
-		return r;
-	}
-
-	protected static <T> void fill(ITree<T> ITree, T node, ITree<T> source)
+	public static <T> ITree<T> subtree(final ITree<T> src, final T node)
 			throws Exception {
-		for (T child : source.getChildren(node)) {
-			ITree.addChild(child, node);
-			fill(ITree, child, source);
-		}
+		return new AbstractUnmodifiableTree<T>() {
+			@Override
+			public T getRoot() throws Exception {
+				return node;
+			}
+
+			@Override
+			public Iterable<T> getChildren(T n) throws Exception {
+				return src.getChildren(n);
+			}
+
+		};
 	}
 
 	/**
@@ -243,6 +248,44 @@ public class TreeUtils {
 
 		// No difference found.
 		return true;
+	}
+
+	public static <T> IPrintable print(final ITree<T> tree) throws Exception {
+		return new IPrintable() {
+
+			private void recurse(T node, PrintWriter out) throws Exception {
+				TextUtils.print(node, out);
+				PrintWriter iout = null;
+				for (T child : tree.getChildren(node)) {
+					if (iout == null) {
+						iout = IndentedWriter.get(out);
+					}
+					recurse(child, iout);
+				}
+			}
+
+			@Override
+			public void print(PrintWriter out) {
+				try {
+					recurse(tree.getRoot(), out);
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+			}
+		};
+
+	}
+
+	/**
+	 * Copies the descendants of from in src tree into node to of the dst tree.
+	 * Neither from or to are added to dst tree (dst must be already in dst).
+	 */
+	public static <T> void copy(ITree<T> src, T from, ITree<T> dst, T to)
+			throws Exception {
+		for (T child : src.getChildren(from)) {
+			dst.addChild(child, to);
+			copy(src, child, dst, child);
+		}
 	}
 
 }
