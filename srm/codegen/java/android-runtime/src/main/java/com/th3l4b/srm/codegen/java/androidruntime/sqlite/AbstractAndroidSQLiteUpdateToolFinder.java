@@ -2,6 +2,7 @@ package com.th3l4b.srm.codegen.java.androidruntime.sqlite;
 
 import java.util.HashMap;
 
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.th3l4b.srm.codegen.java.basicruntime.update.AbstractUpdateToolFinder;
@@ -14,11 +15,32 @@ public abstract class AbstractAndroidSQLiteUpdateToolFinder extends
 
 	protected abstract SQLiteDatabase getDatabase() throws Exception;
 
+	protected abstract IAndroidSQLiteEntityParserContext getParsers()
+			throws Exception;
+
+	protected abstract IAndroidSQLiteIdentifierParser getIdentifierParser()
+			throws Exception;
+
 	@Override
-	protected <T extends IRuntimeEntity<T>> void processEntity(
+	protected <T extends IRuntimeEntity<T>> void findEntity(
 			IRuntimeEntity<T> entity,
 			HashMap<IIdentifier, IRuntimeEntity<?>> r, IModelUtils utils)
 			throws Exception {
-		String a;
+		IAndroidSQLiteEntityParser<T> parser = getParsers().getEntityParser(
+				entity.clazz());
+		Cursor result = getDatabase().query(
+				parser.table(),
+				parser.allColumns(),
+				"" + parser.idColumn() + " = ?",
+				new String[] { getIdentifierParser().toString(
+						entity.coordinates().getIdentifier()) }, null, null,
+				null);
+		result.moveToFirst();
+		try {
+			T t = parser.parse(0, result);
+			r.put(t.coordinates().getIdentifier(), t);
+		} finally {
+			result.close();
+		}
 	}
 }

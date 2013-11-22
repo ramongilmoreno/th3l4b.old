@@ -27,6 +27,15 @@ public abstract class AbstractModelUtils implements IModelUtils {
 
 		protected abstract void copyEntity(T source, T target) throws Exception;
 	}
+	
+	protected static abstract class ForeignKeysClearer<T extends IRuntimeEntity<T>> {
+		@SuppressWarnings("unchecked")
+		public void clear(Object obj) throws Exception {
+			clearEntity((T) obj);
+		}
+
+		protected abstract void clearEntity(T obj) throws Exception;
+	}
 
 	protected static <T extends IRuntimeEntity<T>> T initialize(Class<T> clazz,
 			T entity) throws Exception {
@@ -38,6 +47,7 @@ public abstract class AbstractModelUtils implements IModelUtils {
 
 	protected Map<String, Creator> _creators = new LinkedHashMap<String, Creator>();
 	protected Map<String, Copier<?>> _copiers = new LinkedHashMap<String, Copier<?>>();
+	protected Map<String, ForeignKeysClearer<?>> _resetters = new LinkedHashMap<String, ForeignKeysClearer<?>>();
 
 	@Override
 	public <T extends IRuntimeEntity<?>> IIdentifier identifier(Class<T> clazz,
@@ -94,5 +104,11 @@ public abstract class AbstractModelUtils implements IModelUtils {
 		T r = (T) create(source.clazz());
 		_copiers.get(source.clazz().getName()).copy(source, r);
 		return r;
+	}
+	
+	@Override
+	public <T extends IRuntimeEntity<?>> void clearForeignKeys(T obj)
+			throws Exception {
+		_resetters.get(obj.clazz().getName()).clear(obj);
 	}
 }

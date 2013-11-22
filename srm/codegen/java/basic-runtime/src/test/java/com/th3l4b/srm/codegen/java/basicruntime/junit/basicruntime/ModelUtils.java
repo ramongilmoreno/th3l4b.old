@@ -26,6 +26,11 @@ public class ModelUtils extends AbstractModelUtils {
 			}
 
 		});
+		_resetters.put(IEntityA.class.getName(), new ForeignKeysClearer<IEntityA>() {
+			@Override
+			protected void clearEntity(IEntityA obj) throws Exception {
+			}
+		});
 	}
 
 }

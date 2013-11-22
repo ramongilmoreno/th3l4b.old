@@ -16,12 +16,12 @@ public abstract class AbstractUpdateToolFinder implements IUpdateToolFinder {
 			throws Exception {
 		LinkedHashMap<IIdentifier, IRuntimeEntity<?>> r = new LinkedHashMap<IIdentifier, IRuntimeEntity<?>>();
 		for (IRuntimeEntity<?> entity : input.values()) {
-			processEntity(entity, r, utils);
+			findEntity(entity, r, utils);
 		}
 		return r;
 	}
 
-	protected abstract <T extends IRuntimeEntity<T>> void processEntity(
+	protected abstract <T extends IRuntimeEntity<T>> void findEntity(
 			IRuntimeEntity<T> entity,
 			HashMap<IIdentifier, IRuntimeEntity<?>> r, IModelUtils utils)
 			throws Exception;

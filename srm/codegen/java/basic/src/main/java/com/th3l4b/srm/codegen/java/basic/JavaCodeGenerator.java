@@ -83,6 +83,8 @@ public class JavaCodeGenerator {
 									+ Exception.class.getName() + ";");
 							iout.println("boolean isSet" + name
 									+ "() throws Exception;");
+							iout.println("void reset" + name
+									+ "() throws Exception;");
 						}
 
 						out.println("}");
@@ -180,6 +182,9 @@ public class JavaCodeGenerator {
 					iout.println("public boolean isSet" + name
 							+ "() throws Exception { return _isSet_" + name
 							+ "; }");
+					iout.println("public void reset" + name
+							+ "() throws Exception { _isSet_" + name
+							+ " = false; }");
 				}
 				iout.println();
 				iout.println("@Override");
@@ -270,6 +275,7 @@ public class JavaCodeGenerator {
 				PrintWriter iout = IndentedWriter.get(out);
 				PrintWriter iiout = IndentedWriter.get(iout);
 				PrintWriter iiiout = IndentedWriter.get(iiout);
+				PrintWriter iiiiout = IndentedWriter.get(iiiout);
 				out.println("package " + pkg + ";");
 				out.println();
 				out.println("public class " + clazz + " extends "
@@ -307,12 +313,30 @@ public class JavaCodeGenerator {
 								+ "()) { target.set" + attribute
 								+ "(source.get" + attribute + "()); }");
 					}
-					iiiout.println("source.coordinates().setIdentifier(source.coordinates().getIdentifier());");
-					iiiout.println("source.coordinates().setStatus(source.coordinates().getStatus());");
+					iiiout.println("target.coordinates().setIdentifier(source.coordinates().getIdentifier());");
+					iiiout.println("target.coordinates().setStatus(source.coordinates().getStatus());");
 					iiout.println("}});");
+					iiout.println("_resetters.put(" + fqn
+							+ ".class.getName(), new "
+							+ AbstractModelUtils.class.getName()
+							+ ".ForeignKeysClearer<" + fqn + ">() {");
+					iiiout.println("@Override");
+					iiiout.println("protected void clearEntity(" + fqn
+							+ " obj) throws Exception {");
+					// Clear relationships
+					for (INormalizedManyToOneRelationship rel : ne
+							.relationships().items()) {
+						String name = javaNames.nameOfDirect(rel, model);
+						iiiiout.println("obj.set" + name + "(("
+								+ IIdentifier.class.getName() + ") null);");
+						iiiiout.println("obj.reset" + name + "();");
+					}
+					iiiout.println("}");
+					iiout.println("});");
 				}
 				iout.println("}");
 				out.println("}");
+				iiiiout.flush();
 				iiiout.flush();
 				iiout.flush();
 				iout.flush();

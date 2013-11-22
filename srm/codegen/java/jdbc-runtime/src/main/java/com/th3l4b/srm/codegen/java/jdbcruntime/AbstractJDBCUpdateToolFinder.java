@@ -20,7 +20,7 @@ public abstract class AbstractJDBCUpdateToolFinder extends
 	protected abstract IJDBCIdentifierParser getIdentifierParser()
 			throws Exception;
 
-	protected <T extends IRuntimeEntity<T>> void processEntity(
+	protected <T extends IRuntimeEntity<T>> void findEntity(
 			IRuntimeEntity<T> entity,
 			HashMap<IIdentifier, IRuntimeEntity<?>> r, IModelUtils utils)
 			throws Exception {

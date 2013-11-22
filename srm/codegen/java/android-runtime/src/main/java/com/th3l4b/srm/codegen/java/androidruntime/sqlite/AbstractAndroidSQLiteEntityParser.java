@@ -59,4 +59,19 @@ public abstract class AbstractAndroidSQLiteEntityParser<R extends IRuntimeEntity
 	}
 
 	public abstract void  setRest (R entity, Void arg, ContentValues values) throws Exception;
+	
+	String[] _allColumns;
+	
+	@Override
+	public String[] allColumns() throws Exception {
+		if (_allColumns == null) {
+			String[] fieldsColumns = fieldsColumns();
+			String[] r = new String[fieldsColumns.length];
+			r[0] = idColumn();
+			r[1] = statusColumn();
+			System.arraycopy(fieldsColumns, 0, r, 2, fieldsColumns.length);
+			_allColumns = r;
+		}
+		return _allColumns;
+	}
 }
