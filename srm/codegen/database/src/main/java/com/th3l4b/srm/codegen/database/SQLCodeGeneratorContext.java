@@ -12,12 +12,15 @@ public class SQLCodeGeneratorContext extends CodeGeneratorContext {
 			.get();
 
 	private IType _identifierType;
+	private IType _statusType;
 
 	private SQLNames _SQLNames = new SQLNames();
 
 	public SQLCodeGeneratorContext() throws Exception {
 		_identifierType = BasicSetTypesContext.get().get(
 				BasicSetTypesContext.ID_TYPE_NAME);
+		_statusType = BasicSetTypesContext.get().get(
+				BasicSetTypesContext.STATUS_TYPE_NAME);
 	}
 
 	public IDatabaseTypesContext getDatabaseTypes() {
@@ -34,6 +37,14 @@ public class SQLCodeGeneratorContext extends CodeGeneratorContext {
 
 	public void setIdentifierType(IType identifierType) {
 		_identifierType = identifierType;
+	}
+	
+	public IType getStatusType() {
+		return _statusType;
+	}
+	
+	public void setStatusType(IType statusType) {
+		_statusType = statusType;
 	}
 
 	public SQLNames getSQLNames() {

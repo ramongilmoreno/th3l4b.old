@@ -116,21 +116,23 @@ public class AndroidSQLiteCodeGenerator {
 				String entityInterface = names.fqn(names.nameInterface(entity),
 						context);
 				out.println("public class " + clazz + " extends "
-						+ AbstractAndroidSQLiteEntityParser.class.getName() + "<"
-						+ entityInterface + "> {");
+						+ AbstractAndroidSQLiteEntityParser.class.getName()
+						+ "<" + entityInterface + "> {");
 				out.println();
 				for (IField field : entity.items()) {
 					String name = fieldName(field, names);
 					String clazz = context.getTypes().get(field.getType())
 							.getProperties()
 							.get(ITypesConstants.PROPERTY_JAVA_CLASS);
-					iout.println("private " + IAndroidSQLiteRuntimeType.class.getName()
-							+ "<" + clazz + "> " + name + ";");
+					iout.println("private "
+							+ IAndroidSQLiteRuntimeType.class.getName() + "<"
+							+ clazz + "> " + name + ";");
 				}
 				out.println();
 				iout.println("public " + clazz + "("
-						+ IAndroidSQLiteIdentifierParser.class.getName() + " ids, "
-						+ IAndroidSQLiteStatusParser.class.getName() + " status, "
+						+ IAndroidSQLiteIdentifierParser.class.getName()
+						+ " ids, " + IAndroidSQLiteStatusParser.class.getName()
+						+ " status, "
 						+ IAndroidSQLiteRuntimeTypesContext.class.getName()
 						+ " types) {");
 				iiout.println("super(ids, status);");
@@ -215,25 +217,28 @@ public class AndroidSQLiteCodeGenerator {
 
 				iout.println("}");
 				iout.println("public void setRest(" + entityInterface
-						+ " entity, Void arg, "
-						+ ContentValues.class.getName()
-						+ " values) throws " + Exception.class.getName()
-						+ " {");
+						+ " entity, Void arg, " + ContentValues.class.getName()
+						+ " values) throws " + Exception.class.getName() + " {");
 				for (IField field : entity.items()) {
-					iiout.println(fieldName(field, names)
+					String name = javaNames.name(field);
+					iiout.println("if (entity.isSet"
+							+ name
+							+ "()) { "
+							+ fieldName(field, names)
 							+ ".set(entity.get"
-							+ javaNames.name(field)
+							+ name
 							+ "(), arg, values, "
 							+ context.getTypes().get(field.getType())
 									.getProperties()
 									.get(ITypesConstants.PROPERTY_JAVA_CLASS)
-							+ ".class);");
+							+ ".class); }");
 				}
 				for (INormalizedManyToOneRelationship rel : entity
 						.relationships().items()) {
-					iiout.println("getIdsParser().set(entity.get"
-							+ javaNames.nameOfDirect(rel, model)
-							+ "(), arg, values);");
+					String name = javaNames.nameOfDirect(rel, model);
+					iiout.println("if (entity.isSet" + name
+							+ "()) { getIdsParser().set(entity.get" + name
+							+ "(), arg, values); }");
 				}
 
 				iout.println("}");

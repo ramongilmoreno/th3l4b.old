@@ -16,6 +16,7 @@ import com.th3l4b.types.base.ITypesContext;
 public class BasicSetTypesContext {
 	
 	public static final String ID_TYPE_NAME = "id";
+	public static final String STATUS_TYPE_NAME = "label";
 
 	private static ITypesContext _default;
 

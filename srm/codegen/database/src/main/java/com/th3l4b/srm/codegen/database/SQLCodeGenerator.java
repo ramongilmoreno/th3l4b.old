@@ -26,6 +26,9 @@ public class SQLCodeGenerator {
 		String idType = names.type(context.getIdentifierType(), database);
 		iout.println("" + names.id(entity) + " " + idType
 				+ " NOT NULL PRIMARY KEY;");
+		String statusType = names.type(context.getStatusType(), database);
+		iout.println("" + names.status(entity) + " " + statusType
+				+ " NOT NULL;");
 		for (IField field : entity.items()) {
 			iout.println(""
 					+ names.column(field)

@@ -231,16 +231,18 @@ public class JDBCCodeGenerator {
 						+ " statement) throws " + Exception.class.getName()
 						+ " {");
 				for (IField field : entity.items()) {
-					iiout.println(fieldName(field, names)
-							+ ".toPreparedStatement(entity.get"
-							+ javaNames.name(field)
-							+ "(), index++, statement);");
+					String name = javaNames.name(field);
+					iiout.println("if (entity.isSet" + name + "()) { "
+							+ fieldName(field, names)
+							+ ".toPreparedStatement(entity.get" + name
+							+ "(), index++, statement); }");
 				}
 				for (INormalizedManyToOneRelationship rel : entity
 						.relationships().items()) {
-					iiout.println("getIdsParser().set(entity.get"
-							+ javaNames.nameOfDirect(rel, model)
-							+ "(), index++, statement);");
+					String name = javaNames.nameOfDirect(rel, model);
+					iiout.println("if (entity.isSet" + name
+							+ "()) { getIdsParser().set(entity.get" + name
+							+ "(), index++, statement); }");
 				}
 
 				iout.println("}");
