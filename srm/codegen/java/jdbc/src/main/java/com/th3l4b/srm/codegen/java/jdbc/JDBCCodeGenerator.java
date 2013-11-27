@@ -234,11 +234,7 @@ public class JDBCCodeGenerator {
 					iiout.println(fieldName(field, names)
 							+ ".toPreparedStatement(entity.get"
 							+ javaNames.name(field)
-							+ "(), index++, statement, "
-							+ context.getTypes().get(field.getType())
-									.getProperties()
-									.get(ITypesConstants.PROPERTY_JAVA_CLASS)
-							+ ".class);");
+							+ "(), index++, statement);");
 				}
 				for (INormalizedManyToOneRelationship rel : entity
 						.relationships().items()) {

@@ -13,19 +13,21 @@ import com.th3l4b.srm.codegen.base.names.CamelUtils;
 
 public class JavaNames {
 
-	public static final String IDENTIFIER = JavaNames.class.getPackage()
-			.getName() + ".identifier";
+	protected String getIdentifierPrefix() {
+		return getClass().getPackage().getName();
+	}
+
+	protected String valueOrProperty(String value, IPropertied propertied)
+			throws Exception {
+		return valueOrProperty(value, getIdentifierPrefix() + ".identifier",
+				propertied);
+	}
 
 	/**
 	 * Creates a Java identifier out of the given input name.
 	 */
 	public String javaIdentifier(String name) {
 		return TextUtils.cIdentifier(CamelUtils.toCamelCase(name));
-	}
-
-	protected String valueOrProperty(String value, IPropertied propertied)
-			throws Exception {
-		return valueOrProperty(value, IDENTIFIER, propertied);
 	}
 
 	protected String valueOrProperty(String value, String property,
@@ -74,33 +76,25 @@ public class JavaNames {
 	public String name(IField field) throws Exception {
 		return valueOrProperty(javaIdentifier(field.getName()), field);
 	}
-	
-	public String name (INormalizedModel model) throws Exception {
+
+	public String name(INormalizedModel model) throws Exception {
 		return javaIdentifier(model.getName());
 	}
 
 	public String finder(INormalizedModel model) throws Exception {
-		return "I"
-				+ valueOrProperty(name(model) + "Finder",
-						model);
+		return "I" + valueOrProperty(name(model) + "Finder", model);
 	}
 
 	public String context(INormalizedModel model) throws Exception {
-		return "I"
-				+ valueOrProperty(name(model) + "Context",
-						model);
+		return "I" + valueOrProperty(name(model) + "Context", model);
 	}
 
 	public String modelUtils(INormalizedModel model) throws Exception {
-		return "Default"
-				+ valueOrProperty(name(model)
-						+ "ModelUtils", model);
+		return "Default" + valueOrProperty(name(model) + "ModelUtils", model);
 	}
 
 	public String modelEntity(INormalizedModel model) throws Exception {
-		return "I"
-				+ valueOrProperty(name(model) + "Entity",
-						model);
+		return "I" + valueOrProperty(name(model) + "Entity", model);
 	}
 
 	public String nameOfReverse(INormalizedManyToOneRelationship relationship,
