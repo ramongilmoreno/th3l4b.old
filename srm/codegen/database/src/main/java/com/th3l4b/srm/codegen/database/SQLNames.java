@@ -14,8 +14,8 @@ public class SQLNames extends JavaNames {
 	public static final String MODEL = PREFIX + ".model";
 	public static final String TABLE = PREFIX + ".table";
 	public static final String COLUMN = PREFIX + ".column";
-	public static final String ID = PREFIX + ".id";
-	public static final String STATUS = PREFIX + ".status";
+	public static final String ID = "_Id";
+	public static final String STATUS = "_Status";
 	public static final String TYPE = PREFIX + ".type";
 
 	public String name(IDatabaseType database) throws Exception {
@@ -24,14 +24,6 @@ public class SQLNames extends JavaNames {
 
 	public String table(INormalizedEntity entity) throws Exception {
 		return valueOrProperty(javaIdentifier(entity.getName()), TABLE, entity);
-	}
-
-	public String id(INormalizedEntity entity) throws Exception {
-		return valueOrProperty("_Id", ID, entity);
-	}
-
-	public String status(INormalizedEntity entity) throws Exception {
-		return valueOrProperty("_Status", STATUS, entity);
 	}
 
 	public String column(IField field) throws Exception {

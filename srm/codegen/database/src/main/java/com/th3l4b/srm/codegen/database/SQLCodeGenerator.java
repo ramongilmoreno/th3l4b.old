@@ -24,11 +24,9 @@ public class SQLCodeGenerator {
 		PrintWriter iout = IndentedWriter.get(out);
 		out.println("CREATE TABLE " + names.table(entity) + " (");
 		String idType = names.type(context.getIdentifierType(), database);
-		iout.println("" + names.id(entity) + " " + idType
-				+ " NOT NULL PRIMARY KEY;");
+		iout.println("" + SQLNames.ID + " " + idType + " NOT NULL PRIMARY KEY;");
 		String statusType = names.type(context.getStatusType(), database);
-		iout.println("" + names.status(entity) + " " + statusType
-				+ " NOT NULL;");
+		iout.println("" + SQLNames.STATUS + " " + statusType + " NOT NULL;");
 		for (IField field : entity.items()) {
 			iout.println(""
 					+ names.column(field)

@@ -8,7 +8,6 @@ import java.util.LinkedHashSet;
 import com.th3l4b.srm.runtime.EntityStatus;
 import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
-import com.th3l4b.types.runtime.IJDBCRuntimeTypesContext;
 
 public abstract class AbstractJDBCFinder {
 

@@ -1,14 +1,15 @@
 package com.th3l4b.android.testbed;
 
-import com.th3l4b.android.screens.AbstractAndroidFacade;
-import com.th3l4b.android.screens.IAndroidScreensClientDescriptor;
-import com.th3l4b.apps.shopping.base.Shopping;
-import com.th3l4b.screens.base.utils.IScreensConfiguration;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
+
+import com.th3l4b.android.screens.AbstractAndroidFacade;
+import com.th3l4b.android.screens.IAndroidScreensClientDescriptor;
+import com.th3l4b.apps.shopping.base.IShoppingApplication;
+import com.th3l4b.apps.shopping.base.Shopping;
+import com.th3l4b.screens.base.utils.IScreensConfiguration;
 
 public class Testbed extends Activity {
 	@Override
@@ -25,7 +26,12 @@ public class Testbed extends Activity {
 				protected IScreensConfiguration createScreensConfiguration(
 						IAndroidScreensClientDescriptor client)
 						throws Exception {
-					return new Shopping().sample(client);
+					IScreensConfiguration r = new Shopping().sample(client);
+					// Alter shopping sample to plug a database-based
+					// data.
+					IShoppingApplication application = Shopping
+							.getShoppingApplication(r);
+					return r;
 				}
 			}.onCreate(this);
 		} catch (Exception e) {

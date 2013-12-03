@@ -21,11 +21,11 @@ import com.th3l4b.srm.codegen.java.jdbcruntime.AbstractJDBCSRMContext;
 import com.th3l4b.srm.codegen.java.jdbcruntime.DefaultJDBCEntityParserContext;
 import com.th3l4b.srm.codegen.java.jdbcruntime.IJDBCEntityParserContext;
 import com.th3l4b.srm.codegen.java.jdbcruntime.IJDBCIdentifierParser;
+import com.th3l4b.srm.codegen.java.jdbcruntime.IJDBCRuntimeType;
+import com.th3l4b.srm.codegen.java.jdbcruntime.IJDBCRuntimeTypesContext;
 import com.th3l4b.srm.codegen.java.jdbcruntime.IJDBCStatusParser;
 import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.types.base.ITypesConstants;
-import com.th3l4b.types.runtime.IJDBCRuntimeType;
-import com.th3l4b.types.runtime.IJDBCRuntimeTypesContext;
 
 public class JDBCCodeGenerator {
 
@@ -165,13 +165,11 @@ public class JDBCCodeGenerator {
 				iout.println("public " + String.class.getName()
 						+ " idColumn() throws " + Exception.class.getName()
 						+ " { return \""
-						+ TextUtils.escapeJavaString(sqlNames.id(entity))
-						+ "\"; }");
+						+ TextUtils.escapeJavaString(SQLNames.ID) + "\"; }");
 				iout.println("public " + String.class.getName()
 						+ " statusColumn() throws " + Exception.class.getName()
 						+ " { return \""
-						+ TextUtils.escapeJavaString(sqlNames.status(entity))
-						+ "\"; }");
+						+ TextUtils.escapeJavaString(SQLNames.STATUS) + "\"; }");
 				iout.println("public " + entityInterface
 						+ " create() { return new "
 						+ names.fqnImpl(names.nameImpl(entity), context)
@@ -215,7 +213,7 @@ public class JDBCCodeGenerator {
 				for (IField field : entity.items()) {
 					iiout.println("entity.set" + javaNames.name(field) + "("
 							+ fieldName(field, names)
-							+ ".fromResultSet(index++, result));");
+							+ ".parse(index++, result));");
 				}
 				for (INormalizedManyToOneRelationship rel : entity
 						.relationships().items()) {
@@ -233,9 +231,8 @@ public class JDBCCodeGenerator {
 				for (IField field : entity.items()) {
 					String name = javaNames.name(field);
 					iiout.println("if (entity.isSet" + name + "()) { "
-							+ fieldName(field, names)
-							+ ".toPreparedStatement(entity.get" + name
-							+ "(), index++, statement); }");
+							+ fieldName(field, names) + ".set(entity.get"
+							+ name + "(), index++, statement); }");
 				}
 				for (INormalizedManyToOneRelationship rel : entity
 						.relationships().items()) {

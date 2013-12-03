@@ -47,11 +47,6 @@ public class Shopping implements IScreensConstants, IRenderingConstants {
 		return clearRoot(root, context, false);
 	}
 
-	protected IShoppingApplication getApplication(IScreensConfiguration screens)
-			throws Exception {
-		return (IShoppingApplication) screens.getAttributes().get(KEY);
-	}
-
 	protected ITreeOfScreens clearRoot(final String root,
 			IShoppingApplication application, boolean atIndex) throws Exception {
 		IScreensConfiguration screens = application.getScreens();
@@ -76,7 +71,7 @@ public class Shopping implements IScreensConstants, IRenderingConstants {
 				public void handleInteraction(String screen,
 						IScreensConfiguration context,
 						IScreensClientDescriptor client) throws Exception {
-					renderIndex(root, Shopping.this.getApplication(context));
+					renderIndex(root, getShoppingApplication(context));
 				}
 			});
 		}
@@ -105,7 +100,7 @@ public class Shopping implements IScreensConstants, IRenderingConstants {
 								IScreensClientDescriptor client)
 								throws Exception {
 							renderShopping(root,
-									Shopping.this.getApplication(context));
+									getShoppingApplication(context));
 						}
 					});
 		}
@@ -125,8 +120,7 @@ public class Shopping implements IScreensConstants, IRenderingConstants {
 								IScreensConfiguration context,
 								IScreensClientDescriptor client)
 								throws Exception {
-							renderItems(root,
-									Shopping.this.getApplication(context));
+							renderItems(root, getShoppingApplication(context));
 						}
 					});
 		}
@@ -195,7 +189,7 @@ public class Shopping implements IScreensConstants, IRenderingConstants {
 			IScreensConfiguration context, IScreensClientDescriptor client,
 			Boolean toggleMarked, Boolean toggleLater) throws Exception {
 		ITreeOfScreens tree = context.getTree();
-		IShoppingApplication application = getApplication(context);
+		IShoppingApplication application = getShoppingApplication(context);
 		String idAsString = tree.getProperty(needName, KEY);
 		IIdentifier id = getIdentifierFromString(idAsString, application);
 		Status status = Status.valueOf(tree.getProperty(needName,
@@ -297,7 +291,7 @@ public class Shopping implements IScreensConstants, IRenderingConstants {
 						String name = context.getTree().getProperty(nameField,
 								IScreensConstants.VALUE);
 						if ((name != null) && (name.trim().length() > 0)) {
-							IShoppingApplication application = getApplication(context);
+							IShoppingApplication application = getShoppingApplication(context);
 							LinkedHashMap<IIdentifier, IRuntimeEntity<?>> updates = new LinkedHashMap<IIdentifier, IRuntimeEntity<?>>();
 							IItem item = application.getData().getUtils()
 									.create(IItem.class);
@@ -305,7 +299,7 @@ public class Shopping implements IScreensConstants, IRenderingConstants {
 							updates.put(item.coordinates().getIdentifier(),
 									item);
 							application.getData().update(updates);
-							renderItems(root, getApplication(context));
+							renderItems(root, getShoppingApplication(context));
 						}
 					}
 				});
@@ -323,7 +317,7 @@ public class Shopping implements IScreensConstants, IRenderingConstants {
 					public void handleInteraction(String screen,
 							IScreensConfiguration context,
 							IScreensClientDescriptor client) throws Exception {
-						renderItems(root, getApplication(context));
+						renderItems(root, getShoppingApplication(context));
 					}
 				});
 
@@ -394,7 +388,7 @@ public class Shopping implements IScreensConstants, IRenderingConstants {
 			public void handleInteraction(final String searchValue,
 					String screen, IScreensConfiguration context,
 					IScreensClientDescriptor client) throws Exception {
-				IShoppingApplication application = getApplication(context);
+				IShoppingApplication application = getShoppingApplication(context);
 				Iterable<IItem> filtered = PredicateUtils.filter(application
 						.getData().getFinder().allItem(),
 						new IPredicate<IItem>() {
@@ -428,7 +422,7 @@ public class Shopping implements IScreensConstants, IRenderingConstants {
 								root,
 								context.getTree().getProperty(
 										name(SEARCH_FIELD), VALUE),
-								getApplication(context));
+								getShoppingApplication(context));
 					}
 				});
 
@@ -471,7 +465,7 @@ public class Shopping implements IScreensConstants, IRenderingConstants {
 								boolean status, IScreensConfiguration context,
 								IScreensClientDescriptor client)
 								throws Exception {
-							IShoppingApplication application = getApplication(context);
+							IShoppingApplication application = getShoppingApplication(context);
 							ITreeOfScreens tree = context.getTree();
 							String itemAsString = tree.getProperty(screen, KEY);
 							IIdentifier itemAsId = getIdentifierFromString(
@@ -578,19 +572,29 @@ public class Shopping implements IScreensConstants, IRenderingConstants {
 
 	public IScreensConfiguration sample(IScreensClientDescriptor client)
 			throws Exception {
-		IShoppingApplication context = new DefaultShoppingApplication();
+		IShoppingApplication application = new DefaultShoppingApplication();
 		LinkedHashMap<String, IInteractionListener> interactions = new LinkedHashMap<String, IInteractionListener>();
 		DefaultTreeOfScreens tree = new DefaultTreeOfScreens();
 		DefaultScreensConfiguration config = new DefaultScreensConfiguration(
 				tree, interactions);
-		context.setClient(client);
-		context.setContext(config);
-		context.setData(ShoppingSample.getSampleContext());
-		context.setLocale(Locale.getDefault());
-		context.getScreens().getAttributes().put(KEY, context);
+		application.setClient(client);
+		application.setContext(config);
+		application.setData(ShoppingSample.getSampleContext());
+		application.setLocale(Locale.getDefault());
+		setShoppingApplication(application, config);
 		String root = name("Root");
-		context.getScreens().getTree().setRoot(root);
-		renderIndex(root, context);
+		application.getScreens().getTree().setRoot(root);
+		renderIndex(root, application);
 		return config;
+	}
+
+	public static IShoppingApplication getShoppingApplication(
+			IScreensConfiguration screens) throws Exception {
+		return (IShoppingApplication) screens.getAttributes().get(KEY);
+	}
+
+	public static void setShoppingApplication(IShoppingApplication application,
+			IScreensConfiguration configuration) throws Exception {
+		configuration.getAttributes().put(KEY, application);
 	}
 }

@@ -50,18 +50,18 @@ public abstract class AbstractAndroidSQLiteEntityParser<R extends IRuntimeEntity
 			throws Exception;
 
 	@Override
-	public void set(R entity, Void arg, ContentValues values)
-			throws Exception {
+	public void set(R entity, Void arg, ContentValues values) throws Exception {
 		ICoordinates coordinates = entity.coordinates();
 		getIdsParser().set(coordinates.getIdentifier(), arg, values);
 		getStatusParser().set(coordinates.getStatus(), arg, values);
 		setRest(entity, arg, values);
 	}
 
-	public abstract void  setRest (R entity, Void arg, ContentValues values) throws Exception;
-	
+	public abstract void setRest(R entity, Void arg, ContentValues values)
+			throws Exception;
+
 	String[] _allColumns;
-	
+
 	@Override
 	public String[] allColumns() throws Exception {
 		if (_allColumns == null) {

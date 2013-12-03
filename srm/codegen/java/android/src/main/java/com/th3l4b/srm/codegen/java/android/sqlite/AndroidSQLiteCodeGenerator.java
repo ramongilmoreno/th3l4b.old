@@ -156,13 +156,11 @@ public class AndroidSQLiteCodeGenerator {
 				iout.println("public " + String.class.getName()
 						+ " idColumn() throws " + Exception.class.getName()
 						+ " { return \""
-						+ TextUtils.escapeJavaString(sqlNames.id(entity))
-						+ "\"; }");
+						+ TextUtils.escapeJavaString(SQLNames.ID) + "\"; }");
 				iout.println("public " + String.class.getName()
 						+ " statusColumn() throws " + Exception.class.getName()
 						+ " { return \""
-						+ TextUtils.escapeJavaString(sqlNames.status(entity))
-						+ "\"; }");
+						+ TextUtils.escapeJavaString(SQLNames.STATUS) + "\"; }");
 				iout.println("public " + entityInterface
 						+ " create() { return new "
 						+ names.fqnImpl(names.nameImpl(entity), context)
@@ -227,11 +225,9 @@ public class AndroidSQLiteCodeGenerator {
 							+ fieldName(field, names)
 							+ ".set(entity.get"
 							+ name
-							+ "(), arg, values, "
-							+ context.getTypes().get(field.getType())
-									.getProperties()
-									.get(ITypesConstants.PROPERTY_JAVA_CLASS)
-							+ ".class); }");
+							+ "(), \""
+							+ TextUtils.escapeJavaString(sqlNames.column(field))
+							+ "\", values); }");
 				}
 				for (INormalizedManyToOneRelationship rel : entity
 						.relationships().items()) {

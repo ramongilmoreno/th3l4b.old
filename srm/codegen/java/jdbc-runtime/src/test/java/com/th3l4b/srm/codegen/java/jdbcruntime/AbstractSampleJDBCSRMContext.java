@@ -2,7 +2,6 @@ package com.th3l4b.srm.codegen.java.jdbcruntime;
 
 import java.sql.Connection;
 
-import com.th3l4b.types.runtime.IJDBCRuntimeTypesContext;
 
 public abstract class AbstractSampleJDBCSRMContext extends
 		AbstractJDBCSRMContext<ISampleFinder> {
