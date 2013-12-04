@@ -232,9 +232,13 @@ public class AndroidSQLiteCodeGenerator {
 				for (INormalizedManyToOneRelationship rel : entity
 						.relationships().items()) {
 					String name = javaNames.nameOfDirect(rel, model);
-					iiout.println("if (entity.isSet" + name
-							+ "()) { getIdsParser().set(entity.get" + name
-							+ "(), arg, values); }");
+					iiout.println("if (entity.isSet"
+							+ name
+							+ "()) { getIdsParser().set(entity.get"
+							+ name
+							+ "(), \""
+							+ TextUtils.escapeJavaString(sqlNames.column(rel,
+									model)) + "\", values); }");
 				}
 
 				iout.println("}");

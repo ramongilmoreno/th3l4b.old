@@ -6,16 +6,15 @@ import com.th3l4b.srm.base.normalized.INormalizedManyToOneRelationship;
 import com.th3l4b.srm.base.normalized.INormalizedModel;
 import com.th3l4b.srm.codegen.java.basic.JavaNames;
 import com.th3l4b.srm.database.IDatabaseType;
+import com.th3l4b.srm.runtime.IDatabaseConstants;
 import com.th3l4b.types.base.IType;
 
-public class SQLNames extends JavaNames {
+public class SQLNames extends JavaNames implements IDatabaseConstants {
 
 	private static final String PREFIX = SQLNames.class.getPackage().getName();
 	public static final String MODEL = PREFIX + ".model";
 	public static final String TABLE = PREFIX + ".table";
 	public static final String COLUMN = PREFIX + ".column";
-	public static final String ID = "_Id";
-	public static final String STATUS = "_Status";
 	public static final String TYPE = PREFIX + ".type";
 
 	public String name(IDatabaseType database) throws Exception {

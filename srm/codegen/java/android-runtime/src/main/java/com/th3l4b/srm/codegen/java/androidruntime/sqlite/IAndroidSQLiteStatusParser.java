@@ -6,5 +6,5 @@ import android.database.Cursor;
 import com.th3l4b.srm.runtime.IEntityStatusParser;
 
 public interface IAndroidSQLiteStatusParser extends
-		IEntityStatusParser<Cursor, ContentValues, Integer, Void> {
+		IEntityStatusParser<Cursor, ContentValues, Integer, String> {
 }

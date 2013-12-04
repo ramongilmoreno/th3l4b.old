@@ -5,22 +5,29 @@ import java.sql.Connection;
 import com.th3l4b.srm.codegen.java.basicruntime.update.AbstractUpdateToolSRMContext;
 import com.th3l4b.srm.codegen.java.basicruntime.update.IUpdateToolFinder;
 import com.th3l4b.srm.codegen.java.basicruntime.update.IUpdateToolUpdater;
+import com.th3l4b.srm.codegen.java.jdbcruntime.types.JDBCRuntimeTypesBasicSet;
 
-public abstract class AbstractJDBCSRMContext<FINDER> extends
+public abstract class AbstractJDBCSRMContext<FINDER>
+		extends
 		AbstractUpdateToolSRMContext<FINDER, IJDBCIdentifierParser, IJDBCStatusParser, IJDBCEntityParserContext, IJDBCRuntimeTypesContext> {
 
 	protected abstract Connection getConnection() throws Exception;
-	
+
+	@Override
+	protected IJDBCRuntimeTypesContext createTypes() throws Exception {
+		return new JDBCRuntimeTypesBasicSet();
+	}
+
 	@Override
 	protected IJDBCIdentifierParser createIdentifierParser() throws Exception {
 		return new StringJDBCIdentifierParser();
 	}
-	
+
 	@Override
 	protected IJDBCStatusParser createStatusParser() throws Exception {
 		return new StringJDBCStatusParser();
 	}
-	
+
 	@Override
 	protected IUpdateToolFinder createUpdateToolFinder() throws Exception {
 		return new AbstractJDBCUpdateToolFinder() {
