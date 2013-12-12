@@ -176,17 +176,18 @@ public class TextUtils {
 		escapeJavaString(src, out);
 		return out.getBuffer().toString();
 	}
-	
-	public static void escapeJavaString(String src, Writer out) throws Exception {
+
+	public static void escapeJavaString(String src, Writer out)
+			throws Exception {
 		if (src == null) {
 			src = "";
 		}
 		StringReader in = new StringReader(src);
 		escapeJava(in, out);
 	}
-	
-	public static void escapeJava (Reader in, Writer out) throws Exception {
-		int c; 
+
+	public static void escapeJava(Reader in, Writer out) throws Exception {
+		int c;
 		while ((c = in.read()) != -1) {
 			if (c < ' ' || c > 127 || c == '\\' || c == '\"') {
 				out.write("\\u");
@@ -199,5 +200,21 @@ public class TextUtils {
 				out.write(c);
 			}
 		}
+	}
+
+	/**
+	 * Computes an String which is a limit unicode characters long as much from
+	 * the original.
+	 */
+	public static String limit(String input, int limit) throws Exception {
+		int count = 0;
+		StringWriter out = new StringWriter();
+		for (Integer i : unicodeIterable(input)) {
+			if (++count > limit) {
+				break;
+			}
+			write(i.intValue(), out);
+		}
+		return out.toString();
 	}
 }

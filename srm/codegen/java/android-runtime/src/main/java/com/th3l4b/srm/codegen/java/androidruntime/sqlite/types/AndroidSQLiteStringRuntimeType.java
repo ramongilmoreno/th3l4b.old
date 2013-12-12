@@ -3,20 +3,35 @@ package com.th3l4b.srm.codegen.java.androidruntime.sqlite.types;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-import com.th3l4b.srm.codegen.java.androidruntime.sqlite.IAndroidSQLiteRuntimeType;
+import com.th3l4b.common.text.TextUtils;
 
-public class AndroidSQLiteStringRuntimeType implements IAndroidSQLiteRuntimeType<String> {
+public class AndroidSQLiteStringRuntimeType extends
+		AbstractAndroidSQLiteType<String> {
 
-	@Override
-	public String parse(Integer arg, Cursor result) throws Exception {
-		return result.getString(arg.intValue());
+	private Integer _limit;
+
+	public AndroidSQLiteStringRuntimeType() {
+		this(null);
+	}
+
+	public AndroidSQLiteStringRuntimeType(Integer limit) {
+		_limit = limit;
+	}
+
+	protected String limit(String input) throws Exception {
+		return _limit != null ? TextUtils.limit(input, _limit.intValue())
+				: input;
 	}
 
 	@Override
-	public void set(String value, String arg, ContentValues statement)
+	public String parseNotNull(int i, Cursor result) throws Exception {
+		return result.getString(i);
+	}
+
+	@Override
+	public void setNotNull(String value, String arg, ContentValues statement)
 			throws Exception {
 		statement.put(arg, value);
 	}
-	
 
 }

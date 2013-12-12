@@ -14,9 +14,10 @@ import com.th3l4b.types.base.ITypesContext;
  * Implementation of the basi list of types.
  */
 public class BasicSetTypesContext {
-	
-	public static final String ID_TYPE_NAME = "id";
-	public static final String STATUS_TYPE_NAME = "label";
+
+	public static final String ID_TYPE_NAME = BasicSetTypesEnum._id.getName();
+	public static final String STATUS_TYPE_NAME = BasicSetTypesEnum._label
+			.getName();;
 
 	private static ITypesContext _default;
 
