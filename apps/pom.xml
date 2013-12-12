@@ -16,5 +16,6 @@
   <modules>
     <module>shopping</module>
     <module>desktop</module>
+    <module>slides</module>
   </modules>
 </project>
