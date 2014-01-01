@@ -39,13 +39,6 @@ public abstract class AbstractAndroidSQLiteSRMContext<FINDER>
 			}
 
 			@Override
-			protected IAndroidSQLiteIdentifierParser getIdentifierParser()
-					throws Exception {
-				return AbstractAndroidSQLiteSRMContext.this
-						.getIdentifierParser();
-			}
-
-			@Override
 			protected SQLiteDatabase getDatabase() throws Exception {
 				return AbstractAndroidSQLiteSRMContext.this.getDatabase();
 			}
@@ -59,13 +52,6 @@ public abstract class AbstractAndroidSQLiteSRMContext<FINDER>
 			protected IAndroidSQLiteEntityParserContext getParsers()
 					throws Exception {
 				return AbstractAndroidSQLiteSRMContext.this.getParsers();
-			}
-
-			@Override
-			protected IAndroidSQLiteIdentifierParser getIdentifierParser()
-					throws Exception {
-				return AbstractAndroidSQLiteSRMContext.this
-						.getIdentifierParser();
 			}
 
 			@Override

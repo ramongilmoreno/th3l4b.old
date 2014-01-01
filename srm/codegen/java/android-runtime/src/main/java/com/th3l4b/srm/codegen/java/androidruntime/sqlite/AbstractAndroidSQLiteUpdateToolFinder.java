@@ -18,9 +18,6 @@ public abstract class AbstractAndroidSQLiteUpdateToolFinder extends
 	protected abstract IAndroidSQLiteEntityParserContext getParsers()
 			throws Exception;
 
-	protected abstract IAndroidSQLiteIdentifierParser getIdentifierParser()
-			throws Exception;
-
 	@Override
 	protected <T extends IRuntimeEntity<T>> void findEntity(
 			IRuntimeEntity<T> entity,
@@ -28,13 +25,10 @@ public abstract class AbstractAndroidSQLiteUpdateToolFinder extends
 			throws Exception {
 		IAndroidSQLiteEntityParser<T> parser = getParsers().getEntityParser(
 				entity.clazz());
-		Cursor result = getDatabase().query(
-				parser.table(),
-				parser.allColumns(),
-				"" + parser.idColumn() + " = ?",
-				new String[] { getIdentifierParser().toString(
-						entity.coordinates().getIdentifier()) }, null, null,
-				null);
+		Cursor result = getDatabase().query(parser.table(),
+				parser.allColumns(), "" + parser.idColumn() + " = ?",
+				new String[] { entity.coordinates().getIdentifier().getKey() },
+				null, null, null);
 		result.moveToFirst();
 		try {
 			T t = parser.parse(0, result);

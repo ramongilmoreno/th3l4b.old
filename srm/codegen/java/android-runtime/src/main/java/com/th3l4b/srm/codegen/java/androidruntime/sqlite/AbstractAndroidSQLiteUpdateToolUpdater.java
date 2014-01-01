@@ -15,9 +15,6 @@ public abstract class AbstractAndroidSQLiteUpdateToolUpdater extends
 	protected abstract IAndroidSQLiteEntityParserContext getParsers()
 			throws Exception;
 
-	protected abstract IAndroidSQLiteIdentifierParser getIdentifierParser()
-			throws Exception;
-
 	@Override
 	protected <T extends IRuntimeEntity<T>> void updateEntity(T entity,
 			T original, IModelUtils utils) throws Exception {
@@ -25,11 +22,8 @@ public abstract class AbstractAndroidSQLiteUpdateToolUpdater extends
 				entity.clazz());
 		ContentValues values = new ContentValues();
 		parser.set(entity, null, values);
-		getDatabase().update(
-				parser.table(),
-				values,
+		getDatabase().update(parser.table(), values,
 				"" + parser.idColumn() + " = ?",
-				new String[] { getIdentifierParser().toString(
-						entity.coordinates().getIdentifier()) });
+				new String[] { entity.coordinates().getIdentifier().getKey() });
 	}
 }

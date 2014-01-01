@@ -6,7 +6,6 @@ import java.util.Locale;
 import com.th3l4b.apps.shopping.base.codegen.srm.IItem;
 import com.th3l4b.apps.shopping.base.codegen.srm.INeed;
 import com.th3l4b.apps.shopping.base.codegen.srm.base.IShoppingContext;
-import com.th3l4b.apps.shopping.base.codegen.srm.base.IShoppingEntity;
 import com.th3l4b.apps.shopping.base.codegen.srm.base.IShoppingFinder;
 import com.th3l4b.common.data.nullsafe.NullSafe;
 import com.th3l4b.common.data.predicate.IPredicate;
@@ -20,6 +19,7 @@ import com.th3l4b.screens.base.utils.DefaultScreensConfiguration;
 import com.th3l4b.screens.base.utils.DefaultTreeOfScreens;
 import com.th3l4b.screens.base.utils.IScreensClientDescriptor;
 import com.th3l4b.screens.base.utils.IScreensConfiguration;
+import com.th3l4b.srm.codegen.java.basicruntime.DefaultIdentifier;
 import com.th3l4b.srm.runtime.EntityStatus;
 import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.srm.runtime.IModelUtils;
@@ -174,24 +174,13 @@ public class Shopping implements IScreensConstants, IRenderingConstants {
 
 	}
 
-	protected IIdentifier getIdentifierFromString(String id,
-			IShoppingApplication context) throws Exception {
-		return context.getData().getUtils().identifierFromString(id);
-	}
-
-	protected String getStringFromIdentifier(IShoppingEntity<?> entity,
-			IShoppingApplication context) throws Exception {
-		return context.getData().getUtils()
-				.identifierToString(entity.coordinates().getIdentifier());
-	}
-
 	protected void updateNeed(String needName, String needRow,
 			IScreensConfiguration context, IScreensClientDescriptor client,
 			Boolean toggleMarked, Boolean toggleLater) throws Exception {
 		ITreeOfScreens tree = context.getTree();
 		IShoppingApplication application = getShoppingApplication(context);
 		String idAsString = tree.getProperty(needName, KEY);
-		IIdentifier id = getIdentifierFromString(idAsString, application);
+		IIdentifier id = new DefaultIdentifier(INeed.class, idAsString);
 		Status status = Status.valueOf(tree.getProperty(needName,
 				STATUS_ENUM_VALUE));
 		if (NullSafe.equals(toggleMarked, Boolean.TRUE)) {
@@ -340,7 +329,7 @@ public class Shopping implements IScreensConstants, IRenderingConstants {
 		int index = 0;
 		IShoppingFinder finder = application.getData().getFinder();
 		for (INeed need : finder.allNeed()) {
-			String id = getStringFromIdentifier(need, application);
+			String id = need.coordinates().getIdentifier().getKey();
 			final String needRow = name("row - " + id);
 			tree.addScreen(needRow, itemsTable);
 			tree.setProperty(needRow, ORDER_INDEX, Integer.toString(index++));
@@ -438,7 +427,7 @@ public class Shopping implements IScreensConstants, IRenderingConstants {
 
 		int index = 0;
 		for (IItem item : items) {
-			String idAsString = getStringFromIdentifier(item, context);
+			String idAsString = item.coordinates().getIdentifier().getKey();
 			String itemRow = name("row - " + idAsString);
 			tree.addScreen(itemRow, itemsTable);
 			tree.setProperty(itemRow, ORDER_INDEX, Integer.toString(index++));
@@ -468,8 +457,8 @@ public class Shopping implements IScreensConstants, IRenderingConstants {
 							IShoppingApplication application = getShoppingApplication(context);
 							ITreeOfScreens tree = context.getTree();
 							String itemAsString = tree.getProperty(screen, KEY);
-							IIdentifier itemAsId = getIdentifierFromString(
-									itemAsString, application);
+							IIdentifier itemAsId = new DefaultIdentifier(
+									IItem.class, itemAsString);
 
 							// Clean needs.
 							LinkedHashMap<IIdentifier, IRuntimeEntity<?>> updates = new LinkedHashMap<IIdentifier, IRuntimeEntity<?>>();

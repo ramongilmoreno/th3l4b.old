@@ -1,6 +1,6 @@
 package com.th3l4b.srm.codegen.java.basicruntime.inmemory;
 
-import com.th3l4b.srm.codegen.java.basicruntime.AbstractModelUtils;
+import com.th3l4b.common.data.nullsafe.NullSafe;
 import com.th3l4b.srm.runtime.IIdentifier;
 
 public abstract class AbstractPredicateOfRelationship<R, S> {
@@ -27,7 +27,7 @@ public abstract class AbstractPredicateOfRelationship<R, S> {
 		return new IPredicate<R>() {
 			@Override
 			public boolean accept(R arg) throws Exception {
-				return AbstractModelUtils.compareStatic(getSource(arg), target);
+				return NullSafe.equals(getSource(arg), target);
 			}
 
 			@Override
