@@ -5,6 +5,7 @@ import com.th3l4b.srm.database.BasicSetDatabaseTypesContext;
 import com.th3l4b.srm.database.IDatabaseTypesContext;
 import com.th3l4b.types.base.IType;
 import com.th3l4b.types.base.basicset.BasicSetTypesContext;
+import com.th3l4b.types.base.basicset.BasicSetTypesEnum;
 
 public class SQLCodeGeneratorContext extends CodeGeneratorContext {
 
@@ -18,9 +19,9 @@ public class SQLCodeGeneratorContext extends CodeGeneratorContext {
 
 	public SQLCodeGeneratorContext() throws Exception {
 		_identifierType = BasicSetTypesContext.get().get(
-				BasicSetTypesContext.ID_TYPE_NAME);
+				BasicSetTypesEnum._label.getName());
 		_statusType = BasicSetTypesContext.get().get(
-				BasicSetTypesContext.STATUS_TYPE_NAME);
+				BasicSetTypesEnum._label.getName());
 	}
 
 	public IDatabaseTypesContext getDatabaseTypes() {
@@ -38,11 +39,11 @@ public class SQLCodeGeneratorContext extends CodeGeneratorContext {
 	public void setIdentifierType(IType identifierType) {
 		_identifierType = identifierType;
 	}
-	
+
 	public IType getStatusType() {
 		return _statusType;
 	}
-	
+
 	public void setStatusType(IType statusType) {
 		_statusType = statusType;
 	}

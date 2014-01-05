@@ -24,7 +24,23 @@ public class AndroidSQLiteRuntimeTypesBasicSet implements
 				new AndroidSQLiteStringRuntimeType(5000));
 		_types.put(BasicSetTypesEnum._integer.getName(),
 				new AndroidSQLiteIntegerRuntimeType());
+		_types.put(BasicSetTypesEnum._decimal.getName(),
+				new AbstractAndroidSQLiteType<Double>() {
+					@Override
+					public Double parseNotNull(int i, Cursor result)
+							throws Exception {
+						return result.getDouble(i);
+					}
+
+					@Override
+					public void setNotNull(Double value, String arg,
+							ContentValues statement) throws Exception {
+						statement.put(arg, value);
+					}
+				});
 		_types.put(BasicSetTypesEnum._date.getName(),
+				new AndroidSQLiteIntegerRuntimeType());
+		_types.put(BasicSetTypesEnum._timestamp.getName(),
 				new AndroidSQLiteIntegerRuntimeType());
 		_types.put(BasicSetTypesEnum._boolean.getName(),
 				new AbstractAndroidSQLiteType<Boolean>() {
@@ -40,8 +56,6 @@ public class AndroidSQLiteRuntimeTypesBasicSet implements
 						statement.put(arg, value);
 					}
 				});
-
-		int i;
 	}
 
 	@SuppressWarnings("unchecked")

@@ -20,12 +20,12 @@ public abstract class AbstractJDBCSRMContext<FINDER>
 
 	@Override
 	protected IJDBCIdentifierParser createIdentifierParser() throws Exception {
-		return new StringJDBCIdentifierParser();
+		return new DefaultJDBCIdentifierParser();
 	}
 
 	@Override
 	protected IJDBCStatusParser createStatusParser() throws Exception {
-		return new StringJDBCStatusParser();
+		return new DefaultJDBCStatusParser();
 	}
 
 	@Override

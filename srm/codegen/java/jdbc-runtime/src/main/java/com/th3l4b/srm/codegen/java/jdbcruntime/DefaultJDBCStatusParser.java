@@ -5,7 +5,7 @@ import java.sql.ResultSet;
 
 import com.th3l4b.srm.runtime.EntityStatus;
 
-public class StringJDBCStatusParser implements IJDBCStatusParser {
+public class DefaultJDBCStatusParser implements IJDBCStatusParser {
 
 	@Override
 	public EntityStatus parse(int column, ResultSet result) throws Exception {

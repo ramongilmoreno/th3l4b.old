@@ -15,10 +15,6 @@ import com.th3l4b.types.base.ITypesContext;
  */
 public class BasicSetTypesContext {
 
-	public static final String ID_TYPE_NAME = BasicSetTypesEnum._id.getName();
-	public static final String STATUS_TYPE_NAME = BasicSetTypesEnum._label
-			.getName();;
-
 	private static ITypesContext _default;
 
 	public static ITypesContext get() {

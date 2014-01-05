@@ -21,12 +21,12 @@ public abstract class AbstractAndroidSQLiteSRMContext<FINDER>
 	@Override
 	protected IAndroidSQLiteIdentifierParser createIdentifierParser()
 			throws Exception {
-		return new StringAndroidSQLiteIndentifierParser();
+		return new DefaultAndroidSQLiteIndentifierParser();
 	}
 
 	@Override
 	protected IAndroidSQLiteStatusParser createStatusParser() throws Exception {
-		return new StringAndroidSQLiteStatusParser();
+		return new DefaultAndroidSQLiteStatusParser();
 	}
 
 	@Override

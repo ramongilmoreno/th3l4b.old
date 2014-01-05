@@ -5,7 +5,7 @@ import android.database.Cursor;
 
 import com.th3l4b.srm.runtime.EntityStatus;
 
-public class StringAndroidSQLiteStatusParser implements
+public class DefaultAndroidSQLiteStatusParser implements
 		IAndroidSQLiteStatusParser {
 
 	@Override

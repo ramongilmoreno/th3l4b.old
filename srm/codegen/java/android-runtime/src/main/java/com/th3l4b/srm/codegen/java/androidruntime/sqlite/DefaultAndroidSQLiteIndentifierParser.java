@@ -6,7 +6,7 @@ import android.database.Cursor;
 import com.th3l4b.srm.codegen.java.basicruntime.DefaultIdentifier;
 import com.th3l4b.srm.runtime.IIdentifier;
 
-public class StringAndroidSQLiteIndentifierParser implements
+public class DefaultAndroidSQLiteIndentifierParser implements
 		IAndroidSQLiteIdentifierParser {
 
 	@Override
