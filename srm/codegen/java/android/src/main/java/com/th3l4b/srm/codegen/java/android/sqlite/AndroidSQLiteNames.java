@@ -24,12 +24,29 @@ public class AndroidSQLiteNames extends AndroidNames {
 				+ "AndroidSQLiteFinder", model);
 	}
 
+	public String context(INormalizedModel model,
+			AndroidSQLiteCodeGeneratorContext context) throws Exception {
+		return valueOrProperty("Abstract" + javaIdentifier(model.getName())
+				+ "AndroidSQLiteContext", model);
+	}
 
+	public String parserContext(INormalizedModel model,
+			AndroidSQLiteCodeGeneratorContext context) throws Exception {
+		return valueOrProperty("Abstract" + javaIdentifier(model.getName())
+				+ "AndroidSQLiteParserContext", model);
+	}
+	
 	public String packageForSQLiteParsers(
 			AndroidSQLiteCodeGeneratorContext context) {
 		return packageForSQLite(context) + ".parsers";
 	}
 
+	public String fqnSQLite(String clazz,
+			AndroidSQLiteCodeGeneratorContext context) {
+		return packageForSQLite(context) + "." + clazz;
+	}
+
+	
 	public String fqnSQLiteParsers(String clazz,
 			AndroidSQLiteCodeGeneratorContext context) {
 		return packageForSQLiteParsers(context) + "." + clazz;

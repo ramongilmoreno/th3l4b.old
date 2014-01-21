@@ -34,6 +34,8 @@ public class AndroidMojo extends SRMAbstractMojo {
 		startProduct("Android SQLite files", androidSQLiteContext);
 		androidSQLiteCodegen.helper(normalized, androidSQLiteContext);
 		androidSQLiteCodegen.finder(normalized, androidSQLiteContext);
+		androidSQLiteCodegen.context(normalized, androidSQLiteContext);
+		androidSQLiteCodegen.parserContext(normalized, androidSQLiteContext);
 		endProduct(androidSQLiteContext);
 
 		for (INormalizedEntity entity : normalized.items()) {

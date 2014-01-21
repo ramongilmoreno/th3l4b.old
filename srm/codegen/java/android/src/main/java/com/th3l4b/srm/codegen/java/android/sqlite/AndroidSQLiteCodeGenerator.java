@@ -23,6 +23,9 @@ import com.th3l4b.srm.codegen.database.SQLCodeGeneratorContext;
 import com.th3l4b.srm.codegen.database.SQLNames;
 import com.th3l4b.srm.codegen.java.androidruntime.sqlite.AbstractAndroidSQLiteEntityParser;
 import com.th3l4b.srm.codegen.java.androidruntime.sqlite.AbstractAndroidSQLiteFinder;
+import com.th3l4b.srm.codegen.java.androidruntime.sqlite.AbstractAndroidSQLiteSRMContext;
+import com.th3l4b.srm.codegen.java.androidruntime.sqlite.DefaultAndroidSQLiteEntityParserContext;
+import com.th3l4b.srm.codegen.java.androidruntime.sqlite.IAndroidSQLiteEntityParserContext;
 import com.th3l4b.srm.codegen.java.androidruntime.sqlite.IAndroidSQLiteIdentifierParser;
 import com.th3l4b.srm.codegen.java.androidruntime.sqlite.IAndroidSQLiteRuntimeType;
 import com.th3l4b.srm.codegen.java.androidruntime.sqlite.IAndroidSQLiteRuntimeTypesContext;
@@ -32,6 +35,7 @@ import com.th3l4b.srm.codegen.java.basicruntime.inmemory.Pair;
 import com.th3l4b.srm.database.BasicSetDatabaseTypesContext;
 import com.th3l4b.srm.database.IDatabaseType;
 import com.th3l4b.srm.runtime.IIdentifier;
+import com.th3l4b.srm.runtime.IModelUtils;
 import com.th3l4b.types.base.ITypesConstants;
 
 public class AndroidSQLiteCodeGenerator {
@@ -353,6 +357,134 @@ public class AndroidSQLiteCodeGenerator {
 
 				out.println("}");
 				iiiout.flush();
+				iiout.flush();
+				iout.flush();
+			}
+		});
+	}
+
+	public void context(final INormalizedModel model,
+			final AndroidSQLiteCodeGeneratorContext context) throws Exception {
+
+		final AndroidSQLiteNames names = context.getSQLiteNames();
+		final String clazz = names.context(model, context);
+		final String pkg = names.packageForSQLite(context);
+
+		FileUtils.java(context, pkg, clazz, new AbstractPrintable() {
+			@Override
+			protected void printWithException(PrintWriter out) throws Exception {
+				PrintWriter iout = IndentedWriter.get(out);
+				PrintWriter iiout = IndentedWriter.get(iout);
+				PrintWriter iiiout = IndentedWriter.get(iiout);
+				PrintWriter iiiiout = IndentedWriter.get(iiiout);
+
+				out.println("package " + pkg + ";");
+				out.println();
+				String fqnFinder = names.fqnBase(names.finder(model), context);
+				out.println("public abstract class " + clazz + " extends "
+						+ AbstractAndroidSQLiteSRMContext.class.getName() + "<"
+						+ fqnFinder + "> {");
+				iout.println("protected "
+						+ IAndroidSQLiteEntityParserContext.class.getName()
+						+ " createParsers() throws "
+						+ Exception.class.getName() + " {");
+				iiout.println("return new "
+						+ names.fqnSQLite(names.parserContext(model, context),
+								context)
+						+ "(getIdentifierParser(), getStatusParser(), getTypes());");
+				iout.println("}");
+				out.println();
+				iout.println("protected " + IModelUtils.class.getName()
+						+ " createUtils() throws " + Exception.class.getName()
+						+ " {");
+				iiout.println("return new "
+						+ names.fqnBase(names.modelUtils(model), context)
+						+ "();");
+				iout.println("}");
+				out.println();
+				iout.println("protected " + fqnFinder
+						+ " createFinder() throws " + Exception.class.getName()
+						+ " {");
+				iiout.println("return new "
+						+ names.fqnSQLite(names.finder(model, context), context)
+						+ "() {");
+				iiiout.println("protected " + SQLiteDatabase.class.getName()
+						+ " getDatabase() throws " + Exception.class.getName()
+						+ " {");
+				iiiiout.println("return " + clazz + ".this.getDatabase();");
+				iiiout.println("}");
+				iiiout.println("protected "
+						+ IAndroidSQLiteIdentifierParser.class.getName()
+						+ " getIdentifierParser() throws "
+						+ Exception.class.getName() + " {");
+				iiiiout.println("return " + clazz
+						+ ".this.getIdentifierParser();");
+				iiiout.println("}");
+				iiiout.println("protected "
+						+ IAndroidSQLiteStatusParser.class.getName()
+						+ " getStatusParser() throws "
+						+ Exception.class.getName() + " {");
+				iiiiout.println("return " + clazz + ".this.getStatusParser();");
+				iiiout.println("}");
+				iiiout.println("protected "
+						+ IAndroidSQLiteRuntimeTypesContext.class.getName()
+						+ " getTypes() throws " + Exception.class.getName()
+						+ " {");
+				iiiiout.println("return " + clazz + ".this.getTypes();");
+				iiiout.println("}");
+				iiiout.println("protected "
+						+ IAndroidSQLiteEntityParserContext.class.getName()
+						+ " getParsers() throws " + Exception.class.getName()
+						+ " {");
+				iiiiout.println("return " + clazz + ".this.getParsers();");
+				iiiout.println("}");
+				iiout.println("};");
+				iout.println("}");
+				out.println("}");
+
+				iiiiout.flush();
+				iiiout.flush();
+				iiout.flush();
+				iout.flush();
+			}
+		});
+	}
+
+	public void parserContext(final INormalizedModel model,
+			final AndroidSQLiteCodeGeneratorContext context) throws Exception {
+		final AndroidSQLiteNames names = context.getSQLiteNames();
+		final String pkg = names.packageForSQLite(context);
+		final String clazz = names.parserContext(model, context);
+		FileUtils.java(context, pkg, clazz, new AbstractPrintable() {
+			@Override
+			protected void printWithException(PrintWriter out) throws Exception {
+				PrintWriter iout = IndentedWriter.get(out);
+				PrintWriter iiout = IndentedWriter.get(iout);
+				out.println("package " + pkg + ";");
+				out.println();
+				out.println("public class "
+						+ clazz
+						+ " extends "
+						+ DefaultAndroidSQLiteEntityParserContext.class
+								.getName() + " {");
+				out.println();
+				iout.println("public " + clazz + "("
+						+ IAndroidSQLiteIdentifierParser.class.getName()
+						+ " idsParser, "
+						+ IAndroidSQLiteStatusParser.class.getName()
+						+ " statusParser, "
+						+ IAndroidSQLiteRuntimeTypesContext.class.getName()
+						+ " types) throws " + Exception.class.getName() + " {");
+				for (INormalizedEntity entity : model.items()) {
+					iiout.print("put(");
+					iiout.print(names.fqn(names.nameInterface(entity), context));
+					iiout.print(".class, new ");
+					iiout.print(names.fqnSQLiteParsers(
+							names.parserAndroidSQLite(entity), context));
+					iiout.println("(idsParser, statusParser, types));");
+				}
+				iout.println("}");
+				out.println("}");
 				iiout.flush();
 				iout.flush();
 			}
