@@ -22,13 +22,16 @@ import com.th3l4b.srm.codegen.database.SQLCodeGenerator;
 import com.th3l4b.srm.codegen.database.SQLCodeGeneratorContext;
 import com.th3l4b.srm.codegen.database.SQLNames;
 import com.th3l4b.srm.codegen.java.androidruntime.sqlite.AbstractAndroidSQLiteEntityParser;
+import com.th3l4b.srm.codegen.java.androidruntime.sqlite.AbstractAndroidSQLiteFinder;
 import com.th3l4b.srm.codegen.java.androidruntime.sqlite.IAndroidSQLiteIdentifierParser;
 import com.th3l4b.srm.codegen.java.androidruntime.sqlite.IAndroidSQLiteRuntimeType;
 import com.th3l4b.srm.codegen.java.androidruntime.sqlite.IAndroidSQLiteRuntimeTypesContext;
 import com.th3l4b.srm.codegen.java.androidruntime.sqlite.IAndroidSQLiteStatusParser;
 import com.th3l4b.srm.codegen.java.basic.JavaNames;
+import com.th3l4b.srm.codegen.java.basicruntime.inmemory.Pair;
 import com.th3l4b.srm.database.BasicSetDatabaseTypesContext;
 import com.th3l4b.srm.database.IDatabaseType;
+import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.types.base.ITypesConstants;
 
 public class AndroidSQLiteCodeGenerator {
@@ -249,4 +252,111 @@ public class AndroidSQLiteCodeGenerator {
 			}
 		});
 	}
+
+	public void finder(final INormalizedModel model,
+			final AndroidSQLiteCodeGeneratorContext context) throws Exception {
+
+		final AndroidSQLiteNames names = context.getSQLiteNames();
+		final SQLNames sqlNames = context.getSQLNames();
+		final String clazz = names.finder(model, context);
+		final String pkg = names.packageForSQLite(context);
+
+		FileUtils.java(context, pkg, clazz, new AbstractPrintable() {
+			@Override
+			protected void printWithException(PrintWriter out) throws Exception {
+				PrintWriter iout = IndentedWriter.get(out);
+				PrintWriter iiout = IndentedWriter.get(iout);
+				PrintWriter iiiout = IndentedWriter.get(iiout);
+				out.println("package " + pkg + ";");
+				out.println();
+				out.println("public abstract class " + clazz + " extends "
+						+ AbstractAndroidSQLiteFinder.class.getName()
+						+ " implements "
+						+ names.fqnBase(names.finder(model), context) + " {");
+
+				// Setup finders in constructor
+				iout.println("public " + clazz + " () {");
+				// And the relationships
+				for (INormalizedEntity ne : model.items()) {
+					for (INormalizedManyToOneRelationship rel : ne
+							.relationships().items()) {
+						String clazzOne = names.fqn(
+								names.nameInterface(model.get(rel.getTo())),
+								context);
+						String name = TextUtils.escapeJavaString(rel
+								.getReverse().getName());
+						iiout.println("_map.put(new "
+								+ Pair.class.getName()
+								+ "("
+								+ clazzOne
+								+ ".class.getName(), \""
+								+ name
+								+ "\"), \""
+								+ TextUtils.escapeJavaString(sqlNames.column(
+										rel, model)) + "\");");
+					}
+				}
+				iout.println("}");
+				iout.println();
+
+				// Get the entities (individually or all)
+				for (INormalizedEntity ne : model.items()) {
+					String fqn = names.fqn(names.nameInterface(ne), context);
+					iout.println("public " + fqn + " get" + names.name(ne)
+							+ "(" + IIdentifier.class.getName()
+							+ " id) throws Exception {");
+					iiout.println("return find(" + fqn + ".class, id);");
+					iout.println("}");
+				}
+
+				for (INormalizedEntity ne : model.items()) {
+					String fqn = names.fqn(names.nameInterface(ne), context);
+					iout.println("public " + Iterable.class.getName() + "<"
+							+ fqn + "> all" + names.name(ne)
+							+ "() throws Exception {");
+
+					iiout.println("return all(" + fqn + ".class);");
+					iout.println("}");
+				}
+
+				// And the relationships
+				for (INormalizedEntity ne : model.items()) {
+					for (INormalizedManyToOneRelationship rel : ne
+							.relationships().items()) {
+						String clazzMany = names.nameInterface(ne);
+						String clazzOne = names.nameInterface(model.get(rel
+								.getTo()));
+						String methodName = "findAll"
+								+ names.nameOfReverse(rel, model) + "From"
+								+ names.name(model.get(rel.getTo()));
+						String leading = "public " + Iterable.class.getName()
+								+ "<" + names.fqn(clazzMany, context) + "> "
+								+ methodName + "(";
+						iout.println(leading + names.fqn(clazzOne, context)
+								+ " from) throws Exception {");
+						iiout.println(" return "
+								+ methodName
+								+ "(from == null ? null : from.coordinates().getIdentifier());");
+						iout.println("}");
+						iout.println(leading + IIdentifier.class.getName()
+								+ " from) throws Exception {");
+						iiout.println("return find("
+								+ names.fqn(clazzMany, context)
+								+ ".class, "
+								+ names.fqn(clazzOne, context)
+								+ ".class, from, \""
+								+ TextUtils.escapeJavaString(rel.getReverse()
+										.getName()) + "\");");
+						iout.println("}");
+					}
+				}
+
+				out.println("}");
+				iiiout.flush();
+				iiout.flush();
+				iout.flush();
+			}
+		});
+	}
+
 }

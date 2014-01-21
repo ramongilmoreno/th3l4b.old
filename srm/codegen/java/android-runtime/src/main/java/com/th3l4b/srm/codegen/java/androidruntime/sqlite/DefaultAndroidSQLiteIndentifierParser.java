@@ -17,6 +17,6 @@ public class DefaultAndroidSQLiteIndentifierParser implements
 	@Override
 	public void set(IIdentifier value, String arg, ContentValues statement)
 			throws Exception {
-		statement.put(arg, value.getKey());
+		statement.put(arg, AndroidSQLiteUtils.fromIdentifier(value));
 	}
 }

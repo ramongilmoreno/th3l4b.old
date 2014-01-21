@@ -17,6 +17,13 @@ public class AndroidSQLiteNames extends AndroidNames {
 		return valueOrProperty(javaIdentifier(model.getName())
 				+ SQLiteOpenHelper.class.getSimpleName(), model);
 	}
+	
+	public String finder(INormalizedModel model,
+			AndroidSQLiteCodeGeneratorContext context) throws Exception {
+		return valueOrProperty("Abstract" + javaIdentifier(model.getName())
+				+ "AndroidSQLiteFinder", model);
+	}
+
 
 	public String packageForSQLiteParsers(
 			AndroidSQLiteCodeGeneratorContext context) {

@@ -17,7 +17,7 @@ public class DefaultAndroidSQLiteStatusParser implements
 	@Override
 	public void set(EntityStatus value, String arg, ContentValues statement)
 			throws Exception {
-		statement.put(arg, value.initial());
+		statement.put(arg, AndroidSQLiteUtils.fromEntityStatus(value));
 	}
 
 }

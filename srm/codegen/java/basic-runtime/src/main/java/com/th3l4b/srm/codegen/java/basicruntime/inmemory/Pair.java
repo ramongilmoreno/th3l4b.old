@@ -4,6 +4,10 @@ public class Pair {
 	String _clazz;
 	String _relationship;
 
+	public Pair(Class<?> clazz, String relationship) {
+		this(clazz.getName(), relationship);
+	}
+	
 	public Pair(String clazz, String relationship) {
 		_clazz = clazz;
 		_relationship = relationship;
