@@ -41,7 +41,9 @@ public abstract class AbstractAndroidSQLiteEntityParser<R extends IRuntimeEntity
 		int index = idx;
 		R entity = create();
 		ICoordinates coordinates = entity.coordinates();
+		Class<R> clazz = entity.clazz();
 		coordinates.setIdentifier(getIdsParser().parse(index++, result));
+		coordinates.getIdentifier().setType(clazz.getName());
 		coordinates.setStatus(getStatusParser().parse(index++, result));
 		parseRest(entity, index, result);
 		return entity;
@@ -69,7 +71,7 @@ public abstract class AbstractAndroidSQLiteEntityParser<R extends IRuntimeEntity
 	public String[] allColumns() throws Exception {
 		if (_allColumns == null) {
 			String[] fieldsColumns = fieldsColumns();
-			String[] r = new String[fieldsColumns.length];
+			String[] r = new String[fieldsColumns.length + 2];
 			r[0] = idColumn();
 			r[1] = statusColumn();
 			System.arraycopy(fieldsColumns, 0, r, 2, fieldsColumns.length);

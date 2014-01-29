@@ -24,19 +24,21 @@ public class SQLCodeGenerator {
 		PrintWriter iout = IndentedWriter.get(out);
 		out.println("CREATE TABLE " + names.table(entity) + " (");
 		String idType = names.type(context.getIdentifierType(), database);
-		iout.println("" + SQLNames.ID + " " + idType + " NOT NULL PRIMARY KEY;");
+		iout.println("" + SQLNames.ID + " " + idType + " NOT NULL PRIMARY KEY,");
 		String statusType = names.type(context.getStatusType(), database);
-		iout.println("" + SQLNames.STATUS + " " + statusType + " NOT NULL;");
+		iout.print("" + SQLNames.STATUS + " " + statusType + " NOT NULL");
 		for (IField field : entity.items()) {
-			iout.println(""
+			iout.println(",");
+			iout.print(""
 					+ names.column(field)
 					+ " "
 					+ names.type(context.getTypes().get(field.getType()),
-							database) + ";");
+							database));
 		}
 		for (INormalizedManyToOneRelationship rel : entity.relationships()
 				.items()) {
-			iout.println("" + names.column(rel, model) + " " + idType + ";");
+			iout.println(",");
+			iout.print("" + names.column(rel, model) + " " + idType);
 
 		}
 		iout.flush();

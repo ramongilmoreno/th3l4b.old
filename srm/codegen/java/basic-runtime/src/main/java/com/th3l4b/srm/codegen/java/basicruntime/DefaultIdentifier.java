@@ -18,16 +18,16 @@ public class DefaultIdentifier implements IIdentifier {
 	}
 
 	public DefaultIdentifier(Class<?> type, String key) {
-		this(type.getName(), key);
+		this(type != null ? type.getName() : null, key);
 	}
 
 	public DefaultIdentifier(String key) {
 		this((Class<?>) null, key);
 	}
-	
+
 	public DefaultIdentifier(String type, String key) {
-		_type = type;
-		_key = key;
+		setType(type);
+		setKey(key);
 	}
 
 	public String getKey() {

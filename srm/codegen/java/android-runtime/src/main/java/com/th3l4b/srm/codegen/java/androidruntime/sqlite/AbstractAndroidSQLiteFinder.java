@@ -34,13 +34,12 @@ public abstract class AbstractAndroidSQLiteFinder {
 			throws Exception;
 
 	public <R extends IRuntimeEntity<R>, S extends IRuntimeEntity<S>> Iterable<R> find(
-			Class<R> resultClass, Class<S> sourceClass,
-			IIdentifier identifier, String relationship)
-			throws Exception {
+			Class<R> resultClass, Class<S> sourceClass, IIdentifier identifier,
+			String relationship) throws Exception {
 		String column = _map.get(new Pair(sourceClass, relationship));
 		return find(resultClass, identifier, column);
 	}
-	
+
 	public <R extends IRuntimeEntity<R>> Iterable<R> find(Class<R> resultClass,
 			IIdentifier sourceIdentifier, String relationshipColumnName)
 			throws Exception {
@@ -63,8 +62,9 @@ public abstract class AbstractAndroidSQLiteFinder {
 		cursor.moveToFirst();
 		LinkedHashSet<R> r = new LinkedHashSet<R>();
 		while (!cursor.isAfterLast()) {
-			R entity = parser.parse(1, cursor);
+			R entity = parser.parse(0, cursor);
 			r.add(entity);
+			cursor.moveToNext();
 		}
 		cursor.close();
 		return r;
@@ -86,7 +86,8 @@ public abstract class AbstractAndroidSQLiteFinder {
 		cursor.moveToFirst();
 		R r = null;
 		while (!cursor.isAfterLast()) {
-			r = parser.parse(1, cursor);
+			r = parser.parse(0, cursor);
+			cursor.moveToNext();
 		}
 		cursor.close();
 		return r;
@@ -98,7 +99,6 @@ public abstract class AbstractAndroidSQLiteFinder {
 				clazz);
 		StringBuffer query = new StringBuffer("select ");
 		AndroidSQLiteUtils.columnsAndFrom(parser, query);
-		query.append(parser.table());
 		query.append(" where ");
 		query.append(parser.statusColumn());
 		query.append(" = ?");
@@ -110,8 +110,9 @@ public abstract class AbstractAndroidSQLiteFinder {
 		cursor.moveToFirst();
 		LinkedHashSet<R> r = new LinkedHashSet<R>();
 		while (!cursor.isAfterLast()) {
-			R entity = parser.parse(1, cursor);
+			R entity = parser.parse(0, cursor);
 			r.add(entity);
+			cursor.moveToNext();
 		}
 		cursor.close();
 		return r;

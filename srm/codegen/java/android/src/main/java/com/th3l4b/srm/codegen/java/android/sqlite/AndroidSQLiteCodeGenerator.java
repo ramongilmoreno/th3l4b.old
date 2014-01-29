@@ -383,7 +383,8 @@ public class AndroidSQLiteCodeGenerator {
 				String fqnFinder = names.fqnBase(names.finder(model), context);
 				out.println("public abstract class " + clazz + " extends "
 						+ AbstractAndroidSQLiteSRMContext.class.getName() + "<"
-						+ fqnFinder + "> {");
+						+ fqnFinder + "> implements "
+						+ names.fqnBase(names.context(model), context) + " {");
 				iout.println("protected "
 						+ IAndroidSQLiteEntityParserContext.class.getName()
 						+ " createParsers() throws "

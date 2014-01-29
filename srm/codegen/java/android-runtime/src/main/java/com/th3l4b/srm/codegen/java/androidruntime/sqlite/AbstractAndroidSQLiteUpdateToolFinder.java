@@ -31,8 +31,10 @@ public abstract class AbstractAndroidSQLiteUpdateToolFinder extends
 				null, null, null);
 		result.moveToFirst();
 		try {
-			T t = parser.parse(0, result);
-			r.put(t.coordinates().getIdentifier(), t);
+			if (!result.isAfterLast()) {
+				T t = parser.parse(0, result);
+				r.put(t.coordinates().getIdentifier(), t);
+			}
 		} finally {
 			result.close();
 		}
