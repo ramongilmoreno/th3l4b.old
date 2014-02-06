@@ -24,7 +24,7 @@
 		<dependency>
 			<groupId>com.th3l4b</groupId>
 			<artifactId>common</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<version>0.1pa</version>
 		</dependency>
 	</dependencies>
 </project>
