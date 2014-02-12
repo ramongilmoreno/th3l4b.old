@@ -3,11 +3,10 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <artifactId>codegen</artifactId>
-    <groupId>com.th3l4b.srm</groupId>
+    <artifactId>pom</artifactId>
+    <groupId>com.th3l4b.android.srm</groupId>
     <version>1.0-SNAPSHOT</version>
   </parent>
-  <groupId>com.th3l4b.srm.codegen</groupId>
   <artifactId>mojo</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
@@ -17,6 +16,11 @@
       <artifactId>maven-plugin-api</artifactId>
       <version>2.0</version>
     </dependency>
+    <dependency>
+        <groupId>com.th3l4b.srm.codegen</groupId>
+        <artifactId>mojo</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </dependency>
      <dependency>
         <groupId>com.th3l4b.srm.codegen.java</groupId>
         <artifactId>basic</artifactId>
@@ -25,6 +29,11 @@
     <dependency>
         <groupId>com.th3l4b.srm.codegen.java</groupId>
         <artifactId>jdbc</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+        <groupId>com.th3l4b.android.srm</groupId>
+        <artifactId>codegen</artifactId>
         <version>1.0-SNAPSHOT</version>
     </dependency>
     <dependency>

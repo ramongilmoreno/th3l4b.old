@@ -1,4 +1,4 @@
-package com.th3l4b.srm.codegen.mojo;
+package com.th3l4b.android.srm.mojo;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,7 +21,7 @@ import com.th3l4b.types.base.basicset.BasicSetTypesContext;
 /**
  * Base for other mojos.
  */
-public abstract class SRMAbstractMojo extends AbstractMojo {
+public abstract class SRMAbstractMojo2 extends AbstractMojo {
 
 	/**
 	 * @parameter alias="input"
