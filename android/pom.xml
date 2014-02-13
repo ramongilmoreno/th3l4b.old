@@ -12,7 +12,6 @@
 		<module>srm</module>
 		<module>helloworld</module>
 		<module>screens</module>
-		<module>testbed</module>
 	</modules>
 
       <properties>

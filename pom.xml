@@ -16,7 +16,7 @@
     <module>screens</module>
     <module>srm</module>
     <module>types</module>
-    <!-- <module>tests</module> -->
+    <module>testbed</module>
   </modules>
     
       <properties>
