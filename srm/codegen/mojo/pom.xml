@@ -12,11 +12,17 @@
   <version>1.0-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
   <dependencies>
-    <dependency>
+     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
       <version>2.0</version>
-    </dependency>
+     </dependency>
+     <!-- http://www.maestrodev.com/better-builds-with-maven/developing-custom-maven-plugins/advanced-mojo-development/ -->
+     <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-project</artifactId>
+      <version>2.0.2</version>
+     </dependency>
      <dependency>
         <groupId>com.th3l4b.srm.codegen.java</groupId>
         <artifactId>basic</artifactId>

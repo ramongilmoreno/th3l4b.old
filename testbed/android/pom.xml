@@ -91,26 +91,6 @@
 	            </execution>
 	          </executions>
 	        </plugin>
-		      <!-- http://mojo.codehaus.org/build-helper-maven-plugin/usage.html -->
-		      <plugin>
-		        <groupId>org.codehaus.mojo</groupId>
-		        <artifactId>build-helper-maven-plugin</artifactId>
-		        <version>1.5</version>
-		        <executions>
-		          <execution>
-		            <id>add-source</id>
-		            <phase>generate-sources</phase>
-		            <goals>
-		              <goal>add-source</goal>
-		            </goals>
-		            <configuration>
-		              <sources>
-		                <source>${com.th3l4b.android.testbed.generated-sources.dir}/java</source>
-		              </sources>
-		            </configuration>
-		          </execution>
-		        </executions>
-		      </plugin>
         </plugins>
     </build>
 </project>

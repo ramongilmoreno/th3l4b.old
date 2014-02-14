@@ -2,6 +2,10 @@ package com.th3l4b.srm.codegen.mojo;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.util.Collections;
+
+import org.apache.maven.model.Resource;
+import org.apache.maven.project.MavenProject;
 
 import com.th3l4b.common.text.IPrintable;
 import com.th3l4b.common.text.TextUtils;
@@ -25,6 +29,16 @@ import com.th3l4b.srm.codegen.java.jdbc.JDBCCodeGeneratorContext;
  * @goal all
  */
 public class AllMojo extends SRMAbstractMojo {
+
+	// http://www.maestrodev.com/better-builds-with-maven/developing-custom-maven-plugins/advanced-mojo-development/
+	/**
+	 * Project instance, needed for attaching the buildinfo file. Used to add
+	 * new source directory to the build.
+	 * 
+	 * @parameter default-value="${project}"
+	 * @required
+	 */
+	private MavenProject _project;
 
 	@Override
 	protected void execute(final IModel model,
@@ -104,10 +118,29 @@ public class AllMojo extends SRMAbstractMojo {
 		// SQL code generator
 		SQLCodeGenerator sqlCodegen = new SQLCodeGenerator();
 		SQLCodeGeneratorContext sqlContext = new SQLCodeGeneratorContext();
-		javaContext.copyTo(sqlContext);
+		context.copyTo(sqlContext);
 		startProduct("SQL files", sqlContext);
 		sqlCodegen.sql(normalized, sqlContext);
 		endProduct(sqlContext);
 
+		// Include .srm file as resource
+		// http://www.maestrodev.com/better-builds-with-maven/developing-custom-maven-plugins/advanced-mojo-development/
+		// https://www.mail-archive.com/users@maven.apache.org/msg102603.html
+		Resource resource = new Resource();
+		resource.setDirectory(getInput().getParentFile().getCanonicalPath());
+		resource.setIncludes(Collections.singletonList(getInput().getName()));
+		resource.setTargetPath(new File(javaContext.getOutput(), FileUtils
+				.asDirectories(javaContext.getPackage())).getCanonicalPath());
+		_project.addResource(resource);
+
+		// Include the generated files as sources
+		Resource resource2 = new Resource();
+		resource2.setDirectory(javaContext.getOutput().getCanonicalPath());
+		resource2.setExcludes(Collections.singletonList("**/*.java"));
+		_project.addResource(resource2);
+
+		// Compile the generated Java output as part of the project build
+		// http://stackoverflow.com/questions/11931652/dynamically-adding-mojo-generated-code-to-source-path
+		_project.addCompileSourceRoot(javaContext.getOutput().getCanonicalPath());
 	}
 }

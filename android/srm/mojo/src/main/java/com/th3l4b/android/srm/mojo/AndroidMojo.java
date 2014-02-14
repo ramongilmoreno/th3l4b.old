@@ -2,6 +2,8 @@ package com.th3l4b.android.srm.mojo;
 
 import java.io.File;
 
+import org.apache.maven.project.MavenProject;
+
 import com.th3l4b.android.srm.codegen.sqlite.AndroidSQLiteCodeGenerator;
 import com.th3l4b.android.srm.codegen.sqlite.AndroidSQLiteCodeGeneratorContext;
 import com.th3l4b.srm.base.normalized.INormalizedEntity;
@@ -16,6 +18,16 @@ import com.th3l4b.srm.codegen.java.basic.JavaCodeGeneratorContext;
  * @goal android
  */
 public class AndroidMojo extends SRMAbstractMojo2 {
+
+	// http://www.maestrodev.com/better-builds-with-maven/developing-custom-maven-plugins/advanced-mojo-development/
+	/**
+	 * Project instance, needed for attaching the buildinfo file. Used to add
+	 * new source directory to the build.
+	 * 
+	 * @parameter default-value="${project}"
+	 * @required
+	 */
+	private MavenProject _project;
 
 	@Override
 	protected void execute(IModel model, INormalizedModel normalized,
@@ -45,6 +57,11 @@ public class AndroidMojo extends SRMAbstractMojo2 {
 					androidSQLiteContext);
 			endProduct(androidSQLiteContext);
 		}
+		
+		// Compile the generated Java output as part of the project build
+		// http://stackoverflow.com/questions/11931652/dynamically-adding-mojo-generated-code-to-source-path
+		_project.addCompileSourceRoot(javaContext.getOutput().getCanonicalPath());
+
 	}
 
 }
