@@ -57,10 +57,11 @@ public class AndroidMojo extends SRMAbstractMojo2 {
 					androidSQLiteContext);
 			endProduct(androidSQLiteContext);
 		}
-		
+
 		// Compile the generated Java output as part of the project build
 		// http://stackoverflow.com/questions/11931652/dynamically-adding-mojo-generated-code-to-source-path
-		_project.addCompileSourceRoot(javaContext.getOutput().getCanonicalPath());
+		_project.addCompileSourceRoot(javaContext.getOutput()
+				.getCanonicalPath());
 
 	}
 

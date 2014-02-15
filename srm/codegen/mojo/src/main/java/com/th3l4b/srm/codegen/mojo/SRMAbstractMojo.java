@@ -30,8 +30,7 @@ public abstract class SRMAbstractMojo extends AbstractMojo {
 	protected File _input = null;
 
 	/**
-	 * @parameter alias="output"
-	 * @required
+	 * @parameter alias="output" expression="${project.build.directory}/srm-generated-sources"
 	 */
 	protected File _output = null;
 

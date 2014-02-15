@@ -2,7 +2,12 @@ package com.th3l4b.android.srm.mojo;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.List;
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
@@ -24,14 +29,26 @@ import com.th3l4b.types.base.basicset.BasicSetTypesContext;
 public abstract class SRMAbstractMojo2 extends AbstractMojo {
 
 	/**
-	 * @parameter alias="input"
+	 * @parameter alias="srmGroupId"
 	 * @required
 	 */
-	protected File _input = null;
+	protected String _srmGroupId = null;
+
+	/**
+	 * @parameter alias="srmArtifactId"
+	 * @required
+	 */
+	protected String _srmArtifactId = null;
+
+	/**
+	 * @parameter alias="srmVersion"
+	 * @required
+	 */
+	protected String _srmVersion = null;
 
 	/**
 	 * @parameter alias="output"
-	 * @required
+	 *            expression="${project.build.directory}/srm-android-generated-sources"
 	 */
 	protected File _output = null;
 
@@ -45,6 +62,42 @@ public abstract class SRMAbstractMojo2 extends AbstractMojo {
 	 * @parameter alias="overwrite" default-value="true"
 	 */
 	protected boolean _overwrite = true;
+
+	/**
+	 * Used to look up Artifacts in the remote repository.
+	 * 
+	 * @parameter expression=
+	 *            "${component.org.apache.maven.artifact.factory.ArtifactFactory}"
+	 * @required
+	 */
+	protected ArtifactFactory _factory;
+
+	/**
+	 * Used to look up Artifacts in the remote repository.
+	 * 
+	 * @parameter expression=
+	 *            "${component.org.apache.maven.artifact.resolver.ArtifactResolver}"
+	 * @required
+	 */
+	protected ArtifactResolver _artifactResolver;
+
+	/**
+	 * List of Remote Repositories used by the resolver
+	 * 
+	 * @parameter expression="${project.remoteArtifactRepositories}"
+	 * @required
+	 */
+	protected List<?> _remoteRepositories;
+
+	/**
+	 * Location of the local repository.
+	 * 
+	 * @parameter expression="${localRepository}"
+	 * @required
+	 */
+	protected ArtifactRepository _localRepository;
+
+	protected File _input = null;
 
 	protected String _lastProduct;
 
@@ -97,20 +150,9 @@ public abstract class SRMAbstractMojo2 extends AbstractMojo {
 
 	public void execute() throws MojoExecutionException {
 		try {
-			IModel model = null;
-			long ts = _input.lastModified();
-
-			// Parse input
-			FileInputStream fis = new FileInputStream(_input);
-			try {
-				model = ParserUtils.parse(fis);
-			} finally {
-				fis.close();
-			}
-
+			// Setup context
 			CodeGeneratorContext context = new CodeGeneratorContext();
 			context.setOutput(_output);
-			context.setTimestamp(ts);
 			context.setOverwrite(_overwrite);
 			context.setTypes(BasicSetTypesContext.get());
 			context.setLog(new AbstractLog() {
@@ -139,6 +181,35 @@ public abstract class SRMAbstractMojo2 extends AbstractMojo {
 					}
 				}
 			});
+
+			// Finding source srm by resolving artifact in dependency
+			context.getLog().message(
+					TextUtils.toPrintable("Resolving srm for " + _srmGroupId
+							+ ":" + _srmArtifactId + " " + _srmVersion));
+			// http://stackoverflow.com/questions/1440224/how-can-i-download-maven-artifacts-within-a-plugin
+			Artifact artifact = this._factory.createArtifact(_srmGroupId,
+					_srmArtifactId, _srmVersion, "", "srm");
+			_artifactResolver.resolve(artifact, this._remoteRepositories,
+					this._localRepository);
+			context.getLog()
+					.message(
+							TextUtils.toPrintable("Found srm at: "
+									+ artifact.getFile()));
+			setInput(artifact.getFile());
+
+			// Setup timestamp
+			long ts = _input.lastModified();
+			context.setTimestamp(ts);
+
+			// Parse input
+			IModel model = null;
+			FileInputStream fis = new FileInputStream(_input);
+			try {
+				model = ParserUtils.parse(fis);
+			} finally {
+				fis.close();
+			}
+
 			// Normalize...
 			INormalizedModel normalized = Normalizer.normalize(model);
 			execute(model, normalized, context);

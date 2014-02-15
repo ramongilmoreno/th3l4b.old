@@ -6,6 +6,7 @@ import java.util.Collections;
 
 import org.apache.maven.model.Resource;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectHelper;
 
 import com.th3l4b.common.text.IPrintable;
 import com.th3l4b.common.text.TextUtils;
@@ -39,6 +40,11 @@ public class AllMojo extends SRMAbstractMojo {
 	 * @required
 	 */
 	private MavenProject _project;
+	
+	/**
+	 * @component
+	 */
+	private MavenProjectHelper _projectHelper;
 
 	@Override
 	protected void execute(final IModel model,
@@ -122,6 +128,10 @@ public class AllMojo extends SRMAbstractMojo {
 		startProduct("SQL files", sqlContext);
 		sqlCodegen.sql(normalized, sqlContext);
 		endProduct(sqlContext);
+		
+		// Install .srm as "srm" artifact
+		// http://www.maestrodev.com/better-builds-with-maven/developing-custom-maven-plugins/advanced-mojo-development/
+		_projectHelper.attachArtifact(_project, "srm", getInput());
 
 		// Include .srm file as resource
 		// http://www.maestrodev.com/better-builds-with-maven/developing-custom-maven-plugins/advanced-mojo-development/
