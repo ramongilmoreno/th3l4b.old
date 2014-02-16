@@ -15,7 +15,7 @@ import com.th3l4b.srm.runtime.IRuntimeEntity;
 public abstract class AbstractAndroidSQLiteFinder {
 
 	/**
-	 * Maps the relationships of a class with a column name
+	 * Maps the relationships of a class with its column name.
 	 */
 	protected Map<Pair, String> _map = new LinkedHashMap<Pair, String>();
 
