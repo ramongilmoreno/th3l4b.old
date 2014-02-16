@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import com.th3l4b.srm.runtime.ICoordinates;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
 
-public abstract class AbstractJDBCEntityParser<R extends IRuntimeEntity<?>>
+public abstract class AbstractJDBCEntityParser<R extends IRuntimeEntity<R>>
 		implements IJDBCEntityParser<R> {
 
 	protected IJDBCIdentifierParser _idsParser;
@@ -39,7 +39,9 @@ public abstract class AbstractJDBCEntityParser<R extends IRuntimeEntity<?>>
 		int index = idx;
 		R entity = create();
 		ICoordinates coordinates = entity.coordinates();
+		Class<R> clazz = entity.clazz();
 		coordinates.setIdentifier(getIdsParser().parse(index++, result));
+		coordinates.getIdentifier().setType(clazz.getName());
 		coordinates.setStatus(getStatusParser().parse(index++, result));
 		parseRest(entity, index, result);
 		return entity;
@@ -60,5 +62,19 @@ public abstract class AbstractJDBCEntityParser<R extends IRuntimeEntity<?>>
 
 	protected abstract void setRest(R entity, int index,
 			PreparedStatement statement) throws Exception;
+	
+	String[] _allColumns;
 
+	@Override
+	public String[] allColumns() throws Exception {
+		if (_allColumns == null) {
+			String[] fieldsColumns = fieldsColumns();
+			String[] r = new String[fieldsColumns.length + 2];
+			r[0] = idColumn();
+			r[1] = statusColumn();
+			System.arraycopy(fieldsColumns, 0, r, 2, fieldsColumns.length);
+			_allColumns = r;
+		}
+		return _allColumns;
+	}
 }

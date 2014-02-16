@@ -10,7 +10,7 @@ public class DefaultJDBCIdentifierParser implements IJDBCIdentifierParser {
 
 	@Override
 	public IIdentifier parse(Integer column, ResultSet result) throws Exception {
-		return new DefaultIdentifier(result.getString(column));
+		return new DefaultIdentifier(result.getString(column.intValue()));
 	}
 
 	@Override

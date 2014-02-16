@@ -56,6 +56,17 @@ public abstract class AbstractJDBCSRMContext<FINDER>
 			protected Connection getConnection() throws Exception {
 				return AbstractJDBCSRMContext.this.getConnection();
 			}
+
+			@Override
+			protected IJDBCEntityParserContext getParsers() throws Exception {
+				return AbstractJDBCSRMContext.this.getParsers();
+			}
+
+			@Override
+			protected IJDBCIdentifierParser getIdentifierParser()
+					throws Exception {
+				return AbstractJDBCSRMContext.this.getIdentifierParser();
+			}
 		};
 	}
 }

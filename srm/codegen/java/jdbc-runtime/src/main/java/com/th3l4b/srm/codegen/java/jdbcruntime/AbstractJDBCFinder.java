@@ -3,13 +3,21 @@ package com.th3l4b.srm.codegen.java.jdbcruntime;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 
+import com.th3l4b.srm.codegen.java.basicruntime.inmemory.Pair;
 import com.th3l4b.srm.runtime.EntityStatus;
 import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
 
 public abstract class AbstractJDBCFinder {
+
+	/**
+	 * Maps the relationships of a class with its column name.
+	 */
+	protected Map<Pair, String> _map = new LinkedHashMap<Pair, String>();
 
 	protected abstract Connection getConnection() throws Exception;
 
@@ -22,6 +30,13 @@ public abstract class AbstractJDBCFinder {
 
 	protected abstract IJDBCEntityParserContext getParsers() throws Exception;
 
+	public <R extends IRuntimeEntity<R>, S extends IRuntimeEntity<S>> Iterable<R> find(
+			Class<R> resultClass, Class<S> sourceClass, IIdentifier identifier,
+			String relationship) throws Exception {
+		String column = _map.get(new Pair(sourceClass, relationship));
+		return find(resultClass, identifier, column);
+	}
+
 	public <R extends IRuntimeEntity<R>> Iterable<R> find(Class<R> resultClass,
 			IIdentifier sourceIdentifier, String relationshipColumnName)
 			throws Exception {
@@ -33,8 +48,10 @@ public abstract class AbstractJDBCFinder {
 		query.append(" = ? and ");
 		query.append(parser.statusColumn());
 		query.append(" = ?");
+
 		PreparedStatement statement = getConnection().prepareStatement(
 				query.toString());
+		getIdentifierParser().set(sourceIdentifier, 1, statement);
 		getStatusParser().set(EntityStatus.Persisted, 2, statement);
 		ResultSet result = statement.executeQuery();
 		LinkedHashSet<R> r = new LinkedHashSet<R>();
@@ -45,7 +62,6 @@ public abstract class AbstractJDBCFinder {
 		result.close();
 		statement.close();
 		return r;
-
 	}
 
 	public <R extends IRuntimeEntity<R>> R find(Class<R> clazz,
@@ -58,6 +74,7 @@ public abstract class AbstractJDBCFinder {
 		query.append(" = ?");
 		PreparedStatement statement = getConnection().prepareStatement(
 				query.toString());
+		getIdentifierParser().set(identifier, 1, statement);
 		ResultSet result = statement.executeQuery();
 		R r = null;
 		if (result.next()) {
@@ -73,10 +90,10 @@ public abstract class AbstractJDBCFinder {
 		IJDBCEntityParser<R> parser = getParsers().getEntityParser(clazz);
 		StringBuffer query = new StringBuffer("select ");
 		JDBCUtils.columnsAndFrom(parser, query);
-		query.append(parser.table());
 		query.append(" where ");
 		query.append(parser.statusColumn());
 		query.append(" = ?");
+
 		PreparedStatement statement = getConnection().prepareStatement(
 				query.toString());
 		getStatusParser().set(EntityStatus.Persisted, 1, statement);

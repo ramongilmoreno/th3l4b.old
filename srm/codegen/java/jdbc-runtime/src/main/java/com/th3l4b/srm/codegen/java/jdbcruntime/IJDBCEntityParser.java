@@ -7,4 +7,5 @@ import com.th3l4b.srm.runtime.IDatabaseParser;
 
 public interface IJDBCEntityParser<R> extends
 		IDatabaseParser<R, ResultSet, PreparedStatement, Integer, Integer> {
+	String[] allColumns() throws Exception;
 }
