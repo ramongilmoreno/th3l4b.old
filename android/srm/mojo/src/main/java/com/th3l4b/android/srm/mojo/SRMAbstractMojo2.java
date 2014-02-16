@@ -3,6 +3,7 @@ package com.th3l4b.android.srm.mojo;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -20,13 +21,15 @@ import com.th3l4b.srm.base.normalized.INormalizedModel;
 import com.th3l4b.srm.base.normalized.Normalizer;
 import com.th3l4b.srm.base.original.IModel;
 import com.th3l4b.srm.codegen.base.CodeGeneratorContext;
+import com.th3l4b.srm.codegen.mojo.ISRMMojoConstants;
 import com.th3l4b.srm.parser.ParserUtils;
 import com.th3l4b.types.base.basicset.BasicSetTypesContext;
 
 /**
  * Base for other mojos.
  */
-public abstract class SRMAbstractMojo2 extends AbstractMojo {
+public abstract class SRMAbstractMojo2 extends AbstractMojo implements
+		ISRMMojoConstants {
 
 	/**
 	 * @parameter alias="srmGroupId"
@@ -51,12 +54,6 @@ public abstract class SRMAbstractMojo2 extends AbstractMojo {
 	 *            expression="${project.build.directory}/srm-android-generated-sources"
 	 */
 	protected File _output = null;
-
-	/**
-	 * @parameter alias="package"
-	 * @required
-	 */
-	protected String _package = null;
 
 	/**
 	 * @parameter alias="overwrite" default-value="true"
@@ -98,6 +95,8 @@ public abstract class SRMAbstractMojo2 extends AbstractMojo {
 	protected ArtifactRepository _localRepository;
 
 	protected File _input = null;
+
+	protected String _package = null;
 
 	protected String _lastProduct;
 
@@ -183,19 +182,48 @@ public abstract class SRMAbstractMojo2 extends AbstractMojo {
 			});
 
 			// Finding source srm by resolving artifact in dependency
-			context.getLog().message(
-					TextUtils.toPrintable("Resolving srm for " + _srmGroupId
-							+ ":" + _srmArtifactId + " " + _srmVersion));
-			// http://stackoverflow.com/questions/1440224/how-can-i-download-maven-artifacts-within-a-plugin
-			Artifact artifact = this._factory.createArtifact(_srmGroupId,
-					_srmArtifactId, _srmVersion, "", "srm");
-			_artifactResolver.resolve(artifact, this._remoteRepositories,
-					this._localRepository);
-			context.getLog()
-					.message(
-							TextUtils.toPrintable("Found srm at: "
-									+ artifact.getFile()));
-			setInput(artifact.getFile());
+			{
+				context.getLog().message(
+						TextUtils.toPrintable("Resolving srm for "
+								+ _srmGroupId + ":" + _srmArtifactId + " "
+								+ _srmVersion));
+				// http://stackoverflow.com/questions/1440224/how-can-i-download-maven-artifacts-within-a-plugin
+				Artifact artifact = this._factory.createArtifact(_srmGroupId,
+						_srmArtifactId, _srmVersion, "", ARTIFACT_SRM);
+				_artifactResolver.resolve(artifact, this._remoteRepositories,
+						this._localRepository);
+				context.getLog().message(
+						TextUtils.toPrintable("Found srm at: "
+								+ artifact.getFile()));
+				setInput(artifact.getFile());
+			}
+
+			// Finding srm-properties by resolving artifact in dependency
+			{
+				context.getLog().message(
+						TextUtils.toPrintable("Resolving srm-properties for "
+								+ _srmGroupId + ":" + _srmArtifactId + " "
+								+ _srmVersion));
+				// http://stackoverflow.com/questions/1440224/how-can-i-download-maven-artifacts-within-a-plugin
+				Artifact artifact = this._factory.createArtifact(_srmGroupId,
+						_srmArtifactId, _srmVersion, "",
+						ARTIFACT_SRM_PROPERTIES);
+				_artifactResolver.resolve(artifact, this._remoteRepositories,
+						this._localRepository);
+				context.getLog().message(
+						TextUtils.toPrintable("Found srm at: "
+								+ artifact.getFile()));
+				Properties p = new Properties();
+				FileInputStream fis = new FileInputStream(artifact.getFile());
+				try {
+					p.load(fis);
+				} finally {
+					if (fis != null) {
+						fis.close();
+					}
+				}
+				setPackage(p.getProperty(PROPERTY_PACKAGE));
+			}
 
 			// Setup timestamp
 			long ts = _input.lastModified();

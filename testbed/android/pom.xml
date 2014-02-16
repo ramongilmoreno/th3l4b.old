@@ -78,8 +78,6 @@
 			<srmGroupId>com.th3l4b.apps.shopping</srmGroupId>
 			<srmArtifactId>base</srmArtifactId>
 			<srmVersion>1.0-SNAPSHOT</srmVersion>
-	              <!-- Package must be the same to resolve the rest of classes -->
-	              <package>com.th3l4b.apps.shopping.base.codegen.srm</package>
 	          </configuration>
 	          <executions>
 	            <execution>

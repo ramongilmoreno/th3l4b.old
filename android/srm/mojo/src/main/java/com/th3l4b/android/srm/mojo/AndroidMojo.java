@@ -21,9 +21,6 @@ public class AndroidMojo extends SRMAbstractMojo2 {
 
 	// http://www.maestrodev.com/better-builds-with-maven/developing-custom-maven-plugins/advanced-mojo-development/
 	/**
-	 * Project instance, needed for attaching the buildinfo file. Used to add
-	 * new source directory to the build.
-	 * 
 	 * @parameter default-value="${project}"
 	 * @required
 	 */

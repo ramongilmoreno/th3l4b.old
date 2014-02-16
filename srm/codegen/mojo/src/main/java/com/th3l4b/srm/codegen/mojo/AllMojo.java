@@ -1,8 +1,10 @@
 package com.th3l4b.srm.codegen.mojo;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.util.Collections;
+import java.util.Properties;
 
 import org.apache.maven.model.Resource;
 import org.apache.maven.project.MavenProject;
@@ -33,14 +35,11 @@ public class AllMojo extends SRMAbstractMojo {
 
 	// http://www.maestrodev.com/better-builds-with-maven/developing-custom-maven-plugins/advanced-mojo-development/
 	/**
-	 * Project instance, needed for attaching the buildinfo file. Used to add
-	 * new source directory to the build.
-	 * 
 	 * @parameter default-value="${project}"
 	 * @required
 	 */
 	private MavenProject _project;
-	
+
 	/**
 	 * @component
 	 */
@@ -128,10 +127,10 @@ public class AllMojo extends SRMAbstractMojo {
 		startProduct("SQL files", sqlContext);
 		sqlCodegen.sql(normalized, sqlContext);
 		endProduct(sqlContext);
-		
+
 		// Install .srm as "srm" artifact
 		// http://www.maestrodev.com/better-builds-with-maven/developing-custom-maven-plugins/advanced-mojo-development/
-		_projectHelper.attachArtifact(_project, "srm", getInput());
+		_projectHelper.attachArtifact(_project, ARTIFACT_SRM, getInput());
 
 		// Include .srm file as resource
 		// http://www.maestrodev.com/better-builds-with-maven/developing-custom-maven-plugins/advanced-mojo-development/
@@ -151,6 +150,23 @@ public class AllMojo extends SRMAbstractMojo {
 
 		// Compile the generated Java output as part of the project build
 		// http://stackoverflow.com/questions/11931652/dynamically-adding-mojo-generated-code-to-source-path
-		_project.addCompileSourceRoot(javaContext.getOutput().getCanonicalPath());
+		_project.addCompileSourceRoot(javaContext.getOutput()
+				.getCanonicalPath());
+
+		// Produce srm properties artifact
+		File srmPropertiesFile = new File(context.getOutput(), getInput()
+				.getName() + ".properties");
+		FileOutputStream fos = new FileOutputStream(srmPropertiesFile);
+		try {
+			Properties srmProperties = new Properties();
+			srmProperties.put(PROPERTY_PACKAGE, getPackage());
+			srmProperties.store(fos, null);
+		} finally {
+			if (fos != null) {
+				fos.close();
+			}
+		}
+		_projectHelper.attachArtifact(_project, ARTIFACT_SRM_PROPERTIES,
+				srmPropertiesFile);
 	}
 }
