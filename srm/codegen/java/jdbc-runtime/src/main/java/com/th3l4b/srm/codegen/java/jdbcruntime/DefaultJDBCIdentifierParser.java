@@ -16,7 +16,7 @@ public class DefaultJDBCIdentifierParser implements IJDBCIdentifierParser {
 	@Override
 	public void set(IIdentifier identifier, Integer column,
 			PreparedStatement statement) throws Exception {
-		statement.setString(column, identifier.getKey());
+		statement.setString(column, JDBCUtils.fromIdentifier(identifier));
 	}
 
 }

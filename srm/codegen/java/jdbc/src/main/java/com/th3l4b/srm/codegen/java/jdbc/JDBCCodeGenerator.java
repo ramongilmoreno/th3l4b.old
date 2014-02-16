@@ -268,16 +268,18 @@ public class JDBCCodeGenerator {
 
 				// Setup parsers in constructor
 				iout.println("public " + clazz + " ("
-						+ IJDBCIdentifierParser.class.getName() + " ids, "
-						+ IJDBCStatusParser.class.getName() + " status, "
+						+ IJDBCIdentifierParser.class.getName()
+						+ " idsParser, " + IJDBCStatusParser.class.getName()
+						+ " statusParser, "
 						+ IJDBCRuntimeTypesContext.class.getName()
 						+ " types) throws " + Exception.class.getName() + " {");
 				for (INormalizedEntity entity : model.items()) {
-					iiout.println("putEntityParser(new "
-							+ names.fqnJDBCParsers(names.parserJDBC(entity),
-									context) + " (ids, status, types), "
-							+ names.fqn(names.nameInterface(entity), context)
-							+ ".class);");
+					iiout.print("put(");
+					iiout.print(names.fqn(names.nameInterface(entity), context));
+					iiout.print(".class, new ");
+					iiout.print(names.fqnJDBCParsers(names.parserJDBC(entity),
+							context));
+					iiout.println("(idsParser, statusParser, types));");
 				}
 				iout.println("}");
 				out.println("}");
