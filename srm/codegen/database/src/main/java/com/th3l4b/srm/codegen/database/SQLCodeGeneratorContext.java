@@ -18,10 +18,10 @@ public class SQLCodeGeneratorContext extends CodeGeneratorContext {
 	private SQLNames _SQLNames = new SQLNames();
 
 	public SQLCodeGeneratorContext() throws Exception {
-		_identifierType = BasicSetTypesContext.get().get(
-				BasicSetTypesEnum._label.getName());
-		_statusType = BasicSetTypesContext.get().get(
-				BasicSetTypesEnum._label.getName());
+		setIdentifierType(BasicSetTypesContext.get().get(
+				BasicSetTypesEnum._label.getName()));
+		setStatusType(BasicSetTypesContext.get().get(
+				BasicSetTypesEnum._label.getName()));
 	}
 
 	public IDatabaseTypesContext getDatabaseTypes() {

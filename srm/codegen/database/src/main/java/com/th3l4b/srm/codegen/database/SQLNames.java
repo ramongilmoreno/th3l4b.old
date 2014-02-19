@@ -1,11 +1,13 @@
 package com.th3l4b.srm.codegen.database;
 
+import com.th3l4b.common.propertied.IPropertied;
 import com.th3l4b.srm.base.IField;
 import com.th3l4b.srm.base.normalized.INormalizedEntity;
 import com.th3l4b.srm.base.normalized.INormalizedManyToOneRelationship;
 import com.th3l4b.srm.base.normalized.INormalizedModel;
 import com.th3l4b.srm.codegen.java.basic.JavaNames;
 import com.th3l4b.srm.database.IDatabaseType;
+import com.th3l4b.srm.runtime.DatabaseUtils;
 import com.th3l4b.srm.runtime.IDatabaseConstants;
 import com.th3l4b.types.base.IType;
 
@@ -14,7 +16,9 @@ public class SQLNames extends JavaNames implements IDatabaseConstants {
 	private static final String PREFIX = SQLNames.class.getPackage().getName();
 	public static final String MODEL = PREFIX + ".model";
 	public static final String TABLE = PREFIX + ".table";
-	public static final String COLUMN = PREFIX + ".column";
+	private static final String COLUMN_PREFIX = PREFIX + ".column";
+	public static final String COLUMN_VALUE = COLUMN_PREFIX + ".value";
+	public static final String COLUMN_ISSET = COLUMN_PREFIX + ".isset";
 	public static final String TYPE = PREFIX + ".type";
 
 	public String name(IDatabaseType database) throws Exception {
@@ -25,14 +29,19 @@ public class SQLNames extends JavaNames implements IDatabaseConstants {
 		return valueOrProperty(javaIdentifier(entity.getName()), TABLE, entity);
 	}
 
-	public String column(IField field) throws Exception {
-		return valueOrProperty(name(field), COLUMN, field);
+	public String column(IField field, boolean forField) throws Exception {
+		return column(name(field), forField, field);
 	}
 
 	public String column(INormalizedManyToOneRelationship relationship,
-			INormalizedModel model) throws Exception {
-		return valueOrProperty(nameOfDirect(relationship, model), COLUMN,
-				relationship);
+			boolean forField, INormalizedModel model) throws Exception {
+		return column(nameOfDirect(relationship, model), forField, relationship);
+	}
+
+	private String column(String name, boolean forField, IPropertied propertied)
+			throws Exception {
+		return valueOrProperty(DatabaseUtils.column(name, forField),
+				forField ? COLUMN_VALUE : COLUMN_ISSET, propertied);
 	}
 
 	public String type(IType type, IDatabaseType database) throws Exception {

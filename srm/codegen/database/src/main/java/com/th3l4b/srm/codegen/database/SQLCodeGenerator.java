@@ -11,6 +11,7 @@ import com.th3l4b.srm.base.normalized.INormalizedManyToOneRelationship;
 import com.th3l4b.srm.base.normalized.INormalizedModel;
 import com.th3l4b.srm.codegen.base.FileUtils;
 import com.th3l4b.srm.database.IDatabaseType;
+import com.th3l4b.srm.runtime.DatabaseUtils;
 
 public class SQLCodeGenerator {
 
@@ -24,13 +25,15 @@ public class SQLCodeGenerator {
 		PrintWriter iout = IndentedWriter.get(out);
 		out.println("CREATE TABLE " + names.table(entity) + " (");
 		String idType = names.type(context.getIdentifierType(), database);
-		iout.println("" + SQLNames.ID + " " + idType + " NOT NULL PRIMARY KEY,");
+		iout.println("" + DatabaseUtils.column(SQLNames.ID, true) + " "
+				+ idType + " NOT NULL PRIMARY KEY,");
 		String statusType = names.type(context.getStatusType(), database);
-		iout.print("" + SQLNames.STATUS + " " + statusType + " NOT NULL");
+		iout.print("" + DatabaseUtils.column(SQLNames.STATUS, true) + " "
+				+ statusType + " NOT NULL");
 		for (IField field : entity.items()) {
 			iout.println(",");
 			iout.print(""
-					+ names.column(field)
+					+ names.column(field, true)
 					+ " "
 					+ names.type(context.getTypes().get(field.getType()),
 							database));
@@ -38,7 +41,7 @@ public class SQLCodeGenerator {
 		for (INormalizedManyToOneRelationship rel : entity.relationships()
 				.items()) {
 			iout.println(",");
-			iout.print("" + names.column(rel, model) + " " + idType);
+			iout.print("" + names.column(rel, true, model) + " " + idType);
 
 		}
 		iout.flush();
@@ -68,13 +71,18 @@ public class SQLCodeGenerator {
 				@Override
 				protected void printWithException(PrintWriter out)
 						throws Exception {
-					for (INormalizedEntity entity : model.items()) {
-						createTable(entity, model, database, context, out);
-						out.println("/");
-						out.println();
-					}
+					sql(model, database, context, out);
 				}
 			});
+		}
+	}
+
+	public void sql(INormalizedModel model, IDatabaseType database,
+			SQLCodeGeneratorContext context, PrintWriter out) throws Exception {
+		for (INormalizedEntity entity : model.items()) {
+			createTable(entity, model, database, context, out);
+			out.println("/");
+			out.println();
 		}
 	}
 }

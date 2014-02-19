@@ -6,7 +6,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.th3l4b.types.runtime.IJavaRuntimeType;
-import com.th3l4b.types.runtime.basicset.BasicSetTypesContext;
+import com.th3l4b.types.runtime.basicset.JavaRuntimeTypesBasicSet;
 
 public class BasicSetTest {
 
@@ -22,7 +22,7 @@ public class BasicSetTest {
 
 	@Test
 	public void test() throws ParseException {
-		BasicSetTypesContext context = new BasicSetTypesContext();
+		JavaRuntimeTypesBasicSet context = new JavaRuntimeTypesBasicSet();
 		IJavaRuntimeType<Double> decimal = context.get("decimal", Double.class);
 		checkDecimal(decimal, 0, "0");
 		T[] tests = new T[] { new T(123, "123"), new T(12.3, "12.3"),

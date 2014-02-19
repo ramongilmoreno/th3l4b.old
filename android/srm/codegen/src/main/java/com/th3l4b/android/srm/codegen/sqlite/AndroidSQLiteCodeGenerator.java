@@ -34,6 +34,7 @@ import com.th3l4b.srm.codegen.java.basic.JavaNames;
 import com.th3l4b.srm.codegen.java.basicruntime.inmemory.Pair;
 import com.th3l4b.srm.database.BasicSetDatabaseTypesContext;
 import com.th3l4b.srm.database.IDatabaseType;
+import com.th3l4b.srm.runtime.DatabaseUtils;
 import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.srm.runtime.IModelUtils;
 import com.th3l4b.types.base.ITypesConstants;
@@ -160,14 +161,20 @@ public class AndroidSQLiteCodeGenerator {
 						+ " { return \""
 						+ TextUtils.escapeJavaString(sqlNames.table(entity))
 						+ "\"; }");
-				iout.println("public " + String.class.getName()
-						+ " idColumn() throws " + Exception.class.getName()
+				iout.println("public "
+						+ String.class.getName()
+						+ " idColumn() throws "
+						+ Exception.class.getName()
 						+ " { return \""
-						+ TextUtils.escapeJavaString(SQLNames.ID) + "\"; }");
-				iout.println("public " + String.class.getName()
-						+ " statusColumn() throws " + Exception.class.getName()
+						+ TextUtils.escapeJavaString(DatabaseUtils.column(
+								SQLNames.ID, true)) + "\"; }");
+				iout.println("public "
+						+ String.class.getName()
+						+ " statusColumn() throws "
+						+ Exception.class.getName()
 						+ " { return \""
-						+ TextUtils.escapeJavaString(SQLNames.STATUS) + "\"; }");
+						+ TextUtils.escapeJavaString(DatabaseUtils.column(
+								SQLNames.STATUS, true)) + "\"; }");
 				iout.println("public " + entityInterface
 						+ " create() { return new "
 						+ names.fqnImpl(names.nameImpl(entity), context)
@@ -182,8 +189,8 @@ public class AndroidSQLiteCodeGenerator {
 						iiout.println(",");
 					}
 					iiout.print("\""
-							+ TextUtils.escapeJavaString(sqlNames.column(field))
-							+ "\"");
+							+ TextUtils.escapeJavaString(sqlNames.column(field,
+									true)) + "\"");
 				}
 
 				// Fill relationships
@@ -196,7 +203,7 @@ public class AndroidSQLiteCodeGenerator {
 					}
 					iiout.print("\""
 							+ TextUtils.escapeJavaString(sqlNames.column(rel,
-									model)) + "\"");
+									true, model)) + "\"");
 				}
 				if (!first) {
 					iiout.println();
@@ -233,8 +240,8 @@ public class AndroidSQLiteCodeGenerator {
 							+ ".set(entity.get"
 							+ name
 							+ "(), \""
-							+ TextUtils.escapeJavaString(sqlNames.column(field))
-							+ "\", values); }");
+							+ TextUtils.escapeJavaString(sqlNames.column(field,
+									true)) + "\", values); }");
 				}
 				for (INormalizedManyToOneRelationship rel : entity
 						.relationships().items()) {
@@ -245,7 +252,7 @@ public class AndroidSQLiteCodeGenerator {
 							+ name
 							+ "(), \""
 							+ TextUtils.escapeJavaString(sqlNames.column(rel,
-									model)) + "\", values); }");
+									true, model)) + "\", values); }");
 				}
 
 				iout.println("}");
@@ -297,7 +304,7 @@ public class AndroidSQLiteCodeGenerator {
 								+ name
 								+ "\"), \""
 								+ TextUtils.escapeJavaString(sqlNames.column(
-										rel, model)) + "\");");
+										rel, true, model)) + "\");");
 					}
 				}
 				iout.println("}");

@@ -6,11 +6,11 @@ import java.util.HashMap;
 import com.th3l4b.types.runtime.IJavaRuntimeType;
 import com.th3l4b.types.runtime.IJavaRuntimeTypesContext;
 
-public class BasicSetTypesContext implements IJavaRuntimeTypesContext {
+public class JavaRuntimeTypesBasicSet implements IJavaRuntimeTypesContext {
 
 	private HashMap<String, IJavaRuntimeType<?>> _types = new HashMap<String, IJavaRuntimeType<?>>();
 
-	public BasicSetTypesContext() {
+	public JavaRuntimeTypesBasicSet() {
 		_types.put("integer", new IntegerType());
 		_types.put("decimal", new AbstractType<Double>(Double.class) {
 			double _min, _max;
