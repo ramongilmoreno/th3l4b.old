@@ -238,16 +238,15 @@ public class JDBCCodeGenerator {
 						+ " {");
 				for (IField field : entity.items()) {
 					String name = javaNames.name(field);
-					iiout.println("if (entity.isSet" + name + "()) { "
-							+ fieldName(field, names) + ".set(entity.get"
-							+ name + "(), index++, statement); }");
+					iiout.println("" + fieldName(field, names)
+							+ ".set(entity.get" + name
+							+ "(), index++, statement);");
 				}
 				for (INormalizedManyToOneRelationship rel : entity
 						.relationships().items()) {
 					String name = javaNames.nameOfDirect(rel, model);
-					iiout.println("if (entity.isSet" + name
-							+ "()) { getIdsParser().set(entity.get" + name
-							+ "(), index++, statement); }");
+					iiout.println("getIdsParser().set(entity.get" + name
+							+ "(), index++, statement);");
 				}
 
 				iout.println("}");

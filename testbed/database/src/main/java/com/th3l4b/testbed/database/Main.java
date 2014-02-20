@@ -6,8 +6,12 @@ import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.th3l4b.apps.shopping.base.codegen.srm.IItem;
+import com.th3l4b.apps.shopping.base.codegen.srm.INeed;
+import com.th3l4b.apps.shopping.base.codegen.srm.base.IShoppingFinder;
 import com.th3l4b.apps.shopping.base.codegen.srm.jdbc.AbstractShoppingJDBCContext;
 import com.th3l4b.common.log.ConsoleLog;
 import com.th3l4b.srm.base.normalized.INormalizedModel;
@@ -19,6 +23,9 @@ import com.th3l4b.srm.database.BasicSetDatabaseTypesContext;
 import com.th3l4b.srm.database.IDatabaseType;
 import com.th3l4b.srm.database.IDatabaseTypesContext;
 import com.th3l4b.srm.parser.ParserUtils;
+import com.th3l4b.srm.runtime.IIdentifier;
+import com.th3l4b.srm.runtime.IModelUtils;
+import com.th3l4b.srm.runtime.IRuntimeEntity;
 import com.th3l4b.types.base.basicset.BasicSetTypesContext;
 
 public class Main {
@@ -84,13 +91,30 @@ public class Main {
 					return connection;
 				}
 			};
-			
-			Iterable<IItem> items = shopping.getFinder().allItem();
-			for (IItem item: items) {
-				System.out.println(item);
+
+			Map<IIdentifier, IRuntimeEntity<?>> entities = new HashMap<IIdentifier, IRuntimeEntity<?>>();
+			IModelUtils utils = shopping.getUtils();
+			for (i = 0; i < 10; i++) {
+				IItem create = utils.create(IItem.class);
+				create.setName("Item #" + i);
+				create.setDescription("Description #" + i);
+				entities.put(create.coordinates().getIdentifier(), create);
+
+				INeed need = utils.create(INeed.class);
+				need.setItem(create);
+				entities.put(need.coordinates().getIdentifier(), need);
 			}
-			
-			
+			shopping.update(entities);
+
+			IShoppingFinder finder = shopping.getFinder();
+			Iterable<IItem> items = finder.allItem();
+			for (IItem item : items) {
+				System.out.println(item.getName() + ", "
+						+ item.getDescription());
+				for (INeed need : finder.findAllNeedFromItem(item)) {
+					System.out.println(need);
+				}
+			}
 
 		} finally {
 			if (connection != null) {

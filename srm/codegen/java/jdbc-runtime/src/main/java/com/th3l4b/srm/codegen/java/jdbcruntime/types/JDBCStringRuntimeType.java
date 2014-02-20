@@ -1,21 +1,27 @@
 package com.th3l4b.srm.codegen.java.jdbcruntime.types;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.Types;
 
-import com.th3l4b.srm.codegen.java.jdbcruntime.IJDBCRuntimeType;
+import com.th3l4b.common.text.TextUtils;
 
-public class JDBCStringRuntimeType implements IJDBCRuntimeType<String> {
+public class JDBCStringRuntimeType extends DefaultJDBCRuntimeType<String> {
 
-	@Override
-	public String parse(Integer arg, ResultSet result) throws Exception {
-		return result.getString(arg.intValue());
+	private Integer _limit;
+
+	public JDBCStringRuntimeType(Integer limit) {
+		super(Types.VARCHAR);
+		_limit = limit;
 	}
 
 	@Override
-	public void set(String value, Integer arg, PreparedStatement statement)
-			throws Exception {
-		statement.setString(arg.intValue(), value);
+	protected String setNotNull(String value) throws Exception {
+		return _limit != null ? TextUtils.limit(value, _limit.intValue())
+				: value;
 	}
 
+	@Override
+	protected String filterNotNullBeforeGet(String value) throws Exception {
+		return _limit != null ? TextUtils.limit(value, _limit.intValue())
+				: value;
+	}
 }

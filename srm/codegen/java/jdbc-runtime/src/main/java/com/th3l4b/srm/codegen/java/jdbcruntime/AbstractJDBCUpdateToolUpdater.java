@@ -34,18 +34,18 @@ public abstract class AbstractJDBCUpdateToolUpdater extends
 			boolean first = true;
 			for (String column : parser.allColumns()) {
 				if (first) {
-					insert.append(", ");
-				} else {
 					first = false;
+				} else {
+					insert.append(", ");
 				}
 				insert.append(column);
 			}
 			insert.append(") values (");
 			for (int i = 0; i < parser.allColumns().length; i++) {
 				if (i == 0) {
-					insert.append(", ");
-				} else {
 					first = false;
+				} else {
+					insert.append(", ");
 				}
 				insert.append("?");
 			}
@@ -69,9 +69,9 @@ public abstract class AbstractJDBCUpdateToolUpdater extends
 			boolean first = true;
 			for (String column : parser.allColumns()) {
 				if (first) {
-					update.append(", ");
-				} else {
 					first = false;
+				} else {
+					update.append(", ");
 				}
 				update.append(column + " = ?");
 			}
