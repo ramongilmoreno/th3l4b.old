@@ -11,10 +11,10 @@ import com.th3l4b.srm.base.normalized.INormalizedManyToOneRelationship;
 import com.th3l4b.srm.base.normalized.INormalizedModel;
 import com.th3l4b.srm.codegen.base.FileUtils;
 import com.th3l4b.srm.codegen.java.basicruntime.AbstractModelUtils;
-import com.th3l4b.srm.codegen.java.basicruntime.ISRMContext;
 import com.th3l4b.srm.codegen.java.basicruntime.inmemory.AbstractRuntimeEntity;
 import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
+import com.th3l4b.srm.runtime.ISRMContext;
 import com.th3l4b.types.base.ITypesConstants;
 
 public class JavaCodeGenerator {

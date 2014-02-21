@@ -1,10 +1,6 @@
-package com.th3l4b.srm.codegen.java.basicruntime;
+package com.th3l4b.srm.runtime;
 
 import java.util.Map;
-
-import com.th3l4b.srm.runtime.IIdentifier;
-import com.th3l4b.srm.runtime.IModelUtils;
-import com.th3l4b.srm.runtime.IRuntimeEntity;
 
 public interface ISRMContext<FINDER> {
 	IModelUtils getUtils () throws Exception;
