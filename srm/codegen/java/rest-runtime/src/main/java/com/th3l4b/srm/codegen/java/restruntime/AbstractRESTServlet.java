@@ -1,6 +1,7 @@
 package com.th3l4b.srm.codegen.java.restruntime;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -8,12 +9,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.th3l4b.srm.codegen.java.basicruntime.tomap.IToMapEntityParser;
-import com.th3l4b.srm.codegen.java.basicruntime.tomap.IToMapEntityParserContext;
+import com.th3l4b.common.text.IPrintable;
+import com.th3l4b.common.text.TextUtils;
 import com.th3l4b.srm.codegen.java.restruntime.access.IRESTFinder;
 import com.th3l4b.srm.runtime.IFinder;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
 import com.th3l4b.srm.runtime.ISRMContext;
+import com.th3l4b.srm.runtime.IToMapEntityParser;
+import com.th3l4b.srm.runtime.IToMapEntityParserContext;
 
 @SuppressWarnings("serial")
 public abstract class AbstractRESTServlet<CONTEXT extends ISRMContext<FINDER>, FINDER extends IFinder>
@@ -47,39 +50,70 @@ public abstract class AbstractRESTServlet<CONTEXT extends ISRMContext<FINDER>, F
 
 	protected String[] split(IRESTRequest request) throws Exception {
 		// Returns up to 3 strings with this format:
-		// <Type>/<Id>/<Relationship>
-		String IMPLEMENT_PARSING_THE_HTTP_REQUEST;
-		throw new UnsupportedOperationException("Not implemented yet");
+		// http://stackoverflow.com/questions/4278083/how-to-get-request-uri-without-context-path
+		String pathInfo = request.getHttpServletRequest().getPathInfo();
+		if (pathInfo == null) {
+			return new String[0];
+		} else {
+			return pathInfo.split("/");
+		}
 	}
 
 	protected void serialize(IRuntimeEntity<?> one, IRESTRequest request)
 			throws Exception {
 		if (one != null) {
-			Map<String, String> map = request.getStringMap();
-			map.clear();
-			serializeClass(one, one.clazz(), map, request);
-			map.clear();
+			printable(one, one.clazz(), request).print(request.getOut());
 		} else {
 			throw new IllegalArgumentException(
 					"Cannot serialized an unique object that is null");
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	private <T extends IRuntimeEntity<T>> void serializeClass(Object one,
-			Class<T> clazz, Map<String, String> map, IRESTRequest request)
+	private static final IPrintable printable(Map<String, String> object)
 			throws Exception {
+		final StringBuilder sb = new StringBuilder(200);
+		sb.append("{ ");
+		for (Map.Entry<String, String> attribute : object.entrySet()) {
+			if (sb.length() > 2) {
+				sb.append(", ");
+			}
+			sb.append('\"');
+			sb.append(TextUtils.escapeJavaString(attribute.getKey()));
+			sb.append("\", \"");
+			sb.append(TextUtils.escapeJavaString(attribute.getValue()));
+			sb.append('\"');
+		}
+		sb.append(" }");
+		return TextUtils.toPrintable(sb.toString());
+	}
+
+	@SuppressWarnings("unchecked")
+	private <T extends IRuntimeEntity<T>> IPrintable printable(Object one,
+			Class<T> clazz, IRESTRequest request) throws Exception {
 		IToMapEntityParser<T> parser = getToMapEntityParserContext().getParser(
 				clazz);
+		Map<String, String> map = request.getStringMap();
+		map.clear();
 		parser.set((T) one, null, map);
-		String IMPLEMENT_SERIALIZING_ONE;
-		throw new UnsupportedOperationException("Not implemented yet");
+		IPrintable printable = printable(map);
+		map.clear();
+		return printable;
 	}
 
 	protected void serialize(Iterable<IRuntimeEntity<?>> many,
 			IRESTRequest request) throws Exception {
-		String IMPLEMENT_SERIALIZING_MANY_EFFICIENTLY;
-		throw new UnsupportedOperationException("Not implemented yet");
+		PrintWriter out = request.getOut();
+		out.print("[ ");
+		boolean first = true;
+		for (IRuntimeEntity<?> entity : many) {
+			if (first) {
+				first = false;
+			} else {
+				out.println(", ");
+			}
+			printable(entity, entity.clazz(), request).print(out);
+		}
+		out.print(" ]");
 	}
 
 	@Override
@@ -123,8 +157,11 @@ public abstract class AbstractRESTServlet<CONTEXT extends ISRMContext<FINDER>, F
 						"Could not decide if result is one or many");
 			}
 
+			// Flush result.
+			request.getOut().flush();
 		} catch (Exception e) {
 			throw new ServletException(e);
 		}
+
 	}
 }

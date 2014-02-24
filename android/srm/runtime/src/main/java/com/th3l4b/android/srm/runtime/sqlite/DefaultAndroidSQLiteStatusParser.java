@@ -10,8 +10,7 @@ public class DefaultAndroidSQLiteStatusParser implements
 
 	@Override
 	public EntityStatus parse(Integer arg, Cursor result) throws Exception {
-		return EntityStatus.fromInitial(result.getString(arg.intValue()),
-				EntityStatus.Unknown);
+		return EntityStatus.fromInitial(result.getString(arg.intValue()));
 	}
 
 	@Override

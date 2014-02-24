@@ -9,8 +9,7 @@ public class DefaultJDBCStatusParser implements IJDBCStatusParser {
 
 	@Override
 	public EntityStatus parse(Integer arg, ResultSet result) throws Exception {
-		return EntityStatus.fromInitial(result.getString(arg.intValue()),
-				EntityStatus.Unknown);
+		return EntityStatus.fromInitial(result.getString(arg.intValue()));
 	}
 
 	@Override

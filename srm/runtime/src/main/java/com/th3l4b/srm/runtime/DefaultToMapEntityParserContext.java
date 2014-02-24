@@ -1,7 +1,5 @@
-package com.th3l4b.srm.codegen.java.basicruntime.tomap;
+package com.th3l4b.srm.runtime;
 
-import com.th3l4b.srm.runtime.DefaultPerEntityContext;
-import com.th3l4b.srm.runtime.IRuntimeEntity;
 
 public class DefaultToMapEntityParserContext extends
 		DefaultPerEntityContext<IToMapEntityParser<?>> implements IToMapEntityParserContext {

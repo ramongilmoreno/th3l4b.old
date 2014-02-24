@@ -225,9 +225,15 @@ public class JDBCCodeGenerator {
 				}
 				for (INormalizedManyToOneRelationship rel : entity
 						.relationships().items()) {
-					iiout.println("entity.set"
-							+ javaNames.nameOfDirect(rel, model)
+					String relName = javaNames.nameOfDirect(rel, model);
+					iiout.println("entity.set" + relName
 							+ "(getIdsParser().parse(index++, result));");
+					iiout.println("entity.get"
+							+ relName
+							+ "().setType("
+							+ javaNames.fqn(javaNames.nameInterface(model
+									.get(rel.getTo())), context)
+							+ ".class.getName());");
 				}
 
 				iout.println("}");

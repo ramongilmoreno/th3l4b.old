@@ -23,6 +23,10 @@ public enum EntityStatus {
 		return _reverse;
 	}
 
+	public static EntityStatus fromInitial(String initial) {
+		return fromInitial(initial, EntityStatus.Unknown);
+	}
+
 	public static EntityStatus fromInitial(String initial, EntityStatus fallback) {
 		if (initial == null) {
 			return fallback;
