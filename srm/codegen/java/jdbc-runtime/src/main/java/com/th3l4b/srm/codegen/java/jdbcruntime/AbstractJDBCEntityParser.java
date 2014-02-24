@@ -34,6 +34,14 @@ public abstract class AbstractJDBCEntityParser<R extends IRuntimeEntity<R>>
 		_statusParser = statusParser;
 	}
 
+	/**
+	 * Always return true. This method does no check.
+	 */
+	@Override
+	public boolean hasValue(Integer arg, ResultSet result) throws Exception {
+		return true;
+	}
+
 	@Override
 	public R parse(Integer idx, ResultSet result) throws Exception {
 		int index = idx;
@@ -62,7 +70,7 @@ public abstract class AbstractJDBCEntityParser<R extends IRuntimeEntity<R>>
 
 	protected abstract void setRest(R entity, int index,
 			PreparedStatement statement) throws Exception;
-	
+
 	String[] _allColumns;
 
 	@Override

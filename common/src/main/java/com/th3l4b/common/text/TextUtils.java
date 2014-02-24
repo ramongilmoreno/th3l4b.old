@@ -12,6 +12,10 @@ import java.util.NoSuchElementException;
 
 public class TextUtils {
 
+	public static boolean empty (String s) {
+		return s == null || s.length() == 0;
+	}
+	
 	public static Iterable<Integer> unicodeIterable(String input) {
 		return unicodeIterable(new StringReader(input));
 	}

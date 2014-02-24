@@ -6,5 +6,5 @@ import com.th3l4b.srm.runtime.IEntityStatusParser;
 
 public interface IToMapStatusParser
 		extends
-		IEntityStatusParser<Map<String, String>, Map<String, String>, Void, Void> {
+		IEntityStatusParser<Map<String, String>, Map<String, String>, String, String> {
 }

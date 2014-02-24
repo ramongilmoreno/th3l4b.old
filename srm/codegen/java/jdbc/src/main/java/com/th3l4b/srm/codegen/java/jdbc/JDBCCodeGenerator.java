@@ -228,12 +228,12 @@ public class JDBCCodeGenerator {
 					String relName = javaNames.nameOfDirect(rel, model);
 					iiout.println("entity.set" + relName
 							+ "(getIdsParser().parse(index++, result));");
-					iiout.println("entity.get"
+					iiout.println("if (entity.get" + relName + "() != null) { entity.get"
 							+ relName
 							+ "().setType("
 							+ javaNames.fqn(javaNames.nameInterface(model
 									.get(rel.getTo())), context)
-							+ ".class.getName());");
+							+ ".class.getName()); }");
 				}
 
 				iout.println("}");

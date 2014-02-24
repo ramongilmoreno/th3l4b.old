@@ -7,6 +7,11 @@ import com.th3l4b.srm.runtime.EntityStatus;
 
 public class DefaultAndroidSQLiteStatusParser implements
 		IAndroidSQLiteStatusParser {
+	
+	@Override
+	public boolean hasValue(Integer arg, Cursor result) throws Exception {
+		return true;
+	}
 
 	@Override
 	public EntityStatus parse(Integer arg, Cursor result) throws Exception {

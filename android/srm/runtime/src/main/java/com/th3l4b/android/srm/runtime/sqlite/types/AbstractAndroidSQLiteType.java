@@ -8,6 +8,11 @@ import com.th3l4b.android.srm.runtime.sqlite.IAndroidSQLiteRuntimeType;
 public abstract class AbstractAndroidSQLiteType<T> implements
 		IAndroidSQLiteRuntimeType<T> {
 
+	@Override
+	public boolean hasValue(Integer arg, Cursor result) throws Exception {
+		return true;
+	}
+
 	public abstract T parseNotNull(int i, Cursor result) throws Exception;
 
 	@Override

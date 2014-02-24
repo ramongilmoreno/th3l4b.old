@@ -80,4 +80,9 @@ public abstract class AbstractAndroidSQLiteEntityParser<R extends IRuntimeEntity
 		}
 		return _allColumns;
 	}
+
+	@Override
+	public boolean hasValue(Integer arg, Cursor result) throws Exception {
+		return true;
+	}
 }

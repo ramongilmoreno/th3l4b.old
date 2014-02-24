@@ -21,12 +21,12 @@ public class AndroidSQLiteUtils {
 		query.append(" from ");
 		query.append(parser.table());
 	}
-	
-	public static String fromIdentifier (IIdentifier id) {
-		return id.getKey();
+
+	public static String fromIdentifier(IIdentifier id) {
+		return id == null ? null : id.getKey();
 	}
-	
-	public static String fromEntityStatus (EntityStatus status) {
+
+	public static String fromEntityStatus(EntityStatus status) {
 		return status.initial();
 	}
 }

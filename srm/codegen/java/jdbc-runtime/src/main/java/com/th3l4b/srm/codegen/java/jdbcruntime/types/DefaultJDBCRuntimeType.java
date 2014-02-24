@@ -43,10 +43,14 @@ public class DefaultJDBCRuntimeType<T> implements IJDBCRuntimeType<T> {
 	public void set(T value, Integer arg, PreparedStatement statement)
 			throws Exception {
 		if (value != null) {
-			statement.setObject(arg.intValue(), setNotNull(value),
-					_sqlType);
+			statement.setObject(arg.intValue(), setNotNull(value), _sqlType);
 		} else {
 			statement.setNull(arg.intValue(), _sqlType);
 		}
+	}
+
+	@Override
+	public boolean hasValue(Integer arg, ResultSet result) throws Exception {
+		return true;
 	}
 }
