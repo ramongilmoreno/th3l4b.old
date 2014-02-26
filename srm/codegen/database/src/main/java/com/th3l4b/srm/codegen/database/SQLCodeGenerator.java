@@ -12,6 +12,7 @@ import com.th3l4b.srm.base.normalized.INormalizedModel;
 import com.th3l4b.srm.codegen.base.FileUtils;
 import com.th3l4b.srm.database.IDatabaseType;
 import com.th3l4b.srm.runtime.DatabaseUtils;
+import com.th3l4b.srm.runtime.IDatabaseConstants;
 
 public class SQLCodeGenerator {
 
@@ -32,6 +33,13 @@ public class SQLCodeGenerator {
 				+ statusType + " NOT NULL");
 		for (IField field : entity.items()) {
 			iout.println(",");
+			iout.println(""
+					+ names.column(field, false)
+					+ " "
+					+ names.type(
+							context.getTypes().get(
+									IDatabaseConstants.BOOLEAN_TYPE), database)
+					+ ",");
 			iout.print(""
 					+ names.column(field, true)
 					+ " "
@@ -41,11 +49,19 @@ public class SQLCodeGenerator {
 		for (INormalizedManyToOneRelationship rel : entity.relationships()
 				.items()) {
 			iout.println(",");
+			iout.println(""
+					+ names.column(rel, false, model)
+					+ " "
+					+ names.type(
+							context.getTypes().get(
+									IDatabaseConstants.BOOLEAN_TYPE), database)
+					+ ",");
 			iout.print("" + names.column(rel, true, model) + " " + idType);
 
 		}
 		iout.flush();
-		out.println(")");
+		out.println();
+		out.print(")");
 	}
 
 	public String createTableSingleLine(INormalizedEntity entity,

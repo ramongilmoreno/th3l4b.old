@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import com.th3l4b.common.data.nullsafe.NullSafe;
 import com.th3l4b.common.text.AbstractPrintable;
 import com.th3l4b.common.text.IndentedWriter;
 import com.th3l4b.common.text.TextUtils;
@@ -25,6 +26,7 @@ import com.th3l4b.srm.codegen.java.jdbcruntime.IJDBCRuntimeType;
 import com.th3l4b.srm.codegen.java.jdbcruntime.IJDBCRuntimeTypesContext;
 import com.th3l4b.srm.codegen.java.jdbcruntime.IJDBCStatusParser;
 import com.th3l4b.srm.runtime.DatabaseUtils;
+import com.th3l4b.srm.runtime.IDatabaseConstants;
 import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.srm.runtime.IModelUtils;
 import com.th3l4b.types.base.ITypesConstants;
@@ -124,6 +126,7 @@ public class JDBCCodeGenerator {
 			protected void printWithException(PrintWriter out) throws Exception {
 				PrintWriter iout = IndentedWriter.get(out);
 				PrintWriter iiout = IndentedWriter.get(iout);
+				PrintWriter iiiout = IndentedWriter.get(iiout);
 				out.println("package " + pkg + ";");
 				out.println();
 				String entityInterface = names.fqn(names.nameInterface(entity),
@@ -132,13 +135,16 @@ public class JDBCCodeGenerator {
 						+ AbstractJDBCEntityParser.class.getName() + "<"
 						+ entityInterface + "> {");
 				out.println();
+				iout.println("private " + IJDBCRuntimeType.class.getName()
+						+ "<" + Boolean.class.getName() + "> _isSet;");
 				for (IField field : entity.items()) {
-					String name = fieldName(field, names);
-					String clazz = context.getTypes().get(field.getType())
-							.getProperties()
-							.get(ITypesConstants.PROPERTY_JAVA_CLASS);
-					iout.println("private " + IJDBCRuntimeType.class.getName()
-							+ "<" + clazz + "> " + name + ";");
+					iout.println("private "
+							+ IJDBCRuntimeType.class.getName()
+							+ "<"
+							+ context.getTypes().get(field.getType())
+									.getProperties()
+									.get(ITypesConstants.PROPERTY_JAVA_CLASS)
+							+ "> " + fieldName(field, names) + ";");
 				}
 				out.println();
 				iout.println("public " + clazz + "("
@@ -147,14 +153,19 @@ public class JDBCCodeGenerator {
 						+ IJDBCRuntimeTypesContext.class.getName()
 						+ " types) {");
 				iiout.println("super(ids, status);");
+				iiout.println("_isSet = types.get(\""
+						+ TextUtils
+								.escapeJavaString(IDatabaseConstants.BOOLEAN_TYPE)
+						+ "\", " + Boolean.class.getName() + ".class);");
 				for (IField field : entity.items()) {
-					String name = fieldName(field, names);
-					String clazz = context.getTypes().get(field.getType())
-							.getProperties()
-							.get(ITypesConstants.PROPERTY_JAVA_CLASS);
-					iiout.println(name + " = types.get(\""
+					iiout.println(fieldName(field, names)
+							+ " = types.get(\""
 							+ TextUtils.escapeJavaString(field.getType())
-							+ "\", " + clazz + ".class);");
+							+ "\", "
+							+ context.getTypes().get(field.getType())
+									.getProperties()
+									.get(ITypesConstants.PROPERTY_JAVA_CLASS)
+							+ ".class);");
 				}
 				iout.println("}");
 				iout.println();
@@ -191,6 +202,9 @@ public class JDBCCodeGenerator {
 					} else {
 						iiout.println(",");
 					}
+					iiout.println("\""
+							+ TextUtils.escapeJavaString(sqlNames.column(field,
+									false)) + "\",");
 					iiout.print("\""
 							+ TextUtils.escapeJavaString(sqlNames.column(field,
 									true)) + "\"");
@@ -204,6 +218,9 @@ public class JDBCCodeGenerator {
 					} else {
 						iiout.println(",");
 					}
+					iiout.println("\""
+							+ TextUtils.escapeJavaString(sqlNames.column(rel,
+									false, model)) + "\",");
 					iiout.print("\""
 							+ TextUtils.escapeJavaString(sqlNames.column(rel,
 									true, model)) + "\"");
@@ -219,21 +236,35 @@ public class JDBCCodeGenerator {
 						+ " entity, int index, " + ResultSet.class.getName()
 						+ " result) throws " + Exception.class.getName() + " {");
 				for (IField field : entity.items()) {
-					iiout.println("entity.set" + javaNames.name(field) + "("
+					iiout.println("if (" + NullSafe.class.getName()
+							+ ".equals(_isSet.parse(index++, result), "
+							+ Boolean.class.getName() + ".TRUE)) {");
+					iiiout.println("entity.set" + javaNames.name(field) + "("
 							+ fieldName(field, names)
 							+ ".parse(index++, result));");
+					iiout.println("} else {");
+					iiiout.println("index++;");
+					iiout.println("}");
 				}
 				for (INormalizedManyToOneRelationship rel : entity
 						.relationships().items()) {
 					String relName = javaNames.nameOfDirect(rel, model);
-					iiout.println("entity.set" + relName
+					iiout.println("if (" + NullSafe.class.getName()
+							+ ".equals(_isSet.parse(index++, result), "
+							+ Boolean.class.getName() + ".TRUE)) {");
+					iiiout.println("entity.set" + relName
 							+ "(getIdsParser().parse(index++, result));");
-					iiout.println("if (entity.get" + relName + "() != null) { entity.get"
+					iiiout.println("if (entity.get"
+							+ relName
+							+ "() != null) { entity.get"
 							+ relName
 							+ "().setType("
 							+ javaNames.fqn(javaNames.nameInterface(model
 									.get(rel.getTo())), context)
 							+ ".class.getName()); }");
+					iiout.println("} else {");
+					iiiout.println("index++;");
+					iiout.println("}");
 				}
 
 				iout.println("}");
@@ -244,6 +275,9 @@ public class JDBCCodeGenerator {
 						+ " {");
 				for (IField field : entity.items()) {
 					String name = javaNames.name(field);
+					iiout.println("_isSet.set(" + Boolean.class.getName()
+							+ ".valueOf(entity.isSet" + name
+							+ "()), index++, statement);");
 					iiout.println("" + fieldName(field, names)
 							+ ".set(entity.get" + name
 							+ "(), index++, statement);");
@@ -251,12 +285,16 @@ public class JDBCCodeGenerator {
 				for (INormalizedManyToOneRelationship rel : entity
 						.relationships().items()) {
 					String name = javaNames.nameOfDirect(rel, model);
+					iiout.println("_isSet.set(" + Boolean.class.getName()
+							+ ".valueOf(entity.isSet" + name
+							+ "()), index++, statement);");
 					iiout.println("getIdsParser().set(entity.get" + name
 							+ "(), index++, statement);");
 				}
 
 				iout.println("}");
 				out.println("}");
+				iiiout.flush();
 				iiout.flush();
 				iout.flush();
 
