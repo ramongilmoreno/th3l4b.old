@@ -1,6 +1,7 @@
 package com.th3l4b.srm.codegen.database;
 
 import com.th3l4b.srm.codegen.base.CodeGeneratorContext;
+import com.th3l4b.srm.codegen.base.names.BaseNames;
 import com.th3l4b.srm.database.BasicSetDatabaseTypesContext;
 import com.th3l4b.srm.database.IDatabaseTypesContext;
 import com.th3l4b.types.base.IType;
@@ -15,9 +16,11 @@ public class SQLCodeGeneratorContext extends CodeGeneratorContext {
 	private IType _identifierType;
 	private IType _statusType;
 
-	private SQLNames _SQLNames = new SQLNames();
+	private SQLNames _SQLNames;
 
-	public SQLCodeGeneratorContext() throws Exception {
+	public SQLCodeGeneratorContext(BaseNames baseNames) throws Exception {
+		super(baseNames);
+		_SQLNames = new SQLNames(baseNames);
 		setIdentifierType(BasicSetTypesContext.get().get(
 				BasicSetTypesEnum._label.getName()));
 		setStatusType(BasicSetTypesContext.get().get(

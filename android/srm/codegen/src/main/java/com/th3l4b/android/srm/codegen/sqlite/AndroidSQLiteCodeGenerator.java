@@ -28,6 +28,7 @@ import com.th3l4b.srm.base.normalized.INormalizedEntity;
 import com.th3l4b.srm.base.normalized.INormalizedManyToOneRelationship;
 import com.th3l4b.srm.base.normalized.INormalizedModel;
 import com.th3l4b.srm.codegen.base.FileUtils;
+import com.th3l4b.srm.codegen.base.names.BaseNames;
 import com.th3l4b.srm.codegen.database.SQLCodeGenerator;
 import com.th3l4b.srm.codegen.database.SQLCodeGeneratorContext;
 import com.th3l4b.srm.codegen.database.SQLNames;
@@ -44,6 +45,7 @@ import com.th3l4b.types.base.ITypesConstants;
 public class AndroidSQLiteCodeGenerator {
 	public void helper(final INormalizedModel model,
 			final AndroidSQLiteCodeGeneratorContext context) throws Exception {
+		final BaseNames baseNames = context.getBaseNames();
 		final AndroidSQLiteNames names = context.getSQLiteNames();
 		final String pkg = names.packageForSQLite(context);
 		final String clazz = names.helper(model, context);
@@ -77,7 +79,8 @@ public class AndroidSQLiteCodeGenerator {
 				out.println();
 				iout.println("public void onCreate("
 						+ SQLiteDatabase.class.getName() + " database) {");
-				SQLCodeGeneratorContext sqlContext = new SQLCodeGeneratorContext();
+				SQLCodeGeneratorContext sqlContext = new SQLCodeGeneratorContext(
+						baseNames);
 				context.copyTo(sqlContext);
 				SQLCodeGenerator sqlGenerator = new SQLCodeGenerator();
 				IDatabaseType sqlite = BasicSetDatabaseTypesContext.get()
@@ -103,19 +106,19 @@ public class AndroidSQLiteCodeGenerator {
 		});
 	}
 
-	private String fieldName(IField f, AndroidSQLiteNames names)
-			throws Exception {
+	private String fieldName(IField f, BaseNames names) throws Exception {
 		return "_field_" + names.name(f);
 	}
 
 	public void entityParser(final INormalizedEntity entity,
 			final INormalizedModel model,
 			final AndroidSQLiteCodeGeneratorContext context) throws Exception {
-		final AndroidSQLiteNames names = context.getSQLiteNames();
+		final BaseNames baseNames = context.getBaseNames();
 		final JavaNames javaNames = context.getJavaNames();
+		final AndroidSQLiteNames asqlNames = context.getSQLiteNames();
 		final SQLNames sqlNames = context.getSQLNames();
-		final String clazz = names.parserAndroidSQLite(entity);
-		final String pkg = names.packageForSQLiteParsers(context);
+		final String clazz = asqlNames.parserAndroidSQLite(entity);
+		final String pkg = asqlNames.packageForSQLiteParsers(context);
 		FileUtils.java(context, pkg, clazz, new AbstractPrintable() {
 			@Override
 			protected void printWithException(PrintWriter out) throws Exception {
@@ -124,8 +127,8 @@ public class AndroidSQLiteCodeGenerator {
 				PrintWriter iiiout = IndentedWriter.get(iiout);
 				out.println("package " + pkg + ";");
 				out.println();
-				String entityInterface = names.fqn(names.nameInterface(entity),
-						context);
+				String entityInterface = javaNames.fqn(
+						javaNames.nameInterface(entity), context);
 				out.println("public class " + clazz + " extends "
 						+ AbstractAndroidSQLiteEntityParser.class.getName()
 						+ "<" + entityInterface + "> {");
@@ -140,7 +143,7 @@ public class AndroidSQLiteCodeGenerator {
 							+ context.getTypes().get(field.getType())
 									.getProperties()
 									.get(ITypesConstants.PROPERTY_JAVA_CLASS)
-							+ "> " + fieldName(field, names) + ";");
+							+ "> " + fieldName(field, baseNames) + ";");
 				}
 				out.println();
 				iout.println("public " + clazz + "("
@@ -154,7 +157,7 @@ public class AndroidSQLiteCodeGenerator {
 						+ IDatabaseConstants.BOOLEAN_TYPE + "\", "
 						+ Boolean.class.getName() + ".class);");
 				for (IField field : entity.items()) {
-					iiout.println(fieldName(field, names)
+					iiout.println(fieldName(field, baseNames)
 							+ " = types.get(\""
 							+ TextUtils.escapeJavaString(field.getType())
 							+ "\", "
@@ -185,9 +188,10 @@ public class AndroidSQLiteCodeGenerator {
 						+ " { return \""
 						+ TextUtils.escapeJavaString(DatabaseUtils.column(
 								SQLNames.STATUS, true)) + "\"; }");
-				iout.println("public " + entityInterface
+				iout.println("public "
+						+ entityInterface
 						+ " create() { return new "
-						+ names.fqnImpl(names.nameImpl(entity), context)
+						+ javaNames.fqnImpl(javaNames.nameImpl(entity), context)
 						+ "(); }");
 				iout.println("private static final String[] COLUMNS = {");
 				boolean first = true;
@@ -235,8 +239,8 @@ public class AndroidSQLiteCodeGenerator {
 					iiout.println("if (" + NullSafe.class.getName()
 							+ ".equals(_isSet.parse(index++, result), "
 							+ Boolean.class.getName() + ".TRUE)) {");
-					iiiout.println("entity.set" + javaNames.name(field) + "("
-							+ fieldName(field, names)
+					iiiout.println("entity.set" + baseNames.name(field) + "("
+							+ fieldName(field, baseNames)
 							+ ".parse(index++, result));");
 					iiout.println("} else { index++; }");
 				}
@@ -246,7 +250,7 @@ public class AndroidSQLiteCodeGenerator {
 							+ ".equals(_isSet.parse(index++, result), "
 							+ Boolean.class.getName() + ".TRUE)) {");
 
-					String relName = javaNames.nameOfDirect(rel, model);
+					String relName = baseNames.nameOfDirect(rel, model);
 					iiiout.println("entity.set" + relName
 							+ "(getIdsParser().parse(index++, result));");
 					iiiout.println("if (entity.get"
@@ -266,7 +270,7 @@ public class AndroidSQLiteCodeGenerator {
 						+ " entity, Void arg, " + ContentValues.class.getName()
 						+ " values) throws " + Exception.class.getName() + " {");
 				for (IField field : entity.items()) {
-					String name = javaNames.name(field);
+					String name = baseNames.name(field);
 					iiout.println("if (entity.isSet" + name + "()) {");
 					iiiout.println("_isSet.set(entity.isSet"
 							+ name
@@ -274,7 +278,7 @@ public class AndroidSQLiteCodeGenerator {
 							+ TextUtils.escapeJavaString(sqlNames.column(field,
 									false)) + "\", values);");
 					iiiout.println(""
-							+ fieldName(field, names)
+							+ fieldName(field, baseNames)
 							+ ".set(entity.get"
 							+ name
 							+ "(), \""
@@ -284,7 +288,7 @@ public class AndroidSQLiteCodeGenerator {
 				}
 				for (INormalizedManyToOneRelationship rel : entity
 						.relationships().items()) {
-					String name = javaNames.nameOfDirect(rel, model);
+					String name = baseNames.nameOfDirect(rel, model);
 					iiout.println("if (entity.isSet" + name + "()) {");
 					iiiout.println("_isSet.set(entity.isSet"
 							+ name
@@ -311,11 +315,12 @@ public class AndroidSQLiteCodeGenerator {
 
 	public void finder(final INormalizedModel model,
 			final AndroidSQLiteCodeGeneratorContext context) throws Exception {
-
-		final AndroidSQLiteNames names = context.getSQLiteNames();
+		final BaseNames baseNames = context.getBaseNames();
+		final JavaNames javaNames = context.getJavaNames();
+		final AndroidSQLiteNames asqlNames = context.getSQLiteNames();
 		final SQLNames sqlNames = context.getSQLNames();
-		final String clazz = names.finder(model, context);
-		final String pkg = names.packageForSQLite(context);
+		final String clazz = asqlNames.finder(model, context);
+		final String pkg = asqlNames.packageForSQLite(context);
 
 		FileUtils.java(context, pkg, clazz, new AbstractPrintable() {
 			@Override
@@ -328,7 +333,8 @@ public class AndroidSQLiteCodeGenerator {
 				out.println("public abstract class " + clazz + " extends "
 						+ AbstractAndroidSQLiteFinder.class.getName()
 						+ " implements "
-						+ names.fqnBase(names.finder(model), context) + " {");
+						+ javaNames.fqnBase(javaNames.finder(model), context)
+						+ " {");
 
 				// Setup finders in constructor
 				iout.println("public " + clazz + " () {");
@@ -336,8 +342,8 @@ public class AndroidSQLiteCodeGenerator {
 				for (INormalizedEntity ne : model.items()) {
 					for (INormalizedManyToOneRelationship rel : ne
 							.relationships().items()) {
-						String clazzOne = names.fqn(
-								names.nameInterface(model.get(rel.getTo())),
+						String clazzOne = javaNames.fqn(
+								javaNames.nameInterface(model.get(rel.getTo())),
 								context);
 						String name = TextUtils.escapeJavaString(rel
 								.getReverse().getName());
@@ -357,8 +363,9 @@ public class AndroidSQLiteCodeGenerator {
 
 				// Get the entities (individually or all)
 				for (INormalizedEntity ne : model.items()) {
-					String fqn = names.fqn(names.nameInterface(ne), context);
-					iout.println("public " + fqn + " get" + names.name(ne)
+					String fqn = javaNames.fqn(javaNames.nameInterface(ne),
+							context);
+					iout.println("public " + fqn + " get" + baseNames.name(ne)
 							+ "(" + IIdentifier.class.getName()
 							+ " id) throws Exception {");
 					iiout.println("return find(" + fqn + ".class, id);");
@@ -366,9 +373,10 @@ public class AndroidSQLiteCodeGenerator {
 				}
 
 				for (INormalizedEntity ne : model.items()) {
-					String fqn = names.fqn(names.nameInterface(ne), context);
+					String fqn = javaNames.fqn(javaNames.nameInterface(ne),
+							context);
 					iout.println("public " + Iterable.class.getName() + "<"
-							+ fqn + "> all" + names.name(ne)
+							+ fqn + "> all" + baseNames.name(ne)
 							+ "() throws Exception {");
 
 					iiout.println("return all(" + fqn + ".class);");
@@ -379,16 +387,16 @@ public class AndroidSQLiteCodeGenerator {
 				for (INormalizedEntity ne : model.items()) {
 					for (INormalizedManyToOneRelationship rel : ne
 							.relationships().items()) {
-						String clazzMany = names.nameInterface(ne);
-						String clazzOne = names.nameInterface(model.get(rel
+						String clazzMany = javaNames.nameInterface(ne);
+						String clazzOne = javaNames.nameInterface(model.get(rel
 								.getTo()));
 						String methodName = "findAll"
-								+ names.nameOfReverse(rel, model) + "From"
-								+ names.name(model.get(rel.getTo()));
+								+ baseNames.nameOfReverse(rel, model) + "From"
+								+ baseNames.name(model.get(rel.getTo()));
 						String leading = "public " + Iterable.class.getName()
-								+ "<" + names.fqn(clazzMany, context) + "> "
-								+ methodName + "(";
-						iout.println(leading + names.fqn(clazzOne, context)
+								+ "<" + javaNames.fqn(clazzMany, context)
+								+ "> " + methodName + "(";
+						iout.println(leading + javaNames.fqn(clazzOne, context)
 								+ " from) throws Exception {");
 						iiout.println(" return "
 								+ methodName
@@ -397,9 +405,9 @@ public class AndroidSQLiteCodeGenerator {
 						iout.println(leading + IIdentifier.class.getName()
 								+ " from) throws Exception {");
 						iiout.println("return find("
-								+ names.fqn(clazzMany, context)
+								+ javaNames.fqn(clazzMany, context)
 								+ ".class, "
-								+ names.fqn(clazzOne, context)
+								+ javaNames.fqn(clazzOne, context)
 								+ ".class, from, \""
 								+ TextUtils.escapeJavaString(rel.getReverse()
 										.getName()) + "\");");
@@ -418,9 +426,10 @@ public class AndroidSQLiteCodeGenerator {
 	public void context(final INormalizedModel model,
 			final AndroidSQLiteCodeGeneratorContext context) throws Exception {
 
-		final AndroidSQLiteNames names = context.getSQLiteNames();
-		final String clazz = names.context(model, context);
-		final String pkg = names.packageForSQLite(context);
+		final JavaNames names = context.getJavaNames();
+		final AndroidSQLiteNames anames = context.getSQLiteNames();
+		final String clazz = anames.context(model, context);
+		final String pkg = anames.packageForSQLite(context);
 
 		FileUtils.java(context, pkg, clazz, new AbstractPrintable() {
 			@Override
@@ -442,8 +451,8 @@ public class AndroidSQLiteCodeGenerator {
 						+ " createParsers() throws "
 						+ Exception.class.getName() + " {");
 				iiout.println("return new "
-						+ names.fqnSQLite(names.parserContext(model, context),
-								context)
+						+ anames.fqnSQLite(
+								anames.parserContext(model, context), context)
 						+ "(getIdentifierParser(), getStatusParser(), getTypes());");
 				iout.println("}");
 				out.println();
@@ -459,8 +468,8 @@ public class AndroidSQLiteCodeGenerator {
 						+ " createFinder() throws " + Exception.class.getName()
 						+ " {");
 				iiout.println("return new "
-						+ names.fqnSQLite(names.finder(model, context), context)
-						+ "() {");
+						+ anames.fqnSQLite(anames.finder(model, context),
+								context) + "() {");
 				iiiout.println("protected " + SQLiteDatabase.class.getName()
 						+ " getDatabase() throws " + Exception.class.getName()
 						+ " {");
@@ -505,9 +514,10 @@ public class AndroidSQLiteCodeGenerator {
 
 	public void parserContext(final INormalizedModel model,
 			final AndroidSQLiteCodeGeneratorContext context) throws Exception {
-		final AndroidSQLiteNames names = context.getSQLiteNames();
-		final String pkg = names.packageForSQLite(context);
-		final String clazz = names.parserContext(model, context);
+		final JavaNames names = context.getJavaNames();
+		final AndroidSQLiteNames anames = context.getSQLiteNames();
+		final String pkg = anames.packageForSQLite(context);
+		final String clazz = anames.parserContext(model, context);
 		FileUtils.java(context, pkg, clazz, new AbstractPrintable() {
 			@Override
 			protected void printWithException(PrintWriter out) throws Exception {
@@ -532,8 +542,8 @@ public class AndroidSQLiteCodeGenerator {
 					iiout.print("put(");
 					iiout.print(names.fqn(names.nameInterface(entity), context));
 					iiout.print(".class, new ");
-					iiout.print(names.fqnSQLiteParsers(
-							names.parserAndroidSQLite(entity), context));
+					iiout.print(anames.fqnSQLiteParsers(
+							anames.parserAndroidSQLite(entity), context));
 					iiout.println("(idsParser, statusParser, types));");
 				}
 				iout.println("}");

@@ -22,6 +22,7 @@ import com.th3l4b.srm.base.normalized.INormalizedModel;
 import com.th3l4b.srm.base.normalized.Normalizer;
 import com.th3l4b.srm.base.original.IModel;
 import com.th3l4b.srm.codegen.base.CodeGeneratorContext;
+import com.th3l4b.srm.codegen.base.names.BaseNames;
 import com.th3l4b.srm.parser.ParserUtils;
 import com.th3l4b.types.base.basicset.BasicSetTypesContext;
 
@@ -112,7 +113,8 @@ public abstract class SRMAbstractMojo extends AbstractMojo implements
 
 	public void execute() throws MojoExecutionException {
 		try {
-			CodeGeneratorContext context = new CodeGeneratorContext();
+			CodeGeneratorContext context = new CodeGeneratorContext(
+					new BaseNames());
 			context.setLog(new AbstractLog() {
 				@Override
 				public void log(IPrintable item, ILogLevel level)

@@ -10,6 +10,7 @@ import com.th3l4b.srm.base.normalized.INormalizedEntity;
 import com.th3l4b.srm.base.normalized.INormalizedManyToOneRelationship;
 import com.th3l4b.srm.base.normalized.INormalizedModel;
 import com.th3l4b.srm.codegen.base.FileUtils;
+import com.th3l4b.srm.codegen.base.names.BaseNames;
 import com.th3l4b.srm.codegen.java.basicruntime.AbstractModelUtils;
 import com.th3l4b.srm.codegen.java.basicruntime.inmemory.AbstractRuntimeEntity;
 import com.th3l4b.srm.runtime.IIdentifier;
@@ -21,6 +22,7 @@ public class JavaCodeGenerator {
 	public void entity(final INormalizedEntity entity,
 			final INormalizedModel model, final JavaCodeGeneratorContext context)
 			throws Exception {
+		final BaseNames baseNames = context.getBaseNames();
 		final JavaNames javaNames = context.getJavaNames();
 		final String clazz = javaNames.nameInterface(entity);
 		FileUtils.java(context, context.getPackage(), clazz,
@@ -40,7 +42,7 @@ public class JavaCodeGenerator {
 
 						// Fill attributes
 						for (IField field : entity.items()) {
-							String name = javaNames.name(field);
+							String name = baseNames.name(field);
 							String clazz = context.getTypes()
 									.get(field.getType()).getProperties()
 									.get(ITypesConstants.PROPERTY_JAVA_CLASS);
@@ -55,7 +57,7 @@ public class JavaCodeGenerator {
 						// Fill relationships
 						for (INormalizedManyToOneRelationship rel : entity
 								.relationships().items()) {
-							String name = javaNames.nameOfDirect(rel, model);
+							String name = baseNames.nameOfDirect(rel, model);
 							String getter = "get" + name;
 							String setter = "set" + name;
 							String clazz = javaNames.fqn(javaNames
@@ -97,6 +99,7 @@ public class JavaCodeGenerator {
 	public void entityImpl(final INormalizedEntity entity,
 			final INormalizedModel model, final JavaCodeGeneratorContext context)
 			throws Exception {
+		final BaseNames baseNames = context.getBaseNames();
 		final JavaNames names = context.getJavaNames();
 		final String clazz = names.nameImpl(entity);
 		final String iclazz = names.fqn(names.nameInterface(entity), context);
@@ -114,7 +117,7 @@ public class JavaCodeGenerator {
 
 				// Create attributes
 				for (IField field : entity.items()) {
-					String name = names.name(field);
+					String name = baseNames.name(field);
 					String clazz = context.getTypes().get(field.getType())
 							.getProperties()
 							.get(ITypesConstants.PROPERTY_JAVA_CLASS);
@@ -123,7 +126,7 @@ public class JavaCodeGenerator {
 				}
 				for (INormalizedManyToOneRelationship rel : entity
 						.relationships().items()) {
-					String name = names.nameOfDirect(rel, model);
+					String name = baseNames.nameOfDirect(rel, model);
 					String clazz = IIdentifier.class.getName();
 					iout.println("protected " + clazz + " _value_" + name + ";");
 					iout.println("protected boolean _isSet_" + name + ";");
@@ -132,7 +135,7 @@ public class JavaCodeGenerator {
 
 				// Implement accessors
 				for (IField field : entity.items()) {
-					String name = names.name(field);
+					String name = baseNames.name(field);
 					String clazz = context.getTypes().get(field.getType())
 							.getProperties()
 							.get(ITypesConstants.PROPERTY_JAVA_CLASS);
@@ -150,7 +153,7 @@ public class JavaCodeGenerator {
 				// Fill relationships
 				for (INormalizedManyToOneRelationship rel : entity
 						.relationships().items()) {
-					String name = names.nameOfDirect(rel, model);
+					String name = baseNames.nameOfDirect(rel, model);
 					String getter = "get" + name;
 					String setter = "set" + name;
 					String clazz = names.nameInterface(model.get(rel.getTo()));
@@ -164,7 +167,7 @@ public class JavaCodeGenerator {
 							+ " accessor) throws " + Exception.class.getName()
 							+ " { return _value_" + name
 							+ " != null ? accessor.get"
-							+ names.name(model.get(rel.getTo())) + "(_value_"
+							+ baseNames.name(model.get(rel.getTo())) + "(_value_"
 							+ name + ") : null; }");
 					iout.println("public void " + setter + " ("
 							+ IIdentifier.class.getName() + " arg) throws "
@@ -199,6 +202,7 @@ public class JavaCodeGenerator {
 
 	public void finder(final INormalizedModel model,
 			final JavaCodeGeneratorContext context) throws Exception {
+		final BaseNames baseNames = context.getBaseNames();
 		final JavaNames javaNames = context.getJavaNames();
 		final String clazz = javaNames.finder(model);
 		FileUtils.java(context, javaNames.packageForBase(context), clazz,
@@ -217,7 +221,7 @@ public class JavaCodeGenerator {
 							iout.println(javaNames.fqn(
 									javaNames.nameInterface(ne), context)
 									+ " get"
-									+ javaNames.name(ne)
+									+ baseNames.name(ne)
 									+ "("
 									+ IIdentifier.class.getName()
 									+ " id) throws Exception;");
@@ -229,7 +233,7 @@ public class JavaCodeGenerator {
 									+ javaNames.fqn(
 											javaNames.nameInterface(ne),
 											context) + "> all"
-									+ javaNames.name(ne)
+									+ baseNames.name(ne)
 									+ "() throws Exception;");
 						}
 
@@ -244,9 +248,9 @@ public class JavaCodeGenerator {
 										+ "<"
 										+ javaNames.fqn(clazzMany, context)
 										+ "> findAll"
-										+ javaNames.nameOfReverse(rel, model)
+										+ baseNames.nameOfReverse(rel, model)
 										+ "From"
-										+ javaNames.name(model.get(rel.getTo()))
+										+ baseNames.name(model.get(rel.getTo()))
 										+ "(";
 								iout.println(leading
 										+ javaNames.fqn(clazzOne, context)
@@ -266,6 +270,7 @@ public class JavaCodeGenerator {
 
 	public void modelUtils(final INormalizedModel model,
 			final JavaCodeGeneratorContext context) throws Exception {
+		final BaseNames baseNames = context.getBaseNames();
 		final JavaNames javaNames = context.getJavaNames();
 		final String clazz = javaNames.modelUtils(model);
 		final String pkg = javaNames.packageForBase(context);
@@ -300,12 +305,12 @@ public class JavaCodeGenerator {
 							+ " source, " + fqn + " target) throws Exception {");
 					ArrayList<String> attributes = new ArrayList<String>();
 					for (IField f : ne.items()) {
-						attributes.add(javaNames.name(f));
+						attributes.add(baseNames.name(f));
 					}
 
 					for (INormalizedManyToOneRelationship rel : ne
 							.relationships().items()) {
-						attributes.add(javaNames.nameOfDirect(rel, model));
+						attributes.add(baseNames.nameOfDirect(rel, model));
 
 					}
 					for (String attribute : attributes) {
@@ -326,7 +331,7 @@ public class JavaCodeGenerator {
 					// Clear relationships
 					for (INormalizedManyToOneRelationship rel : ne
 							.relationships().items()) {
-						String name = javaNames.nameOfDirect(rel, model);
+						String name = baseNames.nameOfDirect(rel, model);
 						iiiiout.println("obj.set" + name + "(("
 								+ IIdentifier.class.getName() + ") null);");
 						iiiiout.println("obj.reset" + name + "();");

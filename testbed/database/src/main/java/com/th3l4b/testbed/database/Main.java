@@ -17,6 +17,7 @@ import com.th3l4b.common.log.ConsoleLog;
 import com.th3l4b.srm.base.normalized.INormalizedModel;
 import com.th3l4b.srm.base.normalized.Normalizer;
 import com.th3l4b.srm.base.original.IModel;
+import com.th3l4b.srm.codegen.base.names.BaseNames;
 import com.th3l4b.srm.codegen.database.SQLCodeGenerator;
 import com.th3l4b.srm.codegen.database.SQLCodeGeneratorContext;
 import com.th3l4b.srm.database.BasicSetDatabaseTypesContext;
@@ -62,7 +63,8 @@ public class Main {
 					.get();
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw, true);
-			SQLCodeGeneratorContext context = new SQLCodeGeneratorContext();
+			SQLCodeGeneratorContext context = new SQLCodeGeneratorContext(
+					new BaseNames());
 			context.setLog(new ConsoleLog());
 			context.setDatabaseTypes(databaseTypes);
 			context.setTypes(BasicSetTypesContext.get());

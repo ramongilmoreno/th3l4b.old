@@ -17,6 +17,7 @@ import com.th3l4b.srm.base.normalized.INormalizedModel;
 import com.th3l4b.srm.base.original.IModel;
 import com.th3l4b.srm.codegen.base.CodeGeneratorContext;
 import com.th3l4b.srm.codegen.base.FileUtils;
+import com.th3l4b.srm.codegen.base.names.BaseNames;
 import com.th3l4b.srm.codegen.database.SQLCodeGenerator;
 import com.th3l4b.srm.codegen.database.SQLCodeGeneratorContext;
 import com.th3l4b.srm.codegen.java.basic.JavaCodeGenerator;
@@ -66,7 +67,9 @@ public class AllMojo extends SRMAbstractMojo {
 
 				});
 		// Produce code.
-		JavaCodeGeneratorContext javaContext = new JavaCodeGeneratorContext();
+		BaseNames baseNames = context.getBaseNames();
+		JavaCodeGeneratorContext javaContext = new JavaCodeGeneratorContext(
+				baseNames);
 		context.copyTo(javaContext);
 		javaContext.setOutput(new File(context.getOutput(), "java"));
 		javaContext.setPackage(getPackage());
@@ -90,7 +93,8 @@ public class AllMojo extends SRMAbstractMojo {
 
 		// In memory
 		JavaInMemoryCodeGenerator inMemoryCodegen = new JavaInMemoryCodeGenerator();
-		JavaInMemoryCodeGeneratorContext inMemoryContext = new JavaInMemoryCodeGeneratorContext();
+		JavaInMemoryCodeGeneratorContext inMemoryContext = new JavaInMemoryCodeGeneratorContext(
+				baseNames);
 		javaContext.copyTo(inMemoryContext);
 		startProduct("Abstract in memory finder", inMemoryContext);
 		inMemoryCodegen.finderInMemory(normalized, inMemoryContext);
@@ -101,7 +105,8 @@ public class AllMojo extends SRMAbstractMojo {
 
 		// JDBC
 		JDBCCodeGenerator jdbcCodegen = new JDBCCodeGenerator();
-		JDBCCodeGeneratorContext jdbcContext = new JDBCCodeGeneratorContext();
+		JDBCCodeGeneratorContext jdbcContext = new JDBCCodeGeneratorContext(
+				baseNames);
 		javaContext.copyTo(jdbcContext);
 		startProduct("Abstract JDBC finder", jdbcContext);
 		jdbcCodegen.finder(normalized, jdbcContext);
@@ -122,7 +127,8 @@ public class AllMojo extends SRMAbstractMojo {
 
 		// SQL code generator
 		SQLCodeGenerator sqlCodegen = new SQLCodeGenerator();
-		SQLCodeGeneratorContext sqlContext = new SQLCodeGeneratorContext();
+		SQLCodeGeneratorContext sqlContext = new SQLCodeGeneratorContext(
+				baseNames);
 		context.copyTo(sqlContext);
 		startProduct("SQL files", sqlContext);
 		sqlCodegen.sql(normalized, sqlContext);

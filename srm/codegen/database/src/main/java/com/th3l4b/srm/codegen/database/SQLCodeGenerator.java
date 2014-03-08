@@ -10,6 +10,7 @@ import com.th3l4b.srm.base.normalized.INormalizedEntity;
 import com.th3l4b.srm.base.normalized.INormalizedManyToOneRelationship;
 import com.th3l4b.srm.base.normalized.INormalizedModel;
 import com.th3l4b.srm.codegen.base.FileUtils;
+import com.th3l4b.srm.codegen.base.names.BaseNames;
 import com.th3l4b.srm.database.IDatabaseType;
 import com.th3l4b.srm.runtime.DatabaseUtils;
 import com.th3l4b.srm.runtime.IDatabaseConstants;
@@ -78,10 +79,11 @@ public class SQLCodeGenerator {
 
 	public void sql(final INormalizedModel model,
 			final SQLCodeGeneratorContext context) throws Exception {
+		final BaseNames baseNames = context.getBaseNames();
 		final SQLNames names = context.getSQLNames();
 		for (IDatabaseType d : context.getDatabaseTypes().items()) {
 			final IDatabaseType database = d;
-			String name = "sql/" + names.name(model) + "-"
+			String name = "sql/" + baseNames.name(model) + "-"
 					+ names.name(database) + ".sql";
 			FileUtils.overwriteIfOlder(context, name, new AbstractPrintable() {
 				@Override

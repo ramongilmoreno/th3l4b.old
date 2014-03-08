@@ -14,6 +14,7 @@ import com.th3l4b.srm.base.normalized.INormalizedEntity;
 import com.th3l4b.srm.base.normalized.INormalizedManyToOneRelationship;
 import com.th3l4b.srm.base.normalized.INormalizedModel;
 import com.th3l4b.srm.codegen.base.FileUtils;
+import com.th3l4b.srm.codegen.base.names.BaseNames;
 import com.th3l4b.srm.codegen.database.SQLNames;
 import com.th3l4b.srm.codegen.java.basic.JavaNames;
 import com.th3l4b.srm.codegen.java.jdbcruntime.AbstractJDBCEntityParser;
@@ -35,11 +36,12 @@ public class JDBCCodeGenerator {
 
 	public void finder(final INormalizedModel model,
 			final JDBCCodeGeneratorContext context) throws Exception {
-		final JDBCNames names = context.getJDBCNames();
+		final BaseNames baseNames = context.getBaseNames();
+		final JDBCNames jdbcNames = context.getJDBCNames();
 		final JavaNames javaNames = context.getJavaNames();
 		final SQLNames sqlNames = context.getSQLNames();
-		final String clazz = names.finderJDBC(model);
-		final String pkg = names.packageForJDBC(context);
+		final String clazz = jdbcNames.finderJDBC(model);
+		final String pkg = jdbcNames.packageForJDBC(context);
 		FileUtils.java(context, pkg, clazz, new AbstractPrintable() {
 			@Override
 			protected void printWithException(PrintWriter out) throws Exception {
@@ -49,14 +51,15 @@ public class JDBCCodeGenerator {
 				out.println();
 				out.println("public abstract class " + clazz + " extends "
 						+ AbstractJDBCFinder.class.getName() + " implements "
-						+ names.fqnBase(names.finder(model), context) + " {");
+						+ javaNames.fqnBase(javaNames.finder(model), context)
+						+ " {");
 
 				// Get the entities (individually or all)
 				for (INormalizedEntity ne : model.items()) {
 					String neClazz = javaNames.fqn(javaNames.nameInterface(ne),
 							context);
 					iout.println("public " + neClazz + " get"
-							+ javaNames.name(ne) + "("
+							+ baseNames.name(ne) + "("
 							+ IIdentifier.class.getName()
 							+ " id) throws Exception {");
 					iiout.println("return find(" + neClazz + ".class, id);");
@@ -67,7 +70,7 @@ public class JDBCCodeGenerator {
 					String neClazz = javaNames.fqn(javaNames.nameInterface(ne),
 							context);
 					iout.println("public " + Iterable.class.getName() + "<"
-							+ neClazz + "> all" + javaNames.name(ne)
+							+ neClazz + "> all" + baseNames.name(ne)
 							+ "() throws Exception {");
 					iiout.println("return all(" + neClazz + ".class);");
 					iout.println("}");
@@ -84,14 +87,14 @@ public class JDBCCodeGenerator {
 								context);
 						String leading = "public " + Iterable.class.getName()
 								+ "<" + clazzMany + "> findAll"
-								+ javaNames.nameOfReverse(rel, model) + "From"
-								+ javaNames.name(model.get(rel.getTo())) + "(";
+								+ baseNames.nameOfReverse(rel, model) + "From"
+								+ baseNames.name(model.get(rel.getTo())) + "(";
 						iout.println(leading + clazzOne
 								+ " from) throws Exception {");
 						iiout.println("return from != null ? findAll"
-								+ javaNames.nameOfReverse(rel, model)
+								+ baseNames.nameOfReverse(rel, model)
 								+ "From"
-								+ javaNames.name(model.get(rel.getTo()))
+								+ baseNames.name(model.get(rel.getTo()))
 								+ "(from.coordinates().getIdentifier()) : null;");
 						iout.println("}");
 						iout.println(leading + IIdentifier.class.getName()
@@ -109,13 +112,14 @@ public class JDBCCodeGenerator {
 		});
 	}
 
-	private String fieldName(IField f, JDBCNames names) throws Exception {
+	private String fieldName(IField f, BaseNames names) throws Exception {
 		return "_field_" + names.name(f);
 	}
 
 	public void entityParser(final INormalizedEntity entity,
 			final INormalizedModel model, final JDBCCodeGeneratorContext context)
 			throws Exception {
+		final BaseNames baseNames = context.getBaseNames();
 		final JDBCNames names = context.getJDBCNames();
 		final JavaNames javaNames = context.getJavaNames();
 		final SQLNames sqlNames = context.getSQLNames();
@@ -129,8 +133,8 @@ public class JDBCCodeGenerator {
 				PrintWriter iiiout = IndentedWriter.get(iiout);
 				out.println("package " + pkg + ";");
 				out.println();
-				String entityInterface = names.fqn(names.nameInterface(entity),
-						context);
+				String entityInterface = javaNames.fqn(
+						javaNames.nameInterface(entity), context);
 				out.println("public class " + clazz + " extends "
 						+ AbstractJDBCEntityParser.class.getName() + "<"
 						+ entityInterface + "> {");
@@ -144,7 +148,7 @@ public class JDBCCodeGenerator {
 							+ context.getTypes().get(field.getType())
 									.getProperties()
 									.get(ITypesConstants.PROPERTY_JAVA_CLASS)
-							+ "> " + fieldName(field, names) + ";");
+							+ "> " + fieldName(field, baseNames) + ";");
 				}
 				out.println();
 				iout.println("public " + clazz + "("
@@ -158,7 +162,7 @@ public class JDBCCodeGenerator {
 								.escapeJavaString(IDatabaseConstants.BOOLEAN_TYPE)
 						+ "\", " + Boolean.class.getName() + ".class);");
 				for (IField field : entity.items()) {
-					iiout.println(fieldName(field, names)
+					iiout.println(fieldName(field, baseNames)
 							+ " = types.get(\""
 							+ TextUtils.escapeJavaString(field.getType())
 							+ "\", "
@@ -189,9 +193,10 @@ public class JDBCCodeGenerator {
 						+ " { return \""
 						+ TextUtils.escapeJavaString(DatabaseUtils.column(
 								SQLNames.STATUS, true)) + "\"; }");
-				iout.println("public " + entityInterface
+				iout.println("public "
+						+ entityInterface
 						+ " create() { return new "
-						+ names.fqnImpl(names.nameImpl(entity), context)
+						+ javaNames.fqnImpl(javaNames.nameImpl(entity), context)
 						+ "(); }");
 				iout.println("private static final String[] COLUMNS = {");
 				boolean first = true;
@@ -239,8 +244,8 @@ public class JDBCCodeGenerator {
 					iiout.println("if (" + NullSafe.class.getName()
 							+ ".equals(_isSet.parse(index++, result), "
 							+ Boolean.class.getName() + ".TRUE)) {");
-					iiiout.println("entity.set" + javaNames.name(field) + "("
-							+ fieldName(field, names)
+					iiiout.println("entity.set" + baseNames.name(field) + "("
+							+ fieldName(field, baseNames)
 							+ ".parse(index++, result));");
 					iiout.println("} else {");
 					iiiout.println("index++;");
@@ -248,7 +253,7 @@ public class JDBCCodeGenerator {
 				}
 				for (INormalizedManyToOneRelationship rel : entity
 						.relationships().items()) {
-					String relName = javaNames.nameOfDirect(rel, model);
+					String relName = baseNames.nameOfDirect(rel, model);
 					iiout.println("if (" + NullSafe.class.getName()
 							+ ".equals(_isSet.parse(index++, result), "
 							+ Boolean.class.getName() + ".TRUE)) {");
@@ -274,17 +279,17 @@ public class JDBCCodeGenerator {
 						+ " statement) throws " + Exception.class.getName()
 						+ " {");
 				for (IField field : entity.items()) {
-					String name = javaNames.name(field);
+					String name = baseNames.name(field);
 					iiout.println("_isSet.set(" + Boolean.class.getName()
 							+ ".valueOf(entity.isSet" + name
 							+ "()), index++, statement);");
-					iiout.println("" + fieldName(field, names)
+					iiout.println("" + fieldName(field, baseNames)
 							+ ".set(entity.get" + name
 							+ "(), index++, statement);");
 				}
 				for (INormalizedManyToOneRelationship rel : entity
 						.relationships().items()) {
-					String name = javaNames.nameOfDirect(rel, model);
+					String name = baseNames.nameOfDirect(rel, model);
 					iiout.println("_isSet.set(" + Boolean.class.getName()
 							+ ".valueOf(entity.isSet" + name
 							+ "()), index++, statement);");
@@ -304,6 +309,7 @@ public class JDBCCodeGenerator {
 
 	public void parsers(final INormalizedModel model,
 			final JDBCCodeGeneratorContext context) throws Exception {
+		final JavaNames javaNames = context.getJavaNames();
 		final JDBCNames names = context.getJDBCNames();
 		final String clazz = names.parsersJDBC(model);
 		final String pkg = names.packageForJDBC(context);
@@ -326,7 +332,8 @@ public class JDBCCodeGenerator {
 						+ " types) throws " + Exception.class.getName() + " {");
 				for (INormalizedEntity entity : model.items()) {
 					iiout.print("put(");
-					iiout.print(names.fqn(names.nameInterface(entity), context));
+					iiout.print(javaNames.fqn(javaNames.nameInterface(entity),
+							context));
 					iiout.print(".class, new ");
 					iiout.print(names.fqnJDBCParsers(names.parserJDBC(entity),
 							context));
@@ -342,6 +349,7 @@ public class JDBCCodeGenerator {
 
 	public void context(final INormalizedModel model,
 			final JDBCCodeGeneratorContext context) throws Exception {
+		final JavaNames javaNames = context.getJavaNames();
 		final JDBCNames names = context.getJDBCNames();
 		final String clazz = names.abstractJDBCContext(model);
 		final String pkg = names.packageForJDBC(context);
@@ -350,11 +358,13 @@ public class JDBCCodeGenerator {
 			protected void printWithException(PrintWriter out) throws Exception {
 				out.println("package " + pkg + ";");
 				out.println();
-				String finderClass = names.fqnBase(names.finder(model), context);
+				String finderClass = javaNames.fqnBase(javaNames.finder(model),
+						context);
 				out.println("public abstract class " + clazz + " extends "
 						+ AbstractJDBCSRMContext.class.getName() + "<"
 						+ finderClass + "> implements "
-						+ names.fqnBase(names.context(model), context) + " {");
+						+ javaNames.fqnBase(javaNames.context(model), context)
+						+ " {");
 				PrintWriter iout = IndentedWriter.get(out);
 				PrintWriter iiout = IndentedWriter.get(iout);
 				PrintWriter iiiout = IndentedWriter.get(iiout);
@@ -364,8 +374,8 @@ public class JDBCCodeGenerator {
 						+ " createUtils() throws " + Exception.class.getName()
 						+ " {");
 				iiout.println("return new "
-						+ names.fqnBase(names.modelUtils(model), context)
-						+ "();");
+						+ javaNames.fqnBase(javaNames.modelUtils(model),
+								context) + "();");
 				iout.println("}");
 				out.println();
 

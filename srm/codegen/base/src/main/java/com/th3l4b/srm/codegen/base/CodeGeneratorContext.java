@@ -4,6 +4,7 @@ import java.io.File;
 
 import com.th3l4b.common.data.ICopyable;
 import com.th3l4b.common.log.ILogger;
+import com.th3l4b.srm.codegen.base.names.BaseNames;
 import com.th3l4b.types.base.ITypesContext;
 
 public class CodeGeneratorContext implements ICopyable<CodeGeneratorContext> {
@@ -17,6 +18,20 @@ public class CodeGeneratorContext implements ICopyable<CodeGeneratorContext> {
 	private boolean _overwrite;
 	
 	private ITypesContext _types;
+	
+	private BaseNames _baseNames;
+	
+	public CodeGeneratorContext (BaseNames baseNames) {
+		_baseNames = baseNames;
+	}
+	
+	public BaseNames getBaseNames() {
+		return _baseNames;
+	}
+	
+	public void setBaseNames(BaseNames baseNames) {
+		_baseNames = baseNames;
+	}
 
 	public long getTimestamp() {
 		return _timestamp;
@@ -60,6 +75,7 @@ public class CodeGeneratorContext implements ICopyable<CodeGeneratorContext> {
 
 	@Override
 	public void copyTo(CodeGeneratorContext to) throws Exception {
+		to.setBaseNames(getBaseNames());
 		to.setTimestamp(getTimestamp());
 		to.setLog(getLog());
 		to.setOutput(getOutput());

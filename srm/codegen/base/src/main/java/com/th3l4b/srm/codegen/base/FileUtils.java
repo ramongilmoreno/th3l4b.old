@@ -67,7 +67,8 @@ public class FileUtils {
 
 	public static boolean java(CodeGeneratorContext context, String pkg,
 			String className, IPrintable printable) throws Exception {
-		CodeGeneratorContext nc = new CodeGeneratorContext();
+		CodeGeneratorContext nc = new CodeGeneratorContext(
+				context.getBaseNames());
 		context.copyTo(nc);
 		nc.setOutput(new File(context.getOutput(), asDirectories(pkg)));
 		return overwriteIfOlder(nc, className + ".java", printable);
