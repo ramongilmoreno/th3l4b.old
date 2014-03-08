@@ -9,4 +9,7 @@ public interface IEntityA extends IRuntimeEntity<IEntityA> {
 	IEntityB getEntityB (ITestFinder finder) throws Exception;
 	void setEntityB (IIdentifier identifier) throws Exception;
 	void setEntityB(IEntityB value) throws Exception;
+	String getStringAttribute () throws Exception;
+	boolean isSetStringAttribute () throws Exception;
+	void setStringAttribute (String value) throws Exception;
 }

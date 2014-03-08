@@ -12,6 +12,10 @@ public class DefaultEntityA extends AbstractRuntimeEntity<IEntityA> implements
 	protected boolean _isSet_EntityB;
 	protected IIdentifier _EntityB;
 
+	protected boolean _isSet_StringAttribute;
+	protected String _stringAttribute;
+
+	
 	@Override
 	public Class<IEntityA> clazz() {
 		return IEntityA.class;
@@ -44,5 +48,23 @@ public class DefaultEntityA extends AbstractRuntimeEntity<IEntityA> implements
 		IIdentifier id =  value == null ? null : value.coordinates().getIdentifier();
 		setEntityB(id);
 	}
+
+	@Override
+	public String getStringAttribute() throws Exception {
+		return _stringAttribute;
+	}
+
+	@Override
+	public boolean isSetStringAttribute() throws Exception {
+		return _isSet_StringAttribute;
+	}
+
+	@Override
+	public void setStringAttribute(String value) throws Exception {
+		_isSet_StringAttribute = true;
+		_stringAttribute = value;
+	}
+	
+	
 
 }
