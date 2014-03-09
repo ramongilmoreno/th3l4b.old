@@ -29,24 +29,27 @@ public class SampleEntityAToMapEntityParser extends
 	}
 
 	@Override
-	protected void parseRest(IEntityA entity, Map<String, String> result)
+	protected void parseRest(IEntityA entity, Map<String, String> map)
 			throws Exception {
-		if (getIdentifierParser().hasValue("EntityB", result)) {
-			entity.setEntityB(getIdentifierParser().parse("EntityB", result));
+		if (getIdentifierParser().hasValue("EntityB", map)) {
+			entity.setEntityB(getIdentifierParser().parse("EntityB", map));
 		}
-		if (result.containsKey("StringAttribute")) {
-			entity.setStringAttribute(_field_StringAttribute.fromString("StringAttribute"));
+		if (map.containsKey("StringAttribute")) {
+			entity.setStringAttribute(_field_StringAttribute.fromString(map
+					.get("StringAttribute")));
 		}
 	}
 
 	@Override
-	protected void setRest(IEntityA value, Map<String, String> statement)
+	protected void setRest(IEntityA value, Map<String, String> map)
 			throws Exception {
 		if (value.isSetEntityB()) {
-			getIdentifierParser().set(value.getEntityB(), "EntityB", statement);
+			getIdentifierParser().set(value.getEntityB(), "EntityB", map);
 		}
 		if (value.isSetStringAttribute()) {
-			statement.put("StringAttribute", _field_StringAttribute.toString(value.getStringAttribute()));
+			map
+					.put("StringAttribute", _field_StringAttribute
+							.toString(value.getStringAttribute()));
 		}
 	}
 

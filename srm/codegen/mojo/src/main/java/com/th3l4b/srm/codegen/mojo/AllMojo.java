@@ -24,6 +24,8 @@ import com.th3l4b.srm.codegen.java.basic.JavaCodeGenerator;
 import com.th3l4b.srm.codegen.java.basic.JavaCodeGeneratorContext;
 import com.th3l4b.srm.codegen.java.basic.inmemory.JavaInMemoryCodeGenerator;
 import com.th3l4b.srm.codegen.java.basic.inmemory.JavaInMemoryCodeGeneratorContext;
+import com.th3l4b.srm.codegen.java.basic.tomap.ToMapCodeGenerator;
+import com.th3l4b.srm.codegen.java.basic.tomap.ToMapCodeGeneratorContext;
 import com.th3l4b.srm.codegen.java.jdbc.JDBCCodeGenerator;
 import com.th3l4b.srm.codegen.java.jdbc.JDBCCodeGeneratorContext;
 
@@ -91,6 +93,24 @@ public class AllMojo extends SRMAbstractMojo {
 		javaCodegen.context(normalized, javaContext);
 		endProduct(javaContext);
 
+		// ToMap
+		ToMapCodeGenerator toMapCodegen = new ToMapCodeGenerator();
+		ToMapCodeGeneratorContext toMapContext = new ToMapCodeGeneratorContext(baseNames);
+		javaContext.copyTo(toMapContext);
+		startProduct("Abstract to map context", toMapContext);
+		toMapCodegen.toMapParserContext(normalized, toMapContext);
+		endProduct(toMapContext);
+		startProduct("To map entities parsers", toMapContext);
+		toMapCodegen.toMapParserContext(normalized, toMapContext);
+		endProduct(toMapContext);
+		for (INormalizedEntity entity : normalized.items()) {
+			startProduct("To map parser for entity: " + entity.getName(),
+					toMapContext);
+			toMapCodegen.entityParser(entity, normalized, toMapContext);
+			endProduct(toMapContext);
+
+		}
+		
 		// In memory
 		JavaInMemoryCodeGenerator inMemoryCodegen = new JavaInMemoryCodeGenerator();
 		JavaInMemoryCodeGeneratorContext inMemoryContext = new JavaInMemoryCodeGeneratorContext(

@@ -50,8 +50,8 @@ public class JDBCNames {
 				+ "JDBCContext";
 	}
 
-	public String parsersJDBC(INormalizedModel model) throws Exception {
-		return _baseNames.identifier(model.getName()) + "JDBCParsers";
+	public String parserContext(INormalizedModel model) throws Exception {
+		return _baseNames.identifier(model.getName()) + "JDBCParserContext";
 	}
 
 }

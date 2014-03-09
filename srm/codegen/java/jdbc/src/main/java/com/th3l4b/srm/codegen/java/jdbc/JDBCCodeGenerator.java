@@ -60,8 +60,8 @@ public class JDBCCodeGenerator {
 							context);
 					iout.println("public " + neClazz + " get"
 							+ baseNames.name(ne) + "("
-							+ IIdentifier.class.getName()
-							+ " id) throws Exception {");
+							+ IIdentifier.class.getName() + " id) throws "
+							+ Exception.class.getName() + " {");
 					iiout.println("return find(" + neClazz + ".class, id);");
 					iout.println("}");
 				}
@@ -71,7 +71,7 @@ public class JDBCCodeGenerator {
 							context);
 					iout.println("public " + Iterable.class.getName() + "<"
 							+ neClazz + "> all" + baseNames.name(ne)
-							+ "() throws Exception {");
+							+ "() throws " + Exception.class.getName() + " {");
 					iiout.println("return all(" + neClazz + ".class);");
 					iout.println("}");
 				}
@@ -89,8 +89,8 @@ public class JDBCCodeGenerator {
 								+ "<" + clazzMany + "> findAll"
 								+ baseNames.nameOfReverse(rel, model) + "From"
 								+ baseNames.name(model.get(rel.getTo())) + "(";
-						iout.println(leading + clazzOne
-								+ " from) throws Exception {");
+						iout.println(leading + clazzOne + " from) throws "
+								+ Exception.class.getName() + " {");
 						iiout.println("return from != null ? findAll"
 								+ baseNames.nameOfReverse(rel, model)
 								+ "From"
@@ -98,7 +98,8 @@ public class JDBCCodeGenerator {
 								+ "(from.coordinates().getIdentifier()) : null;");
 						iout.println("}");
 						iout.println(leading + IIdentifier.class.getName()
-								+ " from) throws Exception {");
+								+ " from) throws " + Exception.class.getName()
+								+ " {");
 						iiout.println("return find(" + clazzMany
 								+ ".class, from, \""
 								+ sqlNames.column(rel, true, model) + "\");");
@@ -311,7 +312,7 @@ public class JDBCCodeGenerator {
 			final JDBCCodeGeneratorContext context) throws Exception {
 		final JavaNames javaNames = context.getJavaNames();
 		final JDBCNames names = context.getJDBCNames();
-		final String clazz = names.parsersJDBC(model);
+		final String clazz = names.parserContext(model);
 		final String pkg = names.packageForJDBC(context);
 		FileUtils.java(context, pkg, clazz, new AbstractPrintable() {
 			@Override
@@ -383,7 +384,7 @@ public class JDBCCodeGenerator {
 						+ IJDBCEntityParserContext.class.getName()
 						+ " createParsers() throws Exception {");
 				iiout.println("return new "
-						+ names.fqnJDBC(names.parsersJDBC(model), context)
+						+ names.fqnJDBC(names.parserContext(model), context)
 						+ "(getIdentifierParser(), getStatusParser(), getTypes());");
 				iout.println("}");
 				out.println();

@@ -37,7 +37,7 @@ public class JavaNames {
 	}
 
 	public String nameImpl(INormalizedEntity entity) throws Exception {
-		return "Default" + _baseNames.identifier(entity.getName()) + entity;
+		return "Default" + _baseNames.identifier(entity.getName());
 	}
 
 	public String finder(INormalizedModel model) throws Exception {
