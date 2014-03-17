@@ -1,7 +1,5 @@
-package com.th3l4b.srm.codegen.base.names;
+package com.th3l4b.common.text;
 
-import com.th3l4b.common.text.StringPrintWriter;
-import com.th3l4b.common.text.TextUtils;
 
 public class CamelUtils {
 
@@ -15,6 +13,10 @@ public class CamelUtils {
 		for (Integer i : TextUtils.unicodeIterable(src)) {
 			int c = i.intValue();
 			if (uppercasePending) {
+				// Skip leading spaces
+				if (Character.isWhitespace(c)) {
+					continue;
+				}
 				uppercasePending = false;
 				TextUtils.print(Character.toUpperCase(c), sw);
 			} else {

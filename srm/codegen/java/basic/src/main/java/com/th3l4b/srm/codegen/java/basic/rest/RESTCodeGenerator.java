@@ -55,11 +55,10 @@ public class RESTCodeGenerator {
 					iiiout.println("public " + Iterable.class.getName() + "<"
 							+ itf + "> all (" + finder + " finder) throws "
 							+ Exception.class.getName() + " {");
-					iiiiout.println("return finder.all"
-							+ baseNames.name(entity) + "();");
+					String name = baseNames.name(entity);
+					iiiiout.println("return finder.all" + name + "();");
 					iiiout.println("}");
-					iiout.println("}, \""
-							+ TextUtils.escapeJavaString(entity.getName())
+					iiout.println("}, \"" + TextUtils.escapeJavaString(name)
 							+ "\");");
 				}
 
@@ -75,13 +74,14 @@ public class RESTCodeGenerator {
 							+ String.class.getName() + " id, " + finder
 							+ " finder) throws " + Exception.class.getName()
 							+ " {");
+					String name = baseNames.name(entity);
 					iiiiout.println("return finder.get"
-							+ baseNames.name(entity) + "(new "
+							+ name + "(new "
 							+ DefaultIdentifier.class.getName() + "(" + itf
 							+ ".class, id));");
 					iiiout.println("}");
 					iiout.println("}, \""
-							+ TextUtils.escapeJavaString(entity.getName())
+							+ TextUtils.escapeJavaString(name)
 							+ "\");");
 				}
 
@@ -100,11 +100,13 @@ public class RESTCodeGenerator {
 								+ String.class.getName() + " id, " + finder
 								+ " finder) throws "
 								+ Exception.class.getName() + " {");
-						String reverseRelationshipName = baseNames.nameOfReverse(rel, model);
+						String reverseRelationshipName = baseNames
+								.nameOfReverse(rel, model);
+						String name = baseNames.name(model.get(rel.getTo()));
 						iiiiout.println("return finder.findAll"
 								+ reverseRelationshipName
 								+ "From"
-								+ baseNames.name(model.get(rel.getTo()))
+								+ name
 								+ "(new "
 								+ DefaultIdentifier.class.getName()
 								+ "("
@@ -113,9 +115,10 @@ public class RESTCodeGenerator {
 								+ ".class, id));");
 						iiiout.println("}");
 						iiout.println("}, \""
-								+ TextUtils.escapeJavaString(rel.getTo())
+								+ TextUtils.escapeJavaString(name)
 								+ "\", \""
-								+ TextUtils.escapeJavaString(reverseRelationshipName)
+								+ TextUtils
+										.escapeJavaString(reverseRelationshipName)
 								+ "\");");
 					}
 				}

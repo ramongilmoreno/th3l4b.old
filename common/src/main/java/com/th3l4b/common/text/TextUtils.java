@@ -12,10 +12,10 @@ import java.util.NoSuchElementException;
 
 public class TextUtils {
 
-	public static boolean empty (String s) {
+	public static boolean empty(String s) {
 		return s == null || s.length() == 0;
 	}
-	
+
 	public static Iterable<Integer> unicodeIterable(String input) {
 		return unicodeIterable(new StringReader(input));
 	}
@@ -152,8 +152,18 @@ public class TextUtils {
 				"[^\\p{ASCII}]", "");
 	}
 
+	/**
+	 * Computes a C identifier by limiting the characters to letters and
+	 * numbers. If resulting identifier starts with a number (invalid as per C
+	 * specification), the XX prefix is added.
+	 */
 	public static String cIdentifier(String input) {
-		return ASCII(input).replaceAll("[^A-Za-z0-9]", "");
+		String r = ASCII(input).replaceAll("[^A-Za-z0-9]", " ");
+		r = CamelUtils.toCamelCase(r);
+		if (r.matches("\\d.*")) {
+			r = "XX" + r;
+		}
+		return r;
 	}
 
 	public static String toString(IPrintable printable) {

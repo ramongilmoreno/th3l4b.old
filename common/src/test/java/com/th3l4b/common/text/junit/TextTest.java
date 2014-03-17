@@ -40,4 +40,13 @@ public class TextTest {
 		String result = "\\uD834\\uDD1E".toLowerCase();
 		Assert.assertEquals(result, TextUtils.escapeJavaString(GCLEF));
 	}
+
+	@Test
+	public void testCIdentifier() throws Exception {
+		String[] tests = { "A", "A", "a", "A", "a a", "AA", "0", "XX0", "a0",
+				"A0", "a b_c", "ABC", "@1@a@b", "XX1AB" };
+		for (int i = 0; i < tests.length; i += 2) {
+			Assert.assertEquals(tests[i + 1], TextUtils.cIdentifier(tests[i]));
+		}
+	}
 }

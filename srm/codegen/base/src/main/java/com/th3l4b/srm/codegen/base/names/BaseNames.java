@@ -35,9 +35,11 @@ public class BaseNames {
 
 	/**
 	 * Creates an identifier out of the given input name (C style).
+	 * 
+	 * @see TextUtils#cIdentifier(String)
 	 */
 	public String identifier(String name) {
-		return TextUtils.cIdentifier(CamelUtils.toCamelCase(name));
+		return TextUtils.cIdentifier(name);
 	}
 
 	public String name(INormalizedEntity entity) throws Exception {
