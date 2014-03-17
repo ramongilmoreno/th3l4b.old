@@ -13,6 +13,7 @@ import com.th3l4b.srm.codegen.base.FileUtils;
 import com.th3l4b.srm.codegen.base.names.BaseNames;
 import com.th3l4b.srm.codegen.java.basicruntime.AbstractModelUtils;
 import com.th3l4b.srm.codegen.java.basicruntime.inmemory.AbstractRuntimeEntity;
+import com.th3l4b.srm.runtime.IFinder;
 import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
 import com.th3l4b.srm.runtime.ISRMContext;
@@ -167,8 +168,8 @@ public class JavaCodeGenerator {
 							+ " accessor) throws " + Exception.class.getName()
 							+ " { return _value_" + name
 							+ " != null ? accessor.get"
-							+ baseNames.name(model.get(rel.getTo())) + "(_value_"
-							+ name + ") : null; }");
+							+ baseNames.name(model.get(rel.getTo()))
+							+ "(_value_" + name + ") : null; }");
 					iout.println("public void " + setter + " ("
 							+ IIdentifier.class.getName() + " arg) throws "
 							+ Exception.class.getName() + " { _isSet_" + name
@@ -214,8 +215,8 @@ public class JavaCodeGenerator {
 						out.println("package "
 								+ javaNames.packageForBase(context) + ";");
 						out.println();
-						out.println("public interface " + clazz + " {");
-
+						out.println("public interface " + clazz + " extends "
+								+ IFinder.class.getName() + "{");
 						// Get the entities (individually or all)
 						for (INormalizedEntity ne : model.items()) {
 							iout.println(javaNames.fqn(

@@ -24,6 +24,8 @@ import com.th3l4b.srm.codegen.java.basic.JavaCodeGenerator;
 import com.th3l4b.srm.codegen.java.basic.JavaCodeGeneratorContext;
 import com.th3l4b.srm.codegen.java.basic.inmemory.JavaInMemoryCodeGenerator;
 import com.th3l4b.srm.codegen.java.basic.inmemory.JavaInMemoryCodeGeneratorContext;
+import com.th3l4b.srm.codegen.java.basic.rest.RESTCodeGenerator;
+import com.th3l4b.srm.codegen.java.basic.rest.RESTCodeGeneratorContext;
 import com.th3l4b.srm.codegen.java.basic.tomap.ToMapCodeGenerator;
 import com.th3l4b.srm.codegen.java.basic.tomap.ToMapCodeGeneratorContext;
 import com.th3l4b.srm.codegen.java.jdbc.JDBCCodeGenerator;
@@ -108,8 +110,15 @@ public class AllMojo extends SRMAbstractMojo {
 					toMapContext);
 			toMapCodegen.entityParser(entity, normalized, toMapContext);
 			endProduct(toMapContext);
-
 		}
+		
+		// REST
+		RESTCodeGenerator restCodegen = new RESTCodeGenerator();
+		RESTCodeGeneratorContext restContext = new RESTCodeGeneratorContext(baseNames);
+		javaContext.copyTo(restContext);
+		startProduct("REST finder", restContext);
+		restCodegen.finder(normalized, restContext);
+		endProduct(restContext);
 		
 		// In memory
 		JavaInMemoryCodeGenerator inMemoryCodegen = new JavaInMemoryCodeGenerator();

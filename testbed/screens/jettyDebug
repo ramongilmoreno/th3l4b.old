@@ -1,0 +1,3 @@
+#!/bin/bash
+# http://stackoverflow.com/questions/15022451/debug-with-jetty-server-remote-server
+mvnDebug org.mortbay.jetty:jetty-maven-plugin:run-exploded

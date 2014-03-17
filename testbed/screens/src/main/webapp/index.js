@@ -12,7 +12,7 @@ $().ready(function() {
 	], function(types, screens, renderer, tree, tree_test, treeTrack_test) {
 		tree_test();
 		treeTrack_test();
-		screens.createContext(document, document.getElementById("root"), "DesktopScreensServlet", renderer);
+		screens.createContext(document, document.getElementById("root"), "ShoppingScreensServlet", renderer);
 		//$("#root").html("Changed text");
 	});
 });

@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.th3l4b.common.text.IPrintable;
 import com.th3l4b.common.text.TextUtils;
-import com.th3l4b.srm.codegen.java.restruntime.access.IRESTFinder;
+import com.th3l4b.srm.codegen.java.basicruntime.rest.IRESTFinder;
 import com.th3l4b.srm.runtime.IFinder;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
 import com.th3l4b.srm.runtime.ISRMContext;
@@ -22,15 +22,15 @@ import com.th3l4b.srm.runtime.IToMapEntityParserContext;
 public abstract class AbstractRESTServlet<CONTEXT extends ISRMContext<FINDER>, FINDER extends IFinder>
 		extends HttpServlet {
 
-	private IRESTFinder _finder;
+	private IRESTFinder<FINDER> _finder;
 	private IToMapEntityParserContext _tomap;
 
 	protected abstract CONTEXT getContext(IRESTRequest request)
 			throws Exception;
 
-	protected abstract IRESTFinder createRESTFinder() throws Exception;
+	protected abstract IRESTFinder<FINDER> createRESTFinder() throws Exception;
 
-	protected IRESTFinder getRESTFinder() throws Exception {
+	protected IRESTFinder<FINDER> getRESTFinder() throws Exception {
 		if (_finder == null) {
 			_finder = createRESTFinder();
 		}
@@ -55,7 +55,10 @@ public abstract class AbstractRESTServlet<CONTEXT extends ISRMContext<FINDER>, F
 		if (pathInfo == null) {
 			return new String[0];
 		} else {
-			return pathInfo.split("/");
+			String[] split = pathInfo.split("/");
+			String[] r = new String[split.length - 1];
+			System.arraycopy(split, 1, r, 0, split.length - 1);
+			return r;
 		}
 	}
 
@@ -79,12 +82,18 @@ public abstract class AbstractRESTServlet<CONTEXT extends ISRMContext<FINDER>, F
 			}
 			sb.append('\"');
 			sb.append(TextUtils.escapeJavaString(attribute.getKey()));
-			sb.append("\", \"");
+			sb.append("\": \"");
 			sb.append(TextUtils.escapeJavaString(attribute.getValue()));
 			sb.append('\"');
 		}
 		sb.append(" }");
-		return TextUtils.toPrintable(sb.toString());
+		// Return a printable that does not add a line feed at the end.
+		return new IPrintable() {
+			@Override
+			public void print(PrintWriter out) {
+				out.print(sb.toString());
+			}
+		};
 	}
 
 	@SuppressWarnings("unchecked")
@@ -92,7 +101,7 @@ public abstract class AbstractRESTServlet<CONTEXT extends ISRMContext<FINDER>, F
 			Class<T> clazz, IRESTRequest request) throws Exception {
 		IToMapEntityParser<T> parser = getToMapEntityParserContext().getParser(
 				clazz);
-		Map<String, String> map = request.getStringMap();
+		Map<String, String> map = request.getProperties();
 		map.clear();
 		parser.set((T) one, null, map);
 		IPrintable printable = printable(map);
@@ -100,20 +109,22 @@ public abstract class AbstractRESTServlet<CONTEXT extends ISRMContext<FINDER>, F
 		return printable;
 	}
 
-	protected void serialize(Iterable<IRuntimeEntity<?>> many,
+	protected void serialize(Iterable<? extends IRuntimeEntity<?>> many,
 			IRESTRequest request) throws Exception {
 		PrintWriter out = request.getOut();
 		out.print("[ ");
 		boolean first = true;
 		for (IRuntimeEntity<?> entity : many) {
 			if (first) {
+				out.println();
 				first = false;
 			} else {
 				out.println(", ");
 			}
 			printable(entity, entity.clazz(), request).print(out);
 		}
-		out.print(" ]");
+		out.println();
+		out.print("]");
 	}
 
 	@Override
@@ -121,24 +132,25 @@ public abstract class AbstractRESTServlet<CONTEXT extends ISRMContext<FINDER>, F
 			throws ServletException, IOException {
 		try {
 			IRESTRequest request = new DefaultRESTRequest(req, resp);
-
+			CONTEXT context = getContext(request);
 			String[] coordinates = split(request);
 			IRuntimeEntity<?> one = null;
 			boolean isOne = false;
-			Iterable<IRuntimeEntity<?>> many = null;
+			Iterable<? extends IRuntimeEntity<?>> many = null;
 			boolean isMany = false;
 			switch (coordinates.length) {
 			case 1:
-				many = getRESTFinder().get(coordinates[0]);
+				many = getRESTFinder().all(coordinates[0], context.getFinder());
 				isMany = true;
 				break;
 			case 2:
-				one = getRESTFinder().get(coordinates[0], coordinates[1]);
+				one = getRESTFinder().get(coordinates[0], coordinates[1],
+						context.getFinder());
 				isOne = true;
 				break;
 			case 3:
 				many = getRESTFinder().get(coordinates[0], coordinates[1],
-						coordinates[2]);
+						coordinates[2], context.getFinder());
 				isMany = true;
 				break;
 			default:
@@ -162,6 +174,5 @@ public abstract class AbstractRESTServlet<CONTEXT extends ISRMContext<FINDER>, F
 		} catch (Exception e) {
 			throw new ServletException(e);
 		}
-
 	}
 }

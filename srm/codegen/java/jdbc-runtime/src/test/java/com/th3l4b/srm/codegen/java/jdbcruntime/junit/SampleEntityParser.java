@@ -1,7 +1,13 @@
-package com.th3l4b.srm.codegen.java.jdbcruntime;
+package com.th3l4b.srm.codegen.java.jdbcruntime.junit;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+
+import com.th3l4b.srm.codegen.java.jdbcruntime.AbstractJDBCEntityParser;
+import com.th3l4b.srm.codegen.java.jdbcruntime.IJDBCIdentifierParser;
+import com.th3l4b.srm.codegen.java.jdbcruntime.IJDBCRuntimeType;
+import com.th3l4b.srm.codegen.java.jdbcruntime.IJDBCRuntimeTypesContext;
+import com.th3l4b.srm.codegen.java.jdbcruntime.IJDBCStatusParser;
 
 public class SampleEntityParser extends AbstractJDBCEntityParser<ISampleEntity> {
 

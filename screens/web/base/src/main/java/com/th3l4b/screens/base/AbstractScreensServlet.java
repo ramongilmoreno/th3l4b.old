@@ -52,7 +52,8 @@ public abstract class AbstractScreensServlet extends HttpServlet {
 	protected void service(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		try {
-			IWebScreensClientDescriptor client = new DefaultWebScreensClientDescriptor();
+			IWebScreensClientDescriptor client = new DefaultWebScreensClientDescriptor(
+					request);
 			ArrayList<Locale> locales = new ArrayList<Locale>();
 			Enumeration<Locale> e = request.getLocales();
 			while (e.hasMoreElements()) {
@@ -63,7 +64,6 @@ public abstract class AbstractScreensServlet extends HttpServlet {
 			languages.add(IScreensConstants.INTERACTION_JAVA);
 			languages.add(IScreensConstants.INTERACTION_JAVASCRIPT);
 			client.setLanguages(languages);
-			client.setRequest(request);
 
 			IScreensConfiguration context = getConfiguration(client);
 

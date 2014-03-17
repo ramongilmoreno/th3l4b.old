@@ -1,5 +1,6 @@
-package com.th3l4b.srm.codegen.java.jdbcruntime;
+package com.th3l4b.srm.codegen.java.jdbcruntime.junit;
 
+import com.th3l4b.srm.codegen.java.jdbcruntime.AbstractJDBCFinder;
 import com.th3l4b.srm.runtime.IIdentifier;
 
 public abstract class AbstractSampleJDBCFinder extends AbstractJDBCFinder

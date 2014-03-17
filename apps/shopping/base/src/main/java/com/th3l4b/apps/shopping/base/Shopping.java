@@ -561,20 +561,20 @@ public class Shopping implements IScreensConstants, IRenderingConstants {
 
 	public IScreensConfiguration sample(IScreensClientDescriptor client)
 			throws Exception {
-		IShoppingApplication application = new DefaultShoppingApplication();
+		return sample(client, ShoppingSample.getSampleContext());
+	}
+
+	public IScreensConfiguration sample(IScreensClientDescriptor client,
+			IShoppingContext data) throws Exception {
 		LinkedHashMap<String, IInteractionListener> interactions = new LinkedHashMap<String, IInteractionListener>();
 		DefaultTreeOfScreens tree = new DefaultTreeOfScreens();
-		DefaultScreensConfiguration config = new DefaultScreensConfiguration(
+		DefaultScreensConfiguration screens = new DefaultScreensConfiguration(
 				tree, interactions);
-		application.setClient(client);
-		application.setContext(config);
-		application.setData(ShoppingSample.getSampleContext());
-		application.setLocale(Locale.getDefault());
-		setShoppingApplication(application, config);
+		IShoppingApplication application = setupShoppipngApplication(data, screens);
 		String root = name("Root");
-		application.getScreens().getTree().setRoot(root);
+		screens.getTree().setRoot(root);
 		renderIndex(root, application);
-		return config;
+		return screens;
 	}
 
 	public static IShoppingApplication getShoppingApplication(
@@ -585,5 +585,16 @@ public class Shopping implements IScreensConstants, IRenderingConstants {
 	public static void setShoppingApplication(IShoppingApplication application,
 			IScreensConfiguration configuration) throws Exception {
 		configuration.getAttributes().put(KEY, application);
+	}
+
+	public static IShoppingApplication setupShoppipngApplication(
+			IShoppingContext context, IScreensConfiguration screens)
+			throws Exception {
+		IShoppingApplication application = new DefaultShoppingApplication();
+		application.setScreens(screens);
+		application.setData(context);
+		application.setLocale(Locale.getDefault());
+		setShoppingApplication(application, screens);
+		return application;
 	}
 }

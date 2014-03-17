@@ -1,6 +1,12 @@
-package com.th3l4b.srm.codegen.java.jdbcruntime;
+package com.th3l4b.srm.codegen.java.jdbcruntime.junit;
 
 import java.sql.Connection;
+
+import com.th3l4b.srm.codegen.java.jdbcruntime.AbstractJDBCSRMContext;
+import com.th3l4b.srm.codegen.java.jdbcruntime.IJDBCEntityParserContext;
+import com.th3l4b.srm.codegen.java.jdbcruntime.IJDBCIdentifierParser;
+import com.th3l4b.srm.codegen.java.jdbcruntime.IJDBCRuntimeTypesContext;
+import com.th3l4b.srm.codegen.java.jdbcruntime.IJDBCStatusParser;
 
 
 public abstract class AbstractSampleJDBCSRMContext extends

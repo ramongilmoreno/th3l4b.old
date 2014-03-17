@@ -6,13 +6,23 @@
     version="2.4">
 
     <servlet>
-        <servlet-name>DesktopScreensServlet</servlet-name>
-        <servlet-class>com.th3l4b.testbed.screens.web.DesktopScreensServlet</servlet-class>
+        <servlet-name>ShoppingScreensServlet</servlet-name>
+        <servlet-class>com.th3l4b.testbed.screens.web.ShoppingScreensServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>ShoppingRESTServlet</servlet-name>
+        <servlet-class>com.th3l4b.testbed.screens.web.ShoppingRESTServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>DesktopScreensServlet</servlet-name>
-        <url-pattern>/DesktopScreensServlet</url-pattern>
+        <servlet-name>ShoppingScreensServlet</servlet-name>
+        <url-pattern>/ShoppingScreensServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ShoppingRESTServlet</servlet-name>
+        <url-pattern>/ShoppingRESTServlet/*</url-pattern>
     </servlet-mapping>
 
 </web-app> 
