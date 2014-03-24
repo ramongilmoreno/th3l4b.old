@@ -2,19 +2,21 @@
 # Shopping model
 #
 
+define name "Name";
+define string "string";
+
 model "Shopping"
 	properties {
 	};
 	
-	
 entity "Item" {
-	field "Name" "string";
-	field "Description" "string";
+	field @name @string;
+	field "Description" @string;
 };
 
 entity "Store" {
-	field "Name" "string";
-	field "Description" "string";
+	field @name @string;
+	field "Description" @string;
 };
 
 entity "Need" {

@@ -24,6 +24,9 @@ options {
 	import com.th3l4b.srm.base.original.IRelationship;
 	import com.th3l4b.srm.base.original.RelationshipType;
 	import com.th3l4b.srm.parser.ParserUtils;
+	
+	import org.antlr.runtime.FailedPredicateException;
+	import org.antlr.runtime.TokenStream;
 }
 
 // http://www.jguru.com/faq/view.jsp?EID=16185
@@ -34,9 +37,22 @@ options {
 @members {
 
 	IModel _model = new DefaultModel();
+	HashMap<String, String> _defines = new HashMap<String, String>();
 
 	public IModel getModel () {
 		return _model;
+	}
+	
+	public HashMap<String, String> getDefines () {
+		return _defines;
+	}
+	
+	public String getDefine (TokenStream input, String d) throws FailedPredicateException {
+		if (!_defines.containsKey(d)) {
+			throw new FailedPredicateException(input, "define", "Could not find define: " + d);
+		} else {
+			return _defines.get(d);
+		}
 	}
 
     public static void main(String[] args) throws Exception {
@@ -54,8 +70,17 @@ options {
 }
 
 document :
+	define*
 	model
     (entity | relationship)*
+;
+
+define:
+	'define' id = IDENTIFIER value = string
+	';'
+	{
+		getDefines().put(id.getText(), value);
+	}
 ;
 
 model:
@@ -125,11 +150,12 @@ relationship returns [ DefaultRelationship r = new DefaultRelationship(); ]:
 ;
 
 string returns [ String r = null; ]:
-	s = STRING_LITERAL { r = s.getText().substring(1, s.getText().length() - 1); }
+	( s = STRING_LITERAL { r = s.getText().substring(1, s.getText().length() - 1); } ) |
+	( d = DEFINE_LITERAL { r = getDefine(input, d.getText().substring(1, d.getText().length())); } )
 ;
 
 identifier_list returns [ ArrayList<String> r = new ArrayList<String>(); ]:
-    (() | (i = IDENTIFIER { r.add(i.getText()); } (',' i=IDENTIFIER { r.add(i.getText()); })*))
+    (i = IDENTIFIER { r.add(i.getText()); } (',' i = IDENTIFIER { r.add(i.getText()); })*)
 ;
 
 IDENTIFIER
@@ -151,8 +177,8 @@ STRING_LITERAL
     :  '"' ( ~('\\'|'"') )* '"'
     ;
     
-CODE_LITERAL
-    :  '@' ( ~('@') )* '@'
+DEFINE_LITERAL
+    :  '@' IDENTIFIER
     ;
 
 WS  :  (' '|'\r'|'\t'|'\u000C'|'\n') {$channel = HIDDEN;}
