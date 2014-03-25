@@ -2,6 +2,8 @@ package com.th3l4b.srm.codegen.java.web.restruntime;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -9,7 +11,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.th3l4b.common.text.IPrintable;
+import com.th3l4b.common.text.ITextConstants;
 import com.th3l4b.common.text.TextUtils;
 import com.th3l4b.srm.codegen.java.basicruntime.rest.IRESTFinder;
 import com.th3l4b.srm.runtime.IFinder;
@@ -65,11 +70,32 @@ public abstract class AbstractRESTServlet<CONTEXT extends ISRMContext<FINDER>, F
 	protected void serialize(IRuntimeEntity<?> one, IRESTRequest request)
 			throws Exception {
 		if (one != null) {
-			printable(one, one.clazz(), request).print(request.getOut());
+			JsonGenerator generator = setupJSONResponse(request);
+			Map<String, String> map = new LinkedHashMap<String, String>();
+			generator.writeStartObject();
+			fillMapForEntity(one, one.clazz(), map);
+			for (Map.Entry<String, String> e : map.entrySet()) {
+				generator.writeFieldName(e.getKey());
+				generator.writeString(e.getValue());
+			}
+			generator.writeEndObject();
+			generator.close();
 		} else {
 			throw new IllegalArgumentException(
 					"Cannot serialized an unique object that is null");
 		}
+	}
+
+	public JsonGenerator setupJSONResponse(IRESTRequest request)
+			throws Exception, IOException {
+		// http://www.studytrails.com/java/json/java-jackson-json-streaming.jsp
+		JsonFactory factory = new JsonFactory();
+		HttpServletResponse response = request.getHttpServletResponse();
+		response.setCharacterEncoding(ITextConstants.UTF_8);
+		// http://stackoverflow.com/questions/477816/what-is-the-correct-json-content-type
+		response.setContentType("application/json");
+		JsonGenerator generator = factory.createGenerator(response.getWriter());
+		return generator;
 	}
 
 	private static final IPrintable printable(Map<String, String> object)
@@ -96,35 +122,40 @@ public abstract class AbstractRESTServlet<CONTEXT extends ISRMContext<FINDER>, F
 		};
 	}
 
-	@SuppressWarnings("unchecked")
 	private <T extends IRuntimeEntity<T>> IPrintable printable(Object one,
-			Class<T> clazz, IRESTRequest request) throws Exception {
-		IToMapEntityParser<T> parser = getToMapEntityParserContext().getParser(
-				clazz);
-		Map<String, String> map = request.getProperties();
-		map.clear();
-		parser.set((T) one, null, map);
+			Class<T> clazz, Map<String, String> map, IRESTRequest request)
+			throws Exception {
+		fillMapForEntity(one, clazz, map);
 		IPrintable printable = printable(map);
 		map.clear();
 		return printable;
 	}
 
+	@SuppressWarnings("unchecked")
+	public <T extends IRuntimeEntity<T>> void fillMapForEntity(Object one,
+			Class<T> clazz, Map<String, String> map) throws Exception {
+		IToMapEntityParser<T> parser = getToMapEntityParserContext().getParser(
+				clazz);
+		map.clear();
+		parser.set((T) one, null, map);
+	}
+
 	protected void serialize(Iterable<? extends IRuntimeEntity<?>> many,
 			IRESTRequest request) throws Exception {
-		PrintWriter out = request.getOut();
-		out.print("[ ");
-		boolean first = true;
+		JsonGenerator generator = setupJSONResponse(request);
+		generator.writeStartArray();
+		Map<String, String> map = new LinkedHashMap<String, String>();
 		for (IRuntimeEntity<?> entity : many) {
-			if (first) {
-				out.println();
-				first = false;
-			} else {
-				out.println(", ");
+			generator.writeStartObject();
+			fillMapForEntity(entity, entity.clazz(), map);
+			for (Map.Entry<String, String> e : map.entrySet()) {
+				generator.writeFieldName(e.getKey());
+				generator.writeString(e.getValue());
 			}
-			printable(entity, entity.clazz(), request).print(out);
+			generator.writeEndObject();
 		}
-		out.println();
-		out.print("]");
+		generator.writeEndArray();
+		generator.close();
 	}
 
 	@Override
