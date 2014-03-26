@@ -1,0 +1,77 @@
+<html>
+<head>
+<script type="text/javascript">
+	var time = (new Date().getTime());
+	var index = 1;
+
+	function id() {
+		return "id-" + time + "-" + index++;
+	}
+
+	function add(data) {
+		// http://stackoverflow.com/questions/1255948/post-data-in-json-format-with-javascript
+		console.log("About to send", data);
+
+		// construct an HTTP request
+		var xhr = new XMLHttpRequest();
+		xhr.open("POST", "ShoppingRESTServlet", true);
+		xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+		xhr.send(JSON.stringify(data));
+		xhr.onloadend = function() {
+			console.log("Done!");
+		};
+	};
+
+	function addItem() {
+		var i = id();
+		add({
+			"_Id": i,
+			"_Type": "Item",
+			"Name": "Name of " + i
+		});
+	};
+
+	function addMany() {
+		var data = [];
+		for (var j = 0; j < 3; j++) {
+			var i = id();
+			data.push({
+				"_Id": i,
+				"_Type": "Item",
+				"Name": "Name of " + i
+			});
+		}
+		add(data);
+	}
+	
+	function needMany() {
+		var data = [];
+		for (var j = 0; j < 3; j++) {
+			var i = id();
+			data.push({
+				"_Id": i,
+				"_Type": "Item",
+				"Name": "Name of " + i
+			});
+			data.push({
+				"_Id": i + "-need",
+				"_Type": "Need",
+				"Item": i
+			});
+		}
+		add(data);
+	}
+
+</script>
+</head>
+<body>
+	<ul>
+		<li><a href="ShoppingRESTServlet/Item">Items</a></li>
+		<li><a href="ShoppingRESTServlet/Need">Needs</a></li>
+		<li><a href="javascript:addItem()">Add item</a></li>
+		<li><a href="javascript:addMany()">Add many items</a></li>
+		<li><a href="javascript:needMany()">Need many items (crashes the <i>Start shopping</i> action)</a></li>
+		<div id="here" />
+	</ul>
+</body>
+</html>

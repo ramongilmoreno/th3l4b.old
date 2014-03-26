@@ -2,6 +2,8 @@ package com.th3l4b.srm.codegen.java.basicruntime.tomap;
 
 import java.util.Map;
 
+import com.th3l4b.common.data.nullsafe.NullSafe;
+import com.th3l4b.srm.runtime.EntityStatus;
 import com.th3l4b.srm.runtime.IDatabaseConstants;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
 import com.th3l4b.srm.runtime.IToMapEntityParser;
@@ -11,11 +13,18 @@ public abstract class AbstractToMapEntityParser<R extends IRuntimeEntity<R>>
 
 	private IToMapIdentifierParser _identifierParser;
 	private IToMapStatusParser _statusParser;
+	private String _name;
 
-	public AbstractToMapEntityParser(IToMapIdentifierParser identifierParser,
+	public AbstractToMapEntityParser(String name,
+			IToMapIdentifierParser identifierParser,
 			IToMapStatusParser statusParser) throws Exception {
+		_name = name;
 		_identifierParser = identifierParser;
 		_statusParser = statusParser;
+	}
+
+	public String getName() {
+		return _name;
 	}
 
 	public IToMapIdentifierParser getIdentifierParser() {
@@ -35,20 +44,29 @@ public abstract class AbstractToMapEntityParser<R extends IRuntimeEntity<R>>
 			throws Exception;
 
 	@Override
-	public R parse(Void arg, Map<String, String> result) throws Exception {
+	public R parse(Void arg, Map<String, String> map) throws Exception {
 		R r = create();
+		// Check map type is the same as the class
+		if (!NullSafe.equals(getName(), map.get(IDatabaseConstants.TYPE))) {
+			throw new IllegalArgumentException(
+					"Type does not match. Expected: " + getName() + ", found: "
+							+ map.get(IDatabaseConstants.TYPE));
+		}
+
 		IToMapStatusParser statusParser = getStatusParser();
 		String status = IDatabaseConstants.STATUS;
-		if (statusParser.hasValue(status, result)) {
-			r.coordinates().setStatus(statusParser.parse(status, result));
+		if (statusParser.hasValue(status, map)) {
+			r.coordinates().setStatus(statusParser.parse(status, map));
+		} else {
+			r.coordinates().setStatus(EntityStatus.Unknown);
 		}
 		String id = IDatabaseConstants.ID;
 		IToMapIdentifierParser identifierParser = getIdentifierParser();
-		if (identifierParser.hasValue(id, result)) {
-			r.coordinates().setIdentifier(identifierParser.parse(id, result));
+		if (identifierParser.hasValue(id, map)) {
+			r.coordinates().setIdentifier(identifierParser.parse(id, map));
 			r.coordinates().getIdentifier().setType(r.clazz().getName());
 		}
-		parseRest(r, result);
+		parseRest(r, map);
 		return r;
 	}
 
@@ -59,13 +77,14 @@ public abstract class AbstractToMapEntityParser<R extends IRuntimeEntity<R>>
 	}
 
 	@Override
-	public void set(R value, Void arg, Map<String, String> statement)
+	public void set(R value, Void arg, Map<String, String> map)
 			throws Exception {
 		getIdentifierParser().set(value.coordinates().getIdentifier(),
-				IDatabaseConstants.ID, statement);
+				IDatabaseConstants.ID, map);
 		getStatusParser().set(value.coordinates().getStatus(),
-				IDatabaseConstants.STATUS, statement);
-		setRest(value, statement);
+				IDatabaseConstants.STATUS, map);
+		map.put(IDatabaseConstants.TYPE, getName());
+		setRest(value, map);
 	}
 
 }

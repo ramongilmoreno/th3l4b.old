@@ -64,7 +64,9 @@ public class ToMapCodeGenerator {
 						+ IJavaRuntimeTypesContext.class.getName() + " types, "
 						+ IModelUtils.class.getName() + " utils) throws "
 						+ Exception.class.getName() + "{");
-				iiout.println("super(ids, status);");
+				iiout.println("super(\""
+						+ TextUtils.escapeJavaString(baseNames.name(entity))
+						+ "\", ids, status);");
 				iiout.println("_utils = utils;");
 				for (IField field : entity.items()) {
 					iiout.println(fieldName(field, baseNames)

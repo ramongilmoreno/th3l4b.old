@@ -1,8 +1,7 @@
 package com.th3l4b.srm.codegen.java.web.restruntime;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -13,15 +12,19 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.th3l4b.common.text.IPrintable;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.th3l4b.common.data.Pair;
 import com.th3l4b.common.text.ITextConstants;
-import com.th3l4b.common.text.TextUtils;
 import com.th3l4b.srm.codegen.java.basicruntime.rest.IRESTFinder;
+import com.th3l4b.srm.runtime.IDatabaseConstants;
 import com.th3l4b.srm.runtime.IFinder;
+import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
 import com.th3l4b.srm.runtime.ISRMContext;
 import com.th3l4b.srm.runtime.IToMapEntityParser;
 import com.th3l4b.srm.runtime.IToMapEntityParserContext;
+import com.th3l4b.srm.runtime.SRMContextUtils;
 
 @SuppressWarnings("serial")
 public abstract class AbstractRESTServlet<CONTEXT extends ISRMContext<FINDER>, FINDER extends IFinder>
@@ -67,6 +70,105 @@ public abstract class AbstractRESTServlet<CONTEXT extends ISRMContext<FINDER>, F
 		}
 	}
 
+	protected Pair<IRuntimeEntity<?>, Iterable<IRuntimeEntity<?>>> parseEntities(
+			IRESTRequest request, boolean acceptOne, boolean acceptMany)
+			throws Exception {
+		Pair<IRuntimeEntity<?>, Iterable<IRuntimeEntity<?>>> r = new Pair<IRuntimeEntity<?>, Iterable<IRuntimeEntity<?>>>();
+		HashSet<IRuntimeEntity<?>> many = new HashSet<IRuntimeEntity<?>>();
+		if (acceptMany) {
+			r.setB(many);
+		}
+
+		// http://www.studytrails.com/java/json/java-jackson-json-streaming.jsp
+		JsonFactory factory = new JsonFactory();
+		JsonParser parser = factory.createParser(request
+				.getHttpServletRequest().getReader());
+		Map<String, String> map = new LinkedHashMap<String, String>();
+
+		while (!parser.isClosed()) {
+			JsonToken token = parser.nextToken();
+			if (token == null) {
+				// EOF
+				break;
+			} else if (JsonToken.START_ARRAY.equals(token)) {
+				if (!acceptMany) {
+					throw new IllegalArgumentException(
+							"JSON Array input was not expected");
+				}
+				while ((token = parser.nextToken()) != null) {
+					if (JsonToken.START_OBJECT.equals(token)) {
+						many.add(createEntity(request, parser, map));
+					} else if (JsonToken.END_ARRAY.equals(token)) {
+						parser.close();
+						break;
+					} else {
+						throw new IllegalArgumentException(
+								"JSON Array end was expected");
+					}
+				}
+			} else if (JsonToken.START_OBJECT.equals(token)) {
+				if (!acceptOne) {
+					throw new IllegalArgumentException(
+							"JSON Object input was not expected");
+				}
+				r.setA(createEntity(request, parser, map));
+				parser.close();
+			} else {
+				throw new IllegalArgumentException("Unexpected JSON token: "
+						+ token);
+			}
+		}
+		return r;
+	}
+
+	public IRuntimeEntity<?> createEntity(IRESTRequest request,
+			JsonParser parser, Map<String, String> map) throws Exception {
+		map.clear();
+		parseFields(parser, map);
+		String[] context = split(request);
+		if (context.length > 0) {
+			map.put(IDatabaseConstants.TYPE, context[0]);
+		}
+		if (context.length > 1) {
+			map.put(IDatabaseConstants.ID, context[1]);
+		}
+
+		// Find parser and create entity.
+		Class<? extends IRuntimeEntity<?>> clazz = getContext(request)
+				.getUtils().classFromName(map.get(IDatabaseConstants.TYPE));
+		IRuntimeEntity<?> entity = getToMapEntityParserContext().getParser(
+				clazz).parse(null, map);
+		return entity;
+	}
+
+	private void parseFields(JsonParser parser, Map<String, String> map)
+			throws Exception {
+		while (true) {
+			JsonToken field = parser.nextToken();
+			String f = parser.getText();
+			if ((field == null) || JsonToken.END_OBJECT.equals(field)) {
+				break;
+			} else if (JsonToken.FIELD_NAME.equals(field)) {
+				// Load value
+				JsonToken value = parser.nextToken();
+				if ((value == null) || !JsonToken.VALUE_STRING.equals(value)) {
+					// Throw an exception if value not found
+					throw new IllegalStateException(
+							"Could not find string field value. Instead found token: "
+									+ field);
+				} else {
+					map.put(f, parser.getText());
+				}
+
+			} else {
+				throw new IllegalStateException(
+						"Could not find field name. Instead found token: "
+								+ field);
+			}
+		}
+
+	}
+
 	protected void serialize(IRuntimeEntity<?> one, IRESTRequest request)
 			throws Exception {
 		if (one != null) {
@@ -96,39 +198,6 @@ public abstract class AbstractRESTServlet<CONTEXT extends ISRMContext<FINDER>, F
 		response.setContentType("application/json");
 		JsonGenerator generator = factory.createGenerator(response.getWriter());
 		return generator;
-	}
-
-	private static final IPrintable printable(Map<String, String> object)
-			throws Exception {
-		final StringBuilder sb = new StringBuilder(200);
-		sb.append("{ ");
-		for (Map.Entry<String, String> attribute : object.entrySet()) {
-			if (sb.length() > 2) {
-				sb.append(", ");
-			}
-			sb.append('\"');
-			sb.append(TextUtils.escapeJavaString(attribute.getKey()));
-			sb.append("\": \"");
-			sb.append(TextUtils.escapeJavaString(attribute.getValue()));
-			sb.append('\"');
-		}
-		sb.append(" }");
-		// Return a printable that does not add a line feed at the end.
-		return new IPrintable() {
-			@Override
-			public void print(PrintWriter out) {
-				out.print(sb.toString());
-			}
-		};
-	}
-
-	private <T extends IRuntimeEntity<T>> IPrintable printable(Object one,
-			Class<T> clazz, Map<String, String> map, IRESTRequest request)
-			throws Exception {
-		fillMapForEntity(one, clazz, map);
-		IPrintable printable = printable(map);
-		map.clear();
-		return printable;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -199,11 +268,56 @@ public abstract class AbstractRESTServlet<CONTEXT extends ISRMContext<FINDER>, F
 				throw new IllegalStateException(
 						"Could not decide if result is one or many");
 			}
-
-			// Flush result.
-			request.getOut().flush();
 		} catch (Exception e) {
 			throw new ServletException(e);
 		}
+	}
+
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		try {
+			IRESTRequest request = new DefaultRESTRequest(req, resp);
+			CONTEXT context = getContext(request);
+			String[] coordinates = split(request);
+			boolean isMany = false;
+			switch (coordinates.length) {
+			case 0:
+			case 1:
+				isMany = true;
+				break;
+			case 2:
+				isMany = false;
+				break;
+			default:
+				throw new IllegalArgumentException(
+						"Unsupported number of coordinates in REST path: "
+								+ coordinates.length);
+			}
+
+			Pair<IRuntimeEntity<?>, Iterable<IRuntimeEntity<?>>> r = parseEntities(
+					request, true, isMany);
+
+			if (isMany) {
+				// Check if one was read
+				Map<IIdentifier, IRuntimeEntity<?>> map = null;
+				if (r.getA() != null) {
+					map = SRMContextUtils.map(r.getA());
+				} else {
+					map = SRMContextUtils.map(r.getB());
+				}
+				context.update(map);
+			} else {
+				context.update(SRMContextUtils.map(r.getA()));
+			}
+
+			// If everthing was OK up to this moment, return true
+			JsonGenerator generator = setupJSONResponse(request);
+			generator.writeBoolean(true);
+			generator.close();
+		} catch (Exception e) {
+			throw new ServletException(e);
+		}
+		// parseEntities
 	}
 }

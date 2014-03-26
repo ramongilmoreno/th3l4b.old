@@ -48,7 +48,7 @@ public class DefaultIdentifier implements IIdentifier {
 
 	@Override
 	public int hashCode() {
-		return _key.hashCode() ^ _type.hashCode();
+		return NullSafe.hashCode(_key) ^ NullSafe.hashCode(_type);
 	}
 
 	@Override

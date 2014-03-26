@@ -1,7 +1,6 @@
 package com.th3l4b.srm.runtime;
 
-
 public interface IToMapEntityParserContext {
-	<R extends IRuntimeEntity<R>> IToMapEntityParser<R> getParser(
-			Class<R> clazz) throws Exception;
+	<T extends IRuntimeEntity<?>> IToMapEntityParser<T> getParser(Class<T> clazz)
+			throws Exception;
 }

@@ -1,12 +1,9 @@
 package com.th3l4b.srm.codegen.java.web.restruntime;
 
-import java.io.PrintWriter;
 import java.util.AbstractMap;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -15,8 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.th3l4b.common.propertied.IPropertied;
-import com.th3l4b.common.text.IPrintable;
-import com.th3l4b.common.text.ITextConstants;
 
 /**
  * Maps {@link IPropertied#getAttributes()} to {@link HttpSession} attributes.
@@ -26,15 +21,11 @@ public class DefaultRESTRequest implements IRESTRequest {
 	private Map<String, String> _properties = new LinkedHashMap<String, String>();
 	private HttpServletRequest _httpServletRequest;
 	private HttpServletResponse _httpServletResponse;
-	private PrintWriter _out;
-	private List<IPrintable> _printables = new ArrayList<IPrintable>();
 
 	public DefaultRESTRequest(HttpServletRequest httpServletRequest,
 			HttpServletResponse httpServletResponse) throws Exception {
 		_httpServletRequest = httpServletRequest;
 		_httpServletResponse = httpServletResponse;
-		_httpServletResponse.setCharacterEncoding(ITextConstants.UTF_8);
-		_out = new PrintWriter(_httpServletResponse.getWriter());
 	}
 
 	public HttpServletRequest getHttpServletRequest() throws Exception {
@@ -53,18 +44,6 @@ public class DefaultRESTRequest implements IRESTRequest {
 	public void setHttpServletResponse(HttpServletResponse httpServletResponse)
 			throws Exception {
 		_httpServletResponse = httpServletResponse;
-	}
-
-	public PrintWriter getOut() {
-		return _out;
-	}
-
-	public void setOut(PrintWriter out) throws Exception {
-		_out = out;
-	}
-
-	public void addPrintable(IPrintable printable) throws Exception {
-		_printables.add(printable);
 	}
 
 	@Override

@@ -19,7 +19,7 @@ public class SampleEntityAToMapEntityParser extends
 			IToMapIdentifierParser identifierParser,
 			IToMapStatusParser statusParser, IJavaRuntimeTypesContext java)
 			throws Exception {
-		super(identifierParser, statusParser);
+		super("SampleEntityA", identifierParser, statusParser);
 		_field_StringAttribute = java.get("string", String.class);
 	}
 
@@ -47,9 +47,8 @@ public class SampleEntityAToMapEntityParser extends
 			getIdentifierParser().set(value.getEntityB(), "EntityB", map);
 		}
 		if (value.isSetStringAttribute()) {
-			map
-					.put("StringAttribute", _field_StringAttribute
-							.toString(value.getStringAttribute()));
+			map.put("StringAttribute",
+					_field_StringAttribute.toString(value.getStringAttribute()));
 		}
 	}
 

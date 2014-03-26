@@ -1,5 +1,6 @@
 package com.th3l4b.srm.codegen.java.basicruntime;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -13,6 +14,26 @@ import com.th3l4b.srm.runtime.IRuntimeEntity;
  * class for identifiers.
  */
 public abstract class AbstractModelUtils implements IModelUtils {
+
+	protected Map<String, Class<? extends IRuntimeEntity<?>>> _classFromName = new HashMap<String, Class<? extends IRuntimeEntity<?>>>();
+	protected Map<Class<? extends IRuntimeEntity<?>>, String> _nameFromClass = new HashMap<Class<? extends IRuntimeEntity<?>>, String>();
+
+	protected <T extends IRuntimeEntity<?>> void register(String name,
+			Class<T> clazz) {
+		_classFromName.put(name, clazz);
+		_nameFromClass.put(clazz, name);
+	}
+
+	@Override
+	public <T extends IRuntimeEntity<?>> String nameFromClass(Class<T> clazz)
+			throws Exception {
+		return _nameFromClass.get(clazz);
+	}
+
+	public Class<? extends IRuntimeEntity<?>> classFromName(String name)
+			throws Exception {
+		return _classFromName.get(name);
+	}
 
 	protected interface Creator {
 		Object create() throws Exception;
@@ -47,7 +68,6 @@ public abstract class AbstractModelUtils implements IModelUtils {
 	protected Map<String, Creator> _creators = new LinkedHashMap<String, Creator>();
 	protected Map<String, Copier<?>> _copiers = new LinkedHashMap<String, Copier<?>>();
 	protected Map<String, ForeignKeysClearer<?>> _resetters = new LinkedHashMap<String, ForeignKeysClearer<?>>();
-
 
 	@SuppressWarnings("unchecked")
 	@Override

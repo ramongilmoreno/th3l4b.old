@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import com.th3l4b.common.text.AbstractPrintable;
 import com.th3l4b.common.text.IndentedWriter;
+import com.th3l4b.common.text.TextUtils;
 import com.th3l4b.srm.base.IField;
 import com.th3l4b.srm.base.normalized.INormalizedEntity;
 import com.th3l4b.srm.base.normalized.INormalizedManyToOneRelationship;
@@ -290,6 +291,7 @@ public class JavaCodeGenerator {
 				for (INormalizedEntity ne : model.items()) {
 					String clazz = javaNames.nameInterface(ne);
 					String fqn = javaNames.fqn(clazz, context);
+					iiout.println("register(\"" + TextUtils.escapeJavaString(baseNames.name(ne)) + "\", " + fqn + ".class);");
 					iiout.println("_creators.put("
 							+ fqn
 							+ ".class.getName(), new "
