@@ -108,6 +108,14 @@ public class ToMapCodeGenerator {
 					iiiout.println("entity.set" + relName
 							+ "(getIdentifierParser().parse(\"" + relName
 							+ "\", map));");
+					iiiout.println("if (entity.get"
+							+ relName
+							+ "() != null) { entity.get"
+							+ relName
+							+ "().setType("
+							+ javaNames.fqn(javaNames.nameInterface(model
+									.get(rel.getTo())), context)
+							+ ".class.getName()); }");
 					iiout.println("}");
 				}
 

@@ -33,7 +33,7 @@
 
 	function addMany() {
 		var data = [];
-		for (var j = 0; j < 3; j++) {
+		for ( var j = 0; j < 3; j++) {
 			var i = id();
 			data.push({
 				"_Id": i,
@@ -43,10 +43,10 @@
 		}
 		add(data);
 	}
-	
+
 	function needMany() {
 		var data = [];
-		for (var j = 0; j < 3; j++) {
+		for ( var j = 0; j < 3; j++) {
 			var i = id();
 			data.push({
 				"_Id": i,
@@ -61,7 +61,6 @@
 		}
 		add(data);
 	}
-
 </script>
 </head>
 <body>
@@ -70,7 +69,7 @@
 		<li><a href="ShoppingRESTServlet/Need">Needs</a></li>
 		<li><a href="javascript:addItem()">Add item</a></li>
 		<li><a href="javascript:addMany()">Add many items</a></li>
-		<li><a href="javascript:needMany()">Need many items (crashes the <i>Start shopping</i> action)</a></li>
+		<li><a href="javascript:needMany()">Need many items</a></li>
 		<div id="here" />
 	</ul>
 </body>
