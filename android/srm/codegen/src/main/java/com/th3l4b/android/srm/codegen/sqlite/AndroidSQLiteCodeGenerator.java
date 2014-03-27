@@ -33,6 +33,7 @@ import com.th3l4b.srm.codegen.database.SQLCodeGenerator;
 import com.th3l4b.srm.codegen.database.SQLCodeGeneratorContext;
 import com.th3l4b.srm.codegen.database.SQLNames;
 import com.th3l4b.srm.codegen.java.basic.JavaNames;
+import com.th3l4b.srm.codegen.java.basicruntime.DefaultIdentifier;
 import com.th3l4b.srm.codegen.java.basicruntime.inmemory.Pair;
 import com.th3l4b.srm.database.BasicSetDatabaseTypesContext;
 import com.th3l4b.srm.database.IDatabaseType;
@@ -251,17 +252,13 @@ public class AndroidSQLiteCodeGenerator {
 							+ Boolean.class.getName() + ".TRUE)) {");
 
 					String relName = baseNames.nameOfDirect(rel, model);
-					iiiout.println("entity.set" + relName
-							+ "(getIdsParser().parse(index++, result));");
-					iiiout.println("if (entity.get"
+					iiiout.println("entity.set"
 							+ relName
-							+ "() != null) { entity.get"
-							+ relName
-							+ "().setType("
+							+ "("
+							+ DefaultIdentifier.class.getName()
+							+ ".setIdentifierType(getIdsParser().parse(index++, result), "
 							+ javaNames.fqn(javaNames.nameInterface(model
-									.get(rel.getTo())), context)
-							+ ".class.getName()); }");
-					;
+									.get(rel.getTo())), context) + ".class));");
 					iiout.println("} else { index++; }");
 				}
 

@@ -13,6 +13,7 @@ import com.th3l4b.srm.base.normalized.INormalizedModel;
 import com.th3l4b.srm.codegen.base.FileUtils;
 import com.th3l4b.srm.codegen.base.names.BaseNames;
 import com.th3l4b.srm.codegen.java.basic.JavaNames;
+import com.th3l4b.srm.codegen.java.basicruntime.DefaultIdentifier;
 import com.th3l4b.srm.codegen.java.basicruntime.tomap.AbstractToMapEntityParser;
 import com.th3l4b.srm.codegen.java.basicruntime.tomap.IToMapIdentifierParser;
 import com.th3l4b.srm.codegen.java.basicruntime.tomap.IToMapStatusParser;
@@ -105,17 +106,15 @@ public class ToMapCodeGenerator {
 					String relName = baseNames.nameOfDirect(rel, model);
 					iiout.println("if (getIdentifierParser().hasValue(\""
 							+ relName + "\", map)) {");
-					iiiout.println("entity.set" + relName
-							+ "(getIdentifierParser().parse(\"" + relName
-							+ "\", map));");
-					iiiout.println("if (entity.get"
+					iiiout.println("entity.set"
 							+ relName
-							+ "() != null) { entity.get"
+							+ "("
+							+ DefaultIdentifier.class.getName()
+							+ ".setIdentifierType(getIdentifierParser().parse(\""
 							+ relName
-							+ "().setType("
+							+ "\", map), "
 							+ javaNames.fqn(javaNames.nameInterface(model
-									.get(rel.getTo())), context)
-							+ ".class.getName()); }");
+									.get(rel.getTo())), context) + ".class));");
 					iiout.println("}");
 				}
 

@@ -61,4 +61,21 @@ public class DefaultIdentifier implements IIdentifier {
 			return false;
 		}
 	}
+
+	public static void checkIdentifierType(IIdentifier id, Class<?> type)
+			throws Exception {
+		if (id != null) {
+			if (!NullSafe.equals(id.getType(), type.getName())) {
+				throw new IllegalArgumentException("Incorrect type. Expected: "
+						+ type.getName() + ", was: " + id.getType());
+			}
+		}
+	}
+
+	public static IIdentifier setIdentifierType(IIdentifier id, Class<?> type) {
+		if (id != null) {
+			id.setType(type.getName());
+		}
+		return id;
+	}
 }

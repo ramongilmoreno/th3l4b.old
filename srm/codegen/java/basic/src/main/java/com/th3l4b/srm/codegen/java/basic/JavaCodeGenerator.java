@@ -13,6 +13,7 @@ import com.th3l4b.srm.base.normalized.INormalizedModel;
 import com.th3l4b.srm.codegen.base.FileUtils;
 import com.th3l4b.srm.codegen.base.names.BaseNames;
 import com.th3l4b.srm.codegen.java.basicruntime.AbstractModelUtils;
+import com.th3l4b.srm.codegen.java.basicruntime.DefaultIdentifier;
 import com.th3l4b.srm.codegen.java.basicruntime.inmemory.AbstractRuntimeEntity;
 import com.th3l4b.srm.runtime.IFinder;
 import com.th3l4b.srm.runtime.IIdentifier;
@@ -102,10 +103,10 @@ public class JavaCodeGenerator {
 			final INormalizedModel model, final JavaCodeGeneratorContext context)
 			throws Exception {
 		final BaseNames baseNames = context.getBaseNames();
-		final JavaNames names = context.getJavaNames();
-		final String clazz = names.nameImpl(entity);
-		final String iclazz = names.fqn(names.nameInterface(entity), context);
-		final String pkg = names.packageForImpl(context);
+		final JavaNames javaNames = context.getJavaNames();
+		final String clazz = javaNames.nameImpl(entity);
+		final String iclazz = javaNames.fqn(javaNames.nameInterface(entity), context);
+		final String pkg = javaNames.packageForImpl(context);
 		FileUtils.java(context, pkg, clazz, new AbstractPrintable() {
 			@Override
 			protected void printWithException(PrintWriter out) throws Exception {
@@ -158,14 +159,14 @@ public class JavaCodeGenerator {
 					String name = baseNames.nameOfDirect(rel, model);
 					String getter = "get" + name;
 					String setter = "set" + name;
-					String clazz = names.nameInterface(model.get(rel.getTo()));
-					String fqn = names.fqn(clazz, context);
+					String clazz = javaNames.nameInterface(model.get(rel.getTo()));
+					String fqn = javaNames.fqn(clazz, context);
 					iout.println("public " + IIdentifier.class.getName() + " "
 							+ getter + " () throws "
 							+ Exception.class.getName() + " { return _value_"
 							+ name + "; }");
 					iout.println("public " + fqn + " " + getter + " ("
-							+ names.fqnBase(names.finder(model), context)
+							+ javaNames.fqnBase(javaNames.finder(model), context)
 							+ " accessor) throws " + Exception.class.getName()
 							+ " { return _value_" + name
 							+ " != null ? accessor.get"
@@ -173,8 +174,11 @@ public class JavaCodeGenerator {
 							+ "(_value_" + name + ") : null; }");
 					iout.println("public void " + setter + " ("
 							+ IIdentifier.class.getName() + " arg) throws "
-							+ Exception.class.getName() + " { _isSet_" + name
-							+ " = true; _value_" + name + " = arg; }");
+							+ Exception.class.getName() + " { "
+							+ DefaultIdentifier.class.getName()
+							+ ".checkIdentifierType(arg, " + fqn
+							+ ".class); _isSet_" + name + " = true; _value_"
+							+ name + " = arg; }");
 					iout.println("public void "
 							+ setter
 							+ " ("
@@ -291,7 +295,9 @@ public class JavaCodeGenerator {
 				for (INormalizedEntity ne : model.items()) {
 					String clazz = javaNames.nameInterface(ne);
 					String fqn = javaNames.fqn(clazz, context);
-					iiout.println("register(\"" + TextUtils.escapeJavaString(baseNames.name(ne)) + "\", " + fqn + ".class);");
+					iiout.println("register(\""
+							+ TextUtils.escapeJavaString(baseNames.name(ne))
+							+ "\", " + fqn + ".class);");
 					iiout.println("_creators.put("
 							+ fqn
 							+ ".class.getName(), new "

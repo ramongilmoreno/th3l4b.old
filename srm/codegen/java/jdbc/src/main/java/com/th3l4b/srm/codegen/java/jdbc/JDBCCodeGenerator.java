@@ -17,6 +17,7 @@ import com.th3l4b.srm.codegen.base.FileUtils;
 import com.th3l4b.srm.codegen.base.names.BaseNames;
 import com.th3l4b.srm.codegen.database.SQLNames;
 import com.th3l4b.srm.codegen.java.basic.JavaNames;
+import com.th3l4b.srm.codegen.java.basicruntime.DefaultIdentifier;
 import com.th3l4b.srm.codegen.java.jdbcruntime.AbstractJDBCEntityParser;
 import com.th3l4b.srm.codegen.java.jdbcruntime.AbstractJDBCFinder;
 import com.th3l4b.srm.codegen.java.jdbcruntime.AbstractJDBCSRMContext;
@@ -258,16 +259,13 @@ public class JDBCCodeGenerator {
 					iiout.println("if (" + NullSafe.class.getName()
 							+ ".equals(_isSet.parse(index++, result), "
 							+ Boolean.class.getName() + ".TRUE)) {");
-					iiiout.println("entity.set" + relName
-							+ "(getIdsParser().parse(index++, result));");
-					iiiout.println("if (entity.get"
+					iiiout.println("entity.set"
 							+ relName
-							+ "() != null) { entity.get"
-							+ relName
-							+ "().setType("
+							+ "("
+							+ DefaultIdentifier.class.getName()
+							+ ".setIdentifierType(getIdsParser().parse(index++, result), "
 							+ javaNames.fqn(javaNames.nameInterface(model
-									.get(rel.getTo())), context)
-							+ ".class.getName()); }");
+									.get(rel.getTo())), context) + ".class));");
 					iiout.println("} else {");
 					iiiout.println("index++;");
 					iiout.println("}");
