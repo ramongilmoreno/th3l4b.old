@@ -3,6 +3,7 @@ package com.th3l4b.srm.codegen.java.jdbcruntime;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import com.th3l4b.srm.codegen.java.basicruntime.DefaultIdentifier;
 import com.th3l4b.srm.runtime.ICoordinates;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
 
@@ -48,8 +49,8 @@ public abstract class AbstractJDBCEntityParser<R extends IRuntimeEntity<R>>
 		R entity = create();
 		ICoordinates coordinates = entity.coordinates();
 		Class<R> clazz = entity.clazz();
-		coordinates.setIdentifier(getIdsParser().parse(index++, result));
-		coordinates.getIdentifier().setType(clazz.getName());
+		coordinates.setIdentifier(new DefaultIdentifier(clazz.getName(),
+				getIdsParser().parse(index++, result).getKey()));
 		coordinates.setStatus(getStatusParser().parse(index++, result));
 		parseRest(entity, index, result);
 		return entity;

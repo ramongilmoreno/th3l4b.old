@@ -74,7 +74,7 @@ public class DefaultIdentifier implements IIdentifier {
 
 	public static IIdentifier setIdentifierType(IIdentifier id, Class<?> type) {
 		if (id != null) {
-			id.setType(type.getName());
+			return new DefaultIdentifier(type, id.getKey());
 		}
 		return id;
 	}

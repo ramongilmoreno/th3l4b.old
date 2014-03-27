@@ -3,6 +3,7 @@ package com.th3l4b.android.srm.runtime.sqlite;
 import android.content.ContentValues;
 import android.database.Cursor;
 
+import com.th3l4b.srm.codegen.java.basicruntime.DefaultIdentifier;
 import com.th3l4b.srm.runtime.DatabaseUtils;
 import com.th3l4b.srm.runtime.ICoordinates;
 import com.th3l4b.srm.runtime.IDatabaseConstants;
@@ -43,8 +44,8 @@ public abstract class AbstractAndroidSQLiteEntityParser<R extends IRuntimeEntity
 		R entity = create();
 		ICoordinates coordinates = entity.coordinates();
 		Class<R> clazz = entity.clazz();
-		coordinates.setIdentifier(getIdsParser().parse(index++, result));
-		coordinates.getIdentifier().setType(clazz.getName());
+		coordinates.setIdentifier(new DefaultIdentifier(clazz.getName(),
+				getIdsParser().parse(index++, result).getKey()));
 		coordinates.setStatus(getStatusParser().parse(index++, result));
 		parseRest(entity, index, result);
 		return entity;

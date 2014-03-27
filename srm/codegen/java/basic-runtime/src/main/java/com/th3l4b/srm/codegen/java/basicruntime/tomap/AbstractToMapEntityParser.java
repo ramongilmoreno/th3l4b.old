@@ -3,6 +3,7 @@ package com.th3l4b.srm.codegen.java.basicruntime.tomap;
 import java.util.Map;
 
 import com.th3l4b.common.data.nullsafe.NullSafe;
+import com.th3l4b.srm.codegen.java.basicruntime.DefaultIdentifier;
 import com.th3l4b.srm.runtime.EntityStatus;
 import com.th3l4b.srm.runtime.IDatabaseConstants;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
@@ -63,8 +64,9 @@ public abstract class AbstractToMapEntityParser<R extends IRuntimeEntity<R>>
 		String id = IDatabaseConstants.ID;
 		IToMapIdentifierParser identifierParser = getIdentifierParser();
 		if (identifierParser.hasValue(id, map)) {
-			r.coordinates().setIdentifier(identifierParser.parse(id, map));
-			r.coordinates().getIdentifier().setType(r.clazz().getName());
+			r.coordinates().setIdentifier(
+					new DefaultIdentifier(r.clazz().getName(), identifierParser
+							.parse(id, map).getKey()));
 		}
 		parseRest(r, map);
 		return r;
