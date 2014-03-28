@@ -62,6 +62,11 @@ public class DefaultIdentifier implements IIdentifier {
 		}
 	}
 
+	@Override
+	public String toString() {
+		return "" + getKey();
+	}
+
 	public static void checkIdentifierType(IIdentifier id, Class<?> type)
 			throws Exception {
 		if (id != null) {
