@@ -1,0 +1,4 @@
+#!/bin/bash
+#adb -e uninstall com.th3l4b.testbed.android
+mvn android:undeploy
+mvn android:deploy

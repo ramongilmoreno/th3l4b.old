@@ -401,6 +401,9 @@ public class AndroidSQLiteCodeGenerator {
 						iout.println("}");
 						iout.println(leading + IIdentifier.class.getName()
 								+ " from) throws Exception {");
+						iiout.println(DefaultIdentifier.class.getName()
+								+ ".checkIdentifierType(from, "
+								+ javaNames.fqn(clazzOne, context) + ".class);");
 						iiout.println("return find("
 								+ javaNames.fqn(clazzMany, context)
 								+ ".class, "

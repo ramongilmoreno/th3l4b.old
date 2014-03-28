@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import com.th3l4b.srm.codegen.java.basicruntime.DefaultIdentifier;
 import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
 
@@ -26,6 +27,7 @@ public abstract class AbstractInMemoryFinder {
 	public <R extends IRuntimeEntity<R>, S extends IRuntimeEntity<S>> Iterable<R> find(
 			Class<R> resultClass, Class<S> sourceClass,
 			IIdentifier sourceIdentifier, String relationship) throws Exception {
+		DefaultIdentifier.checkIdentifierType(sourceIdentifier, sourceClass);
 		final IPredicate<R> p = getPredicateForRelationship(resultClass,
 				sourceClass, sourceIdentifier, relationship).predicate(
 				sourceIdentifier);
@@ -47,6 +49,7 @@ public abstract class AbstractInMemoryFinder {
 	@SuppressWarnings("unchecked")
 	public <T extends IRuntimeEntity<T>> T find(Class<T> clazz,
 			IIdentifier identifier) throws Exception {
+		DefaultIdentifier.checkIdentifierType(identifier, clazz);
 		IRuntimeEntity<?> t = getEntities().get(identifier);
 		if (t == null) {
 			return null;

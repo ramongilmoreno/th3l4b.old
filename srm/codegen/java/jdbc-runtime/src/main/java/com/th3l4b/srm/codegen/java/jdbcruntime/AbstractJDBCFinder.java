@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 
+import com.th3l4b.srm.codegen.java.basicruntime.DefaultIdentifier;
 import com.th3l4b.srm.codegen.java.basicruntime.inmemory.Pair;
 import com.th3l4b.srm.runtime.EntityStatus;
 import com.th3l4b.srm.runtime.IIdentifier;
@@ -33,6 +34,7 @@ public abstract class AbstractJDBCFinder {
 	public <R extends IRuntimeEntity<R>, S extends IRuntimeEntity<S>> Iterable<R> find(
 			Class<R> resultClass, Class<S> sourceClass, IIdentifier identifier,
 			String relationship) throws Exception {
+		DefaultIdentifier.checkIdentifierType(identifier, sourceClass);
 		String column = _map.get(new Pair(sourceClass, relationship));
 		return find(resultClass, identifier, column);
 	}
@@ -66,6 +68,7 @@ public abstract class AbstractJDBCFinder {
 
 	public <R extends IRuntimeEntity<R>> R find(Class<R> clazz,
 			IIdentifier identifier) throws Exception {
+		DefaultIdentifier.checkIdentifierType(identifier, clazz);
 		IJDBCEntityParser<R> parser = getParsers().getEntityParser(clazz);
 		StringBuffer query = new StringBuffer("select ");
 		JDBCUtils.columnsAndFrom(parser, query);

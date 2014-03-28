@@ -101,6 +101,9 @@ public class JDBCCodeGenerator {
 						iout.println(leading + IIdentifier.class.getName()
 								+ " from) throws " + Exception.class.getName()
 								+ " {");
+						iiout.println(DefaultIdentifier.class.getName()
+								+ ".checkIdentifierType(from, " + clazzOne
+								+ ".class);");
 						iiout.println("return find(" + clazzMany
 								+ ".class, from, \""
 								+ sqlNames.column(rel, true, model) + "\");");

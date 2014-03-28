@@ -82,10 +82,9 @@ public class Main {
 				System.out.println("*********");
 				System.out.println(statement);
 				PreparedStatement stmt = connection.prepareStatement(statement);
-				boolean success = stmt.execute();
-				System.out.println("OK:" + success);
-				System.out.println("*********");
+				stmt.execute();
 			}
+			System.out.println("*********");
 			// Create a JDBC context and try to install some items
 			AbstractShoppingJDBCContext shopping = new AbstractShoppingJDBCContext() {
 				@Override
