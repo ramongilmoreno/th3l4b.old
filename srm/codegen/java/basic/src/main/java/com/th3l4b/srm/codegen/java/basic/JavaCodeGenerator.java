@@ -105,12 +105,15 @@ public class JavaCodeGenerator {
 		final BaseNames baseNames = context.getBaseNames();
 		final JavaNames javaNames = context.getJavaNames();
 		final String clazz = javaNames.nameImpl(entity);
-		final String iclazz = javaNames.fqn(javaNames.nameInterface(entity), context);
+		final String iclazz = javaNames.fqn(javaNames.nameInterface(entity),
+				context);
 		final String pkg = javaNames.packageForImpl(context);
 		FileUtils.java(context, pkg, clazz, new AbstractPrintable() {
 			@Override
 			protected void printWithException(PrintWriter out) throws Exception {
 				PrintWriter iout = IndentedWriter.get(out);
+				PrintWriter iiout = IndentedWriter.get(iout);
+				PrintWriter iiiout = IndentedWriter.get(iiout);
 				out.println("package " + pkg + ";");
 				out.println();
 				out.println("public class " + clazz + " extends "
@@ -159,17 +162,22 @@ public class JavaCodeGenerator {
 					String name = baseNames.nameOfDirect(rel, model);
 					String getter = "get" + name;
 					String setter = "set" + name;
-					String clazz = javaNames.nameInterface(model.get(rel.getTo()));
+					String clazz = javaNames.nameInterface(model.get(rel
+							.getTo()));
 					String fqn = javaNames.fqn(clazz, context);
 					iout.println("public " + IIdentifier.class.getName() + " "
 							+ getter + " () throws "
 							+ Exception.class.getName() + " { return _value_"
 							+ name + "; }");
-					iout.println("public " + fqn + " " + getter + " ("
-							+ javaNames.fqnBase(javaNames.finder(model), context)
-							+ " accessor) throws " + Exception.class.getName()
-							+ " { return _value_" + name
-							+ " != null ? accessor.get"
+					iout.println("public "
+							+ fqn
+							+ " "
+							+ getter
+							+ " ("
+							+ javaNames.fqnBase(javaNames.finder(model),
+									context) + " accessor) throws "
+							+ Exception.class.getName() + " { return _value_"
+							+ name + " != null ? accessor.get"
 							+ baseNames.name(model.get(rel.getTo()))
 							+ "(_value_" + name + ") : null; }");
 					iout.println("public void " + setter + " ("
@@ -199,11 +207,42 @@ public class JavaCodeGenerator {
 				iout.println("@Override");
 				iout.println("public Class<" + iclazz + "> clazz() { return "
 						+ iclazz + ".class; }");
+				iout.println();
+				iout.println("@Override");
+				iout.println("public " + String.class.getName()
+						+ " toString() {");
+				iiout.println("try {");
+				iiiout.println(StringBuilder.class.getName() + " sb = new "
+						+ StringBuilder.class.getName() + "(\""
+						+ TextUtils.escapeJavaString(entity.getName()) + "\");");
+				iiiout.println("sb.append(\" - Id: \" + coordinates().getIdentifier());");
+				for (IField field : entity.items()) {
+					String name = baseNames.name(field);
+					iiiout.println("if (isSet" + name + "()) { sb.append(\" - "
+							+ TextUtils.escapeJavaString(field.getName())
+							+ ": \" + get" + name + "()); }");
+				}
+				for (INormalizedManyToOneRelationship rel : entity
+						.relationships().items()) {
+					String name = baseNames.nameOfDirect(rel, model);
+					iiiout.println("if (isSet" + name + "()) { sb.append(\" - "
+							+ TextUtils.escapeJavaString(rel.getName())
+							+ ": \" + get" + name + "()); }");
+				}
+
+				iiiout.println("sb.append(\" - Status: \" + coordinates().getStatus());");
+				iiiout.println("return sb.toString();");
+				iiout.println("} catch (" + Exception.class.getName() + " e) {");
+				iiiout.println("throw new " + RuntimeException.class.getName()
+						+ "(e);");
+				iiout.println("}");
+				iout.println("}");
 				out.println("}");
+				iiiout.flush();
+				iiout.flush();
 				iout.flush();
 			}
 		});
-
 	}
 
 	public void finder(final INormalizedModel model,
