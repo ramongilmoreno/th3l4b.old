@@ -8,6 +8,14 @@
 		return "id-" + time + "-" + index++;
 	}
 
+	function log (msg) {
+		var p = document.createElement("li");
+		var t = document.createTextNode(msg);
+		p.appendChild(t);
+		document.getElementById("here").appendChild(p);
+	} 
+
+	
 	function add(data) {
 		// http://stackoverflow.com/questions/1255948/post-data-in-json-format-with-javascript
 		console.log("About to send", data);
@@ -21,7 +29,7 @@
 			console.log("Done!");
 		};
 	};
-
+	
 	function addItem() {
 		var i = id();
 		add({
@@ -29,6 +37,7 @@
 			"_Type": "Item",
 			"Name": "Name of " + i
 		});
+		log("Item added!");
 	};
 
 	function addMany() {
@@ -42,6 +51,7 @@
 			});
 		}
 		add(data);
+		log("Many items added!");
 	}
 
 	function needMany() {
@@ -60,17 +70,20 @@
 			});
 		}
 		add(data);
+		log("Many needs added!");
 	}
 </script>
 </head>
 <body>
+	<p>Actions:</p>
 	<ul>
 		<li><a href="ShoppingRESTServlet/Item">Items</a></li>
 		<li><a href="ShoppingRESTServlet/Need">Needs</a></li>
 		<li><a href="javascript:addItem()">Add item</a></li>
 		<li><a href="javascript:addMany()">Add many items</a></li>
 		<li><a href="javascript:needMany()">Need many items</a></li>
-		<div id="here" />
 	</ul>
+	<p>Log:</p>
+	<ol id="here"/>
 </body>
 </html>
