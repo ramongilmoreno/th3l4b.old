@@ -1,6 +1,7 @@
 package com.th3l4b.testbed.database;
 
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.Connection;
@@ -8,11 +9,13 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import com.th3l4b.apps.shopping.base.codegen.srm.IItem;
 import com.th3l4b.apps.shopping.base.codegen.srm.INeed;
 import com.th3l4b.apps.shopping.base.codegen.srm.base.IShoppingFinder;
 import com.th3l4b.apps.shopping.base.codegen.srm.jdbc.AbstractShoppingJDBCContext;
+import com.th3l4b.common.data.nullsafe.NullSafe;
 import com.th3l4b.common.log.ConsoleLog;
 import com.th3l4b.srm.base.normalized.INormalizedModel;
 import com.th3l4b.srm.base.normalized.Normalizer;
@@ -20,10 +23,12 @@ import com.th3l4b.srm.base.original.IModel;
 import com.th3l4b.srm.codegen.base.names.BaseNames;
 import com.th3l4b.srm.codegen.database.SQLCodeGenerator;
 import com.th3l4b.srm.codegen.database.SQLCodeGeneratorContext;
+import com.th3l4b.srm.codegen.java.basicruntime.DefaultIdentifier;
 import com.th3l4b.srm.database.BasicSetDatabaseTypesContext;
 import com.th3l4b.srm.database.IDatabaseType;
 import com.th3l4b.srm.database.IDatabaseTypesContext;
 import com.th3l4b.srm.parser.ParserUtils;
+import com.th3l4b.srm.runtime.EntityStatus;
 import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.srm.runtime.IModelUtils;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
@@ -74,17 +79,18 @@ public class Main {
 			pw.flush();
 
 			String[] statements = sw.toString().split("/");
+			PrintStream out = System.out;
 			for (String statement : statements) {
 				statement = statement.trim();
 				if (statement.length() == 0) {
 					continue;
 				}
-				System.out.println("*********");
-				System.out.println(statement);
+				out.println("*********");
+				out.println(statement);
 				PreparedStatement stmt = connection.prepareStatement(statement);
 				stmt.execute();
 			}
-			System.out.println("*********");
+			out.println("*********");
 			// Create a JDBC context and try to install some items
 			AbstractShoppingJDBCContext shopping = new AbstractShoppingJDBCContext() {
 				@Override
@@ -110,17 +116,41 @@ public class Main {
 			IShoppingFinder finder = shopping.getFinder();
 			Iterable<IItem> items = finder.allItem();
 			for (IItem item : items) {
-				System.out.println(item.getName() + ", "
-						+ item.getDescription());
+				out.println(item.getName() + ", " + item.getDescription());
 				for (INeed need : finder.findAllNeedFromItem(item)) {
-					System.out.println(need);
+					out.println(need);
 				}
 			}
+
+			// Find unknown items
+			DefaultIdentifier unknownId = new DefaultIdentifier(IItem.class,
+					UUID.randomUUID().toString());
+			IItem found = finder.find(IItem.class, unknownId);
+			assertNotNull(found, "Finding unknown item");
+			assertEquals(EntityStatus.Unknown, found.coordinates().getStatus(),
+					"Unexisting item was not declared unknown");
 
 		} finally {
 			if (connection != null) {
 				connection.close();
 			}
 		}
+	}
+
+	protected static void assertNotNull(Object obj, String msg)
+			throws Exception {
+		if (obj == null) {
+			throw new IllegalArgumentException("Unexpected null: " + msg);
+		}
+	}
+
+	protected static <T> void assertEquals(T expected, T actual, String msg) {
+		if (NullSafe.equals(expected, actual)
+				&& NullSafe.equals(actual, expected)) {
+			return;
+		} else {
+			throw new IllegalArgumentException("Unexpected null: " + msg);
+		}
+
 	}
 }

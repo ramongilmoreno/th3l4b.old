@@ -10,6 +10,7 @@ import java.util.Map;
 import com.th3l4b.srm.codegen.java.basicruntime.DefaultIdentifier;
 import com.th3l4b.srm.codegen.java.basicruntime.inmemory.Pair;
 import com.th3l4b.srm.runtime.EntityStatus;
+import com.th3l4b.srm.runtime.ICoordinates;
 import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
 
@@ -85,6 +86,15 @@ public abstract class AbstractJDBCFinder {
 		}
 		result.close();
 		statement.close();
+
+		// If item is not found, return an unknown one.
+		if (r == null) {
+			r = parser.create();
+			ICoordinates coordinates = r.coordinates();
+			coordinates.setIdentifier(identifier);
+			coordinates.setStatus(EntityStatus.Unknown);
+		}
+
 		return r;
 	}
 
