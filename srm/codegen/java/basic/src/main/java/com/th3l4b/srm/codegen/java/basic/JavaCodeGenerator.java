@@ -148,9 +148,18 @@ public class JavaCodeGenerator {
 					iout.println("public " + clazz + " get" + name
 							+ "() throws Exception { return _value_" + name
 							+ "; }");
+
+					String check = context.getTypes().get(field.getType())
+							.getProperties()
+							.get(ITypesConstants.PROPERTY_JAVA_CHECK);
+					if (check == null) {
+						check = "";
+					} else {
+						check = "{ " + check + " } ";
+					}
 					iout.println("public void set" + name + "(" + clazz
-							+ " value) throws Exception { _isSet_" + name
-							+ " = true; _value_" + name + " = value; }");
+							+ " value) throws Exception { " + check + "_isSet_"
+							+ name + " = true; _value_" + name + " = value; }");
 					iout.println("public boolean isSet" + name
 							+ "() throws Exception { return _isSet_" + name
 							+ "; }");
