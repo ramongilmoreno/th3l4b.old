@@ -1,5 +1,7 @@
 package com.th3l4b.srm.codegen.database;
 
+import java.util.Map;
+
 import com.th3l4b.common.propertied.IPropertied;
 import com.th3l4b.srm.base.IField;
 import com.th3l4b.srm.base.normalized.INormalizedEntity;
@@ -20,6 +22,7 @@ public class SQLNames implements IDatabaseConstants {
 	public static final String COLUMN_VALUE = COLUMN_PREFIX + ".value";
 	public static final String COLUMN_ISSET = COLUMN_PREFIX + ".isset";
 	public static final String TYPE = PREFIX + ".type";
+	public static final String INDEX = PREFIX + ".index";
 
 	private BaseNames _baseNames;
 
@@ -53,10 +56,7 @@ public class SQLNames implements IDatabaseConstants {
 	}
 
 	public String type(IType type, IDatabaseType database) throws Exception {
-		String value = type.getProperties().get(TYPE + "." + name(database));
-		if (value == null) {
-			value = type.getProperties().get(TYPE);
-		}
+		String value = property(type, TYPE, database);
 		if (value == null) {
 			throw new IllegalStateException(
 					"Cannot find SQL type property in type: " + TYPE + ", "
@@ -64,6 +64,27 @@ public class SQLNames implements IDatabaseConstants {
 		} else {
 			return value;
 		}
+	}
+
+	public String index(INormalizedManyToOneRelationship rel,
+			IDatabaseType database, INormalizedModel model) throws Exception {
+		String r = property(rel.getDirect(), INDEX, database);
+		if (r == null) {
+			return "Idx" + table(model.get(rel.getTo()))
+					+ column(rel, true, model);
+		}
+		return r;
+	}
+
+	public String property(IPropertied propertied, String property,
+			IDatabaseType database) throws Exception {
+		Map<String, String> properties = propertied.getProperties();
+		String value = properties.get(property + "." + name(database));
+		if (value != null) {
+			return value;
+		}
+		value = properties.get(property);
+		return value;
 	}
 
 }

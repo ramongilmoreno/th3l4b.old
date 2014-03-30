@@ -95,12 +95,29 @@ public class SQLCodeGenerator {
 		}
 	}
 
+	private void createIndexes(INormalizedEntity entity,
+			INormalizedModel model, IDatabaseType database,
+			SQLCodeGeneratorContext context, PrintWriter out) throws Exception {
+		final SQLNames sqlNames = context.getSQLNames();
+		for (INormalizedManyToOneRelationship rel : entity.relationships()
+				.items()) {
+			out.println("CREATE INDEX " + sqlNames.index(rel, database, model)
+					+ " ON " + sqlNames.table(entity)
+
+					+ " (" + sqlNames.column(rel, true, model) + ")/");
+			out.println();
+		}
+	}
+
 	public void sql(INormalizedModel model, IDatabaseType database,
 			SQLCodeGeneratorContext context, PrintWriter out) throws Exception {
+		// Create table
 		for (INormalizedEntity entity : model.items()) {
 			createTable(entity, model, database, context, out);
 			out.println("/");
 			out.println();
+			createIndexes(entity, model, database, context, out);
 		}
 	}
+
 }
