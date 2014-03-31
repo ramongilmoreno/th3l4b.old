@@ -7,11 +7,13 @@ import com.th3l4b.srm.codegen.java.basicruntime.junit.IEntityA;
 import com.th3l4b.srm.codegen.java.basicruntime.junit.IEntityB;
 import com.th3l4b.srm.codegen.java.basicruntime.junit.ITestFinder;
 import com.th3l4b.srm.runtime.IIdentifier;
+import com.th3l4b.srm.runtime.IModelUtils;
 
-public abstract class AbstractFinder extends AbstractInMemoryFinder
-		implements ITestFinder {
+public abstract class AbstractFinder extends AbstractInMemoryFinder implements
+		ITestFinder {
 
-	public AbstractFinder() {
+	public AbstractFinder(IModelUtils utils) {
+		super(utils);
 		_map.put(new Pair(IEntityB.class.getName(), "Entity A"),
 				new AbstractPredicateOfRelationship<IEntityA, IEntityB>(
 						IEntityA.class, IEntityB.class) {

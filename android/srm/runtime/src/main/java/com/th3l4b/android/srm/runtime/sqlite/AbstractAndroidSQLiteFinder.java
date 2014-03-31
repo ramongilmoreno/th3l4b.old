@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 import com.th3l4b.srm.codegen.java.basicruntime.DefaultIdentifier;
 import com.th3l4b.srm.codegen.java.basicruntime.inmemory.Pair;
 import com.th3l4b.srm.runtime.EntityStatus;
+import com.th3l4b.srm.runtime.ICoordinates;
 import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
 
@@ -93,6 +94,13 @@ public abstract class AbstractAndroidSQLiteFinder {
 			cursor.moveToNext();
 		}
 		cursor.close();
+		
+		if (r == null) {
+			r = parser.create();
+			ICoordinates coordinates = r.coordinates();
+			coordinates.setIdentifier(identifier);
+			coordinates.setStatus(EntityStatus.Unknown);
+		}
 		return r;
 	}
 

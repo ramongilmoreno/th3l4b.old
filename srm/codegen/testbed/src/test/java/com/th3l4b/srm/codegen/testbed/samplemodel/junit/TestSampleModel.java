@@ -39,7 +39,7 @@ public class TestSampleModel {
 		dept3.coordinates().setStatus(EntityStatus.Persisted);
 		dept3.setName("Department #3");
 		dept3.setParent(dept1);
-		IOfficeFinder finder = new AbstractOfficeInMemoryFinder() {
+		IOfficeFinder finder = new AbstractOfficeInMemoryFinder(utils) {
 			@Override
 			protected Map<IIdentifier, IRuntimeEntity<?>> getEntities()
 					throws Exception {

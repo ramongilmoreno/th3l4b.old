@@ -44,7 +44,9 @@ public class JavaInMemoryCodeGenerator {
 						+ " {");
 
 				// Setup finders in constructor
-				iout.println("public " + clazz + " () {");
+				iout.println("public " + clazz + " ("
+						+ IModelUtils.class.getName() + " utils) {");
+				iiout.println("super(utils);");
 				// And the relationships
 				for (INormalizedEntity ne : model.items()) {
 					for (INormalizedManyToOneRelationship rel : ne
@@ -175,7 +177,8 @@ public class JavaInMemoryCodeGenerator {
 						+ " createFinder() throws Exception {");
 				iiout.println("return new "
 						+ names.fqnInMemory(context.getJavaInMemoryNames()
-								.finderInMemory(model), context) + "() {");
+								.finderInMemory(model), context)
+						+ "(getUtils()) {");
 				iiiout.println("protected " + Map.class.getName() + "<"
 						+ IIdentifier.class.getName() + ", "
 						+ IRuntimeEntity.class.getName()
