@@ -1,0 +1,20 @@
+#
+# Integrated test model
+#
+
+define name "Name";
+define string "string";
+
+model "Integrated test"
+	properties {
+		"com.th3l4b.srm.codegen.base.names.BaseNames.identifier" = "NameForIntegratedTest";
+	};
+	
+entity "class" {
+	field @name @string;
+	field "Description" @string;
+}
+	properties {
+		"com.th3l4b.srm.codegen.base.names.BaseNames.identifier" = "NameForClass";
+	};
+

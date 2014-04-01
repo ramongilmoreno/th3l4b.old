@@ -21,14 +21,12 @@ public class JavaInMemoryNames {
 	}
 
 	public String finderInMemory(INormalizedModel model) throws Exception {
-		return "Abstract" + _baseNames.identifier(model.getName())
-				+ "InMemoryFinder";
+		return "Abstract" + _baseNames.name(model) + "InMemoryFinder";
 	}
 
 	public String abstractInMemoryContext(INormalizedModel model)
 			throws Exception {
-		return "Abstract" + _baseNames.identifier(model.getName())
-				+ "InMemorySRMContext";
+		return "Abstract" + _baseNames.name(model) + "InMemorySRMContext";
 	}
 
 }

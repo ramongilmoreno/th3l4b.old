@@ -1,6 +1,5 @@
 package com.th3l4b.srm.codegen.java.jdbc;
 
-import com.th3l4b.common.propertied.IPropertied;
 import com.th3l4b.srm.base.normalized.INormalizedEntity;
 import com.th3l4b.srm.base.normalized.INormalizedModel;
 import com.th3l4b.srm.codegen.base.names.BaseNames;
@@ -30,28 +29,20 @@ public class JDBCNames {
 		return packageForJDBCParsers(context) + "." + clazz;
 	}
 
-	protected String valueOrProperty(String value, IPropertied propertied)
-			throws Exception {
-		return _baseNames.valueOrProperty(value, JDBCNames.class.getName()
-				+ ".identifier", propertied);
-	}
-
 	public String parserJDBC(INormalizedEntity entity) throws Exception {
-		return _baseNames.identifier(entity.getName()) + "Parser";
+		return _baseNames.name(entity) + "Parser";
 	}
 
 	public String finderJDBC(INormalizedModel model) throws Exception {
-		return "Abstract" + _baseNames.identifier(model.getName())
-				+ "JDBCFinder";
+		return "Abstract" + _baseNames.name(model) + "JDBCFinder";
 	}
 
 	public String abstractJDBCContext(INormalizedModel model) throws Exception {
-		return "Abstract" + _baseNames.identifier(model.getName())
-				+ "JDBCContext";
+		return "Abstract" + _baseNames.name(model) + "JDBCContext";
 	}
 
 	public String parserContext(INormalizedModel model) throws Exception {
-		return _baseNames.identifier(model.getName()) + "JDBCParserContext";
+		return _baseNames.name(model) + "JDBCParserContext";
 	}
 
 }

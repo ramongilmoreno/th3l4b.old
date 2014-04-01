@@ -21,12 +21,11 @@ public class RESTNames {
 	}
 
 	public String parserREST(INormalizedEntity entity) throws Exception {
-		return _baseNames.identifier(entity.getName()) + "Parser";
+		return _baseNames.name(entity) + "Parser";
 	}
 
 	public String finder(INormalizedModel model) throws Exception {
-		return _baseNames.identifier(model.getName())
-				+ "RESTFinder";
+		return _baseNames.name(model) + "RESTFinder";
 	}
 
 }

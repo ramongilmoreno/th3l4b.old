@@ -12,11 +12,6 @@ import com.th3l4b.srm.base.normalized.INormalizedModel;
 
 public class BaseNames {
 
-	public String valueOrProperty(String value, IPropertied propertied,
-			String sourcePrefix) throws Exception {
-		return valueOrProperty(value, sourcePrefix + ".identifier", propertied);
-	}
-
 	public String valueOrProperty(String value, String property,
 			IPropertied propertied) throws Exception {
 		Map<String, String> map = propertied.getProperties();
@@ -51,7 +46,7 @@ public class BaseNames {
 	}
 
 	public String name(INormalizedModel model) throws Exception {
-		return identifier(model.getName());
+		return valueOrProperty(identifier(model.getName()), model);
 	}
 
 	public String nameOfReverse(INormalizedManyToOneRelationship relationship,

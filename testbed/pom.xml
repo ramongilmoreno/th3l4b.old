@@ -11,7 +11,8 @@
     <modules>
         <module>android</module>
         <module>screens</module>
-    <module>database</module>
+	<module>database</module>
+	<module>integrated</module>
   </modules>
 
 </project>
