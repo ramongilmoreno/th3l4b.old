@@ -18,3 +18,12 @@ entity "class" {
 		"com.th3l4b.srm.codegen.base.names.BaseNames.identifier" = "NameForClass";
 	};
 
+// Entity named after a class (in java.lang package)
+entity "String" {
+};
+
+// Regular entity
+entity "Regular entity" {
+	field "Field 1" @string;
+	field "Field 2" @string;
+};
