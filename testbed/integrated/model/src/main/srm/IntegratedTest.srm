@@ -27,3 +27,12 @@ entity "Regular entity" {
 	field "Field 1" @string;
 	field "Field 2" @string;
 };
+
+// Single relationship entity
+entity "Only has a relationship" {
+};
+
+entity "Target of a relationship" {
+};
+
+relationship "Only has a relationship" "Target of a relationship" many-to-one;

@@ -143,9 +143,17 @@ public class JDBCCodeGenerator {
 				out.println("public class " + clazz + " extends "
 						+ AbstractJDBCEntityParser.class.getName() + "<"
 						+ entityInterface + "> {");
-				out.println();
-				iout.println("private " + IJDBCRuntimeType.class.getName()
-						+ "<" + Boolean.class.getName() + "> _isSet;");
+				boolean needsIsSet = false;
+				if (entity.items().iterator().hasNext()
+						|| entity.relationships().items().iterator().hasNext()) {
+					needsIsSet = true;
+				}
+
+				if (needsIsSet) {
+					out.println();
+					iout.println("private " + IJDBCRuntimeType.class.getName()
+							+ "<" + Boolean.class.getName() + "> _isSet;");
+				}
 				for (IField field : entity.items()) {
 					iout.println("private "
 							+ IJDBCRuntimeType.class.getName()
@@ -162,10 +170,12 @@ public class JDBCCodeGenerator {
 						+ IJDBCRuntimeTypesContext.class.getName()
 						+ " types) {");
 				iiout.println("super(ids, status);");
-				iiout.println("_isSet = types.get(\""
-						+ TextUtils
-								.escapeJavaString(IDatabaseConstants.BOOLEAN_TYPE)
-						+ "\", " + Boolean.class.getName() + ".class);");
+				if (needsIsSet) {
+					iiout.println("_isSet = types.get(\""
+							+ TextUtils
+									.escapeJavaString(IDatabaseConstants.BOOLEAN_TYPE)
+							+ "\", " + Boolean.class.getName() + ".class);");
+				}
 				for (IField field : entity.items()) {
 					iiout.println(fieldName(field, baseNames)
 							+ " = types.get(\""
