@@ -1,4 +1,4 @@
-package com.th3l4b.testbed.database;
+package com.th3l4b.testbed.integrated.derby.junit;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

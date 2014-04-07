@@ -18,12 +18,20 @@ public class TestsUtils {
 			throw new IllegalArgumentException("Not equals: " + msg);
 		}
 	}
-	
+
 	public static <T> void assertDifferent(T expected, T actual, String msg) {
 		if (expected != actual) {
 			return;
 		} else {
 			throw new IllegalArgumentException("Not different: " + msg);
+		}
+	}
+
+	public static <T> void assertTrue(boolean value, String msg) {
+		if (value) {
+			return;
+		} else {
+			throw new IllegalArgumentException("Not true: " + msg);
 		}
 	}
 

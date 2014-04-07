@@ -269,7 +269,7 @@ public class JavaCodeGenerator {
 								+ javaNames.packageForBase(context) + ";");
 						out.println();
 						out.println("public interface " + clazz + " extends "
-								+ IFinder.class.getName() + "{");
+								+ IFinder.class.getName() + " {");
 						// Get the entities (individually or all)
 						for (INormalizedEntity ne : model.items()) {
 							iout.println(javaNames.fqn(

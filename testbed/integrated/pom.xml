@@ -11,6 +11,7 @@
     <modules>
     <module>model</module>
     <module>app</module>
+    <module>derby</module>
   </modules>
 
       <properties>

@@ -1,8 +1,11 @@
 package com.th3l4b.srm.codegen.mojo;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.channels.FileChannel;
 import java.util.Collections;
 import java.util.Properties;
 
@@ -49,6 +52,33 @@ public class AllMojo extends SRMAbstractMojo {
 	 * @component
 	 */
 	private MavenProjectHelper _projectHelper;
+
+	/**
+	 * http://stackoverflow.com/questions/106770/standard-concise-way-to-copy-a-
+	 * file-in-java
+	 */
+	public static void copyFile(File sourceFile, File destFile)
+			throws IOException {
+		if (!destFile.exists()) {
+			destFile.createNewFile();
+		}
+
+		FileChannel source = null;
+		FileChannel destination = null;
+
+		try {
+			source = new FileInputStream(sourceFile).getChannel();
+			destination = new FileOutputStream(destFile).getChannel();
+			destination.transferFrom(source, 0, source.size());
+		} finally {
+			if (source != null) {
+				source.close();
+			}
+			if (destination != null) {
+				destination.close();
+			}
+		}
+	}
 
 	@Override
 	protected void execute(final IModel model,
@@ -97,7 +127,8 @@ public class AllMojo extends SRMAbstractMojo {
 
 		// ToMap
 		ToMapCodeGenerator toMapCodegen = new ToMapCodeGenerator();
-		ToMapCodeGeneratorContext toMapContext = new ToMapCodeGeneratorContext(baseNames);
+		ToMapCodeGeneratorContext toMapContext = new ToMapCodeGeneratorContext(
+				baseNames);
 		javaContext.copyTo(toMapContext);
 		startProduct("Abstract to map context", toMapContext);
 		toMapCodegen.toMapParserContext(normalized, toMapContext);
@@ -111,15 +142,16 @@ public class AllMojo extends SRMAbstractMojo {
 			toMapCodegen.entityParser(entity, normalized, toMapContext);
 			endProduct(toMapContext);
 		}
-		
+
 		// REST
 		RESTCodeGenerator restCodegen = new RESTCodeGenerator();
-		RESTCodeGeneratorContext restContext = new RESTCodeGeneratorContext(baseNames);
+		RESTCodeGeneratorContext restContext = new RESTCodeGeneratorContext(
+				baseNames);
 		javaContext.copyTo(restContext);
 		startProduct("REST finder", restContext);
 		restCodegen.finder(normalized, restContext);
 		endProduct(restContext);
-		
+
 		// In memory
 		JavaInMemoryCodeGenerator inMemoryCodegen = new JavaInMemoryCodeGenerator();
 		JavaInMemoryCodeGeneratorContext inMemoryContext = new JavaInMemoryCodeGeneratorContext(
@@ -165,14 +197,17 @@ public class AllMojo extends SRMAbstractMojo {
 
 		// Install .srm as "srm" artifact
 		// http://www.maestrodev.com/better-builds-with-maven/developing-custom-maven-plugins/advanced-mojo-development/
-		_projectHelper.attachArtifact(_project, ARTIFACT_SRM, getInput());
+		File srm = new File(context.getOutput(), baseNames.name(normalized)
+				+ ".srm");
+		copyFile(getInput(), srm);
+		_projectHelper.attachArtifact(_project, ARTIFACT_SRM, srm);
 
 		// Include .srm file as resource
 		// http://www.maestrodev.com/better-builds-with-maven/developing-custom-maven-plugins/advanced-mojo-development/
 		// https://www.mail-archive.com/users@maven.apache.org/msg102603.html
 		Resource resource = new Resource();
-		resource.setDirectory(getInput().getParentFile().getCanonicalPath());
-		resource.setIncludes(Collections.singletonList(getInput().getName()));
+		resource.setDirectory(srm.getParentFile().getCanonicalPath());
+		resource.setIncludes(Collections.singletonList(srm.getName()));
 		resource.setTargetPath(new File(javaContext.getOutput(), FileUtils
 				.asDirectories(javaContext.getPackage())).getCanonicalPath());
 		_project.addResource(resource);
@@ -189,8 +224,8 @@ public class AllMojo extends SRMAbstractMojo {
 				.getCanonicalPath());
 
 		// Produce srm properties artifact
-		File srmPropertiesFile = new File(context.getOutput(), getInput()
-				.getName() + ".properties");
+		File srmPropertiesFile = new File(context.getOutput(),
+				baseNames.name(normalized) + ".properties");
 		FileOutputStream fos = new FileOutputStream(srmPropertiesFile);
 		try {
 			Properties srmProperties = new Properties();
