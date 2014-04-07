@@ -83,4 +83,10 @@ public abstract class AbstractIntegratedTestTests {
 			TestsUtils.assertTrue(found.contains(id), "Not found: " + id);
 		}
 	}
+
+	public void everything() throws Exception {
+		testCommonActions();
+		testAll();
+		testUnknownItem();
+	}
 }

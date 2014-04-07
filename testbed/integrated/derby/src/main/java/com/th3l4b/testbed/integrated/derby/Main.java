@@ -10,7 +10,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import com.th3l4b.common.data.nullsafe.NullSafe;
 import com.th3l4b.common.log.ConsoleLog;
 import com.th3l4b.srm.base.normalized.INormalizedModel;
 import com.th3l4b.srm.base.normalized.Normalizer;
@@ -31,11 +30,6 @@ import com.th3l4b.types.base.basicset.BasicSetTypesContext;
 public class Main {
 
 	public static void main(String[] args) throws Exception {
-		main2(new String[] { "org.apache.derby.jdbc.EmbeddedDriver",
-				"jdbc:derby:memory:testDB;create=true", "", "" });
-	}
-
-	public static void main2(String[] args) throws Exception {
 		int i = 0;
 		String driver = args[i++];
 		String url = args[i++];
@@ -64,10 +58,7 @@ public class Main {
 			};
 			setupSchema(IRegularEntity.class, "NameForIntegratedTest.srm",
 					connection);
-			test.testCommonActions();
-			test.testUnknownItem();
-			test.testAll();
-
+			test.everything();
 		} finally {
 			if (connection != null) {
 				connection.close();
@@ -117,22 +108,5 @@ public class Main {
 		}
 		out.println("*********");
 		return out;
-	}
-
-	protected static void assertNotNull(Object obj, String msg)
-			throws Exception {
-		if (obj == null) {
-			throw new IllegalArgumentException("Unexpected null: " + msg);
-		}
-	}
-
-	protected static <T> void assertEquals(T expected, T actual, String msg) {
-		if (NullSafe.equals(expected, actual)
-				&& NullSafe.equals(actual, expected)) {
-			return;
-		} else {
-			throw new IllegalArgumentException("Unexpected null: " + msg);
-		}
-
 	}
 }
