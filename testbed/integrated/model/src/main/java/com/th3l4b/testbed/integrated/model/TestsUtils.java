@@ -35,4 +35,12 @@ public class TestsUtils {
 		}
 	}
 
+	public static <T> void assertFalse(boolean value, String msg) {
+		if (!value) {
+			return;
+		} else {
+			throw new IllegalArgumentException("Not false: " + msg);
+		}
+	}
+
 }

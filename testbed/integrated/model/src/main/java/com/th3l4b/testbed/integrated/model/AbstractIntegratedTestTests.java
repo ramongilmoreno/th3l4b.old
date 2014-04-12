@@ -53,6 +53,66 @@ public abstract class AbstractIntegratedTestTests {
 				.getStatus(), "Unknown item status is not Unknown");
 	}
 
+	public void testEmptyFields() throws Exception {
+		INameForIntegratedTestContext context = getContext();
+		IModelUtils utils = context.getUtils();
+
+		{
+			DefaultIdentifier id = new DefaultIdentifier(IRegularEntity.class);
+			IRegularEntity created = utils.create(IRegularEntity.class);
+			created.coordinates().setIdentifier(id);
+			String value1 = "Hello";
+			created.setField1(value1);
+			context.update(SRMContextUtils.map(created));
+
+			IRegularEntity found = context.getFinder().getRegularEntity(id);
+			TestsUtils.assertTrue(found.isSetField1(),
+					"Field 1 is not retrieved as set");
+			TestsUtils.assertFalse(found.isSetField2(),
+					"Field 2 is retrieved as set");
+
+			IRegularEntity updated = utils.create(IRegularEntity.class);
+			updated.coordinates().setIdentifier(id);
+			updated.coordinates().setStatus(EntityStatus.Modified);
+			String value2 = "Good bye";
+			updated.setField2(value2);
+			context.update(SRMContextUtils.map(updated));
+
+			found = context.getFinder().getRegularEntity(id);
+			TestsUtils.assertTrue(found.isSetField1(),
+					"Field 1 is not retrieved as set");
+			TestsUtils.assertTrue(found.isSetField2(),
+					"Field 2 is not retrieved as set");
+		}
+		{
+			DefaultIdentifier id = new DefaultIdentifier(IRegularEntity.class);
+			IRegularEntity created = utils.create(IRegularEntity.class);
+			created.coordinates().setIdentifier(id);
+			String value2 = "Good bye";
+			created.setField2(value2);
+			context.update(SRMContextUtils.map(created));
+
+			IRegularEntity found = context.getFinder().getRegularEntity(id);
+			TestsUtils.assertFalse(found.isSetField1(),
+					"Field 1 is not retrieved as set");
+			TestsUtils.assertTrue(found.isSetField2(),
+					"Field 2 is retrieved as set");
+
+			IRegularEntity updated = utils.create(IRegularEntity.class);
+			updated.coordinates().setIdentifier(id);
+			updated.coordinates().setStatus(EntityStatus.Modified);
+			String value1 = "Hello";
+			updated.setField1(value1);
+			context.update(SRMContextUtils.map(updated));
+
+			found = context.getFinder().getRegularEntity(id);
+			TestsUtils.assertTrue(found.isSetField1(),
+					"Field 1 is not retrieved as set");
+			TestsUtils.assertTrue(found.isSetField2(),
+					"Field 2 is not retrieved as set");
+		}
+	}
+
 	public void testAll() throws Exception {
 		INameForIntegratedTestContext context = getContext();
 		IModelUtils utils = context.getUtils();
@@ -87,6 +147,7 @@ public abstract class AbstractIntegratedTestTests {
 	public void everything() throws Exception {
 		testCommonActions();
 		testAll();
+		testEmptyFields();
 		testUnknownItem();
 	}
 }
