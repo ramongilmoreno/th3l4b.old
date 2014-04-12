@@ -4,35 +4,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 import com.th3l4b.srm.codegen.java.basicruntime.DefaultIdentifier;
+import com.th3l4b.srm.runtime.AbstractEntityParser;
 import com.th3l4b.srm.runtime.ICoordinates;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
 
 public abstract class AbstractJDBCEntityParser<R extends IRuntimeEntity<R>>
+		extends AbstractEntityParser<IJDBCIdentifierParser, IJDBCStatusParser>
 		implements IJDBCEntityParser<R> {
-
-	protected IJDBCIdentifierParser _idsParser;
-	protected IJDBCStatusParser _statusParser;
 
 	public AbstractJDBCEntityParser(IJDBCIdentifierParser idsParser,
 			IJDBCStatusParser statusParser) {
-		_idsParser = idsParser;
-		_statusParser = statusParser;
-	}
-
-	public IJDBCIdentifierParser getIdsParser() {
-		return _idsParser;
-	}
-
-	public void setIdsParser(IJDBCIdentifierParser idsParser) {
-		_idsParser = idsParser;
-	}
-
-	public IJDBCStatusParser getStatusParser() {
-		return _statusParser;
-	}
-
-	public void setStatusParser(IJDBCStatusParser statusParser) {
-		_statusParser = statusParser;
+		super(idsParser, statusParser);
 	}
 
 	/**
@@ -72,18 +54,4 @@ public abstract class AbstractJDBCEntityParser<R extends IRuntimeEntity<R>>
 	protected abstract void setRest(R entity, int index,
 			PreparedStatement statement) throws Exception;
 
-	String[] _allColumns;
-
-	@Override
-	public String[] allColumns() throws Exception {
-		if (_allColumns == null) {
-			String[] fieldsColumns = fieldsColumns();
-			String[] r = new String[fieldsColumns.length + 2];
-			r[0] = idColumn();
-			r[1] = statusColumn();
-			System.arraycopy(fieldsColumns, 0, r, 2, fieldsColumns.length);
-			_allColumns = r;
-		}
-		return _allColumns;
-	}
 }

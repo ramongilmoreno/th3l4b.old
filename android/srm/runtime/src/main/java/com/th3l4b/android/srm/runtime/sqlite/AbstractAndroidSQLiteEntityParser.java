@@ -4,38 +4,21 @@ import android.content.ContentValues;
 import android.database.Cursor;
 
 import com.th3l4b.srm.codegen.java.basicruntime.DefaultIdentifier;
+import com.th3l4b.srm.runtime.AbstractEntityParser;
 import com.th3l4b.srm.runtime.DatabaseUtils;
 import com.th3l4b.srm.runtime.ICoordinates;
 import com.th3l4b.srm.runtime.IDatabaseConstants;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
 
 public abstract class AbstractAndroidSQLiteEntityParser<R extends IRuntimeEntity<R>>
+		extends
+		AbstractEntityParser<IAndroidSQLiteIdentifierParser, IAndroidSQLiteStatusParser>
 		implements IAndroidSQLiteEntityParser<R> {
-
-	protected IAndroidSQLiteIdentifierParser _idsParser;
-	protected IAndroidSQLiteStatusParser _statusParser;
 
 	public AbstractAndroidSQLiteEntityParser(
 			IAndroidSQLiteIdentifierParser idsParser,
 			IAndroidSQLiteStatusParser statusParser) {
-		_idsParser = idsParser;
-		_statusParser = statusParser;
-	}
-
-	public IAndroidSQLiteIdentifierParser getIdsParser() {
-		return _idsParser;
-	}
-
-	public void setIdsParser(IAndroidSQLiteIdentifierParser idsParser) {
-		_idsParser = idsParser;
-	}
-
-	public IAndroidSQLiteStatusParser getStatusParser() {
-		return _statusParser;
-	}
-
-	public void setStatusParser(IAndroidSQLiteStatusParser statusParser) {
-		_statusParser = statusParser;
+		super(idsParser, statusParser);
 	}
 
 	@Override
@@ -66,21 +49,6 @@ public abstract class AbstractAndroidSQLiteEntityParser<R extends IRuntimeEntity
 
 	public abstract void setRest(R entity, Void arg, ContentValues values)
 			throws Exception;
-
-	String[] _allColumns;
-
-	@Override
-	public String[] allColumns() throws Exception {
-		if (_allColumns == null) {
-			String[] fieldsColumns = fieldsColumns();
-			String[] r = new String[fieldsColumns.length + 2];
-			r[0] = idColumn();
-			r[1] = statusColumn();
-			System.arraycopy(fieldsColumns, 0, r, 2, fieldsColumns.length);
-			_allColumns = r;
-		}
-		return _allColumns;
-	}
 
 	@Override
 	public boolean hasValue(Integer arg, Cursor result) throws Exception {

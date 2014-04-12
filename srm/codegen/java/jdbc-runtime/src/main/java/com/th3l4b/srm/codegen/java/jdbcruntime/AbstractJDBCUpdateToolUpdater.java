@@ -17,6 +17,8 @@ public abstract class AbstractJDBCUpdateToolUpdater extends
 
 	protected abstract IJDBCIdentifierParser getIdentifierParser()
 			throws Exception;
+	
+	protected abstract IModelUtils getModelUtils () throws Exception;
 
 	@Override
 	protected <T extends IRuntimeEntity<T>> void updateEntity(T entity,
@@ -63,6 +65,11 @@ public abstract class AbstractJDBCUpdateToolUpdater extends
 				}
 			}
 		} else {
+			// Merge the two items
+			T update2 = parser.create();
+			getModelUtils().copy(original, update2, entity.clazz());
+			getModelUtils().copy(entity, update2, entity.clazz());
+			
 			StringBuffer update = new StringBuffer("update ");
 			update.append(parser.table());
 			update.append(" set ");
@@ -78,8 +85,8 @@ public abstract class AbstractJDBCUpdateToolUpdater extends
 			update.append(" where " + parser.idColumn() + " = ?");
 			PreparedStatement statement = getConnection().prepareStatement(
 					update.toString());
-			parser.set(entity, 1, statement);
-			getIdentifierParser().set(entity.coordinates().getIdentifier(),
+			parser.set(update2, 1, statement);
+			getIdentifierParser().set(update2.coordinates().getIdentifier(),
 					1 + parser.allColumns().length, statement);
 			try {
 				if (statement.executeUpdate() != 1) {
