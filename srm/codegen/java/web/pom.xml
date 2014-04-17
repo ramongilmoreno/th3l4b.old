@@ -3,13 +3,11 @@
 
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.th3l4b.srm.codegen</groupId>
-        <artifactId>java</artifactId>
+        <groupId>com.th3l4b.srm.codegen.java</groupId>
+        <artifactId>pom</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-
     
-    <groupId>com.th3l4b.srm.codegen.java</groupId>
     <artifactId>web</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>

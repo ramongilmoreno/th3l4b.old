@@ -12,6 +12,7 @@
     <module>model</module>
     <module>app</module>
     <module>derby</module>
+    <module>mongo</module>
   </modules>
 
       <properties>

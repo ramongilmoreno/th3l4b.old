@@ -7,24 +7,29 @@
     <artifactId>pom</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
-  <artifactId>jdbc-runtime</artifactId>
+  <artifactId>mongo</artifactId>
   <version>1.0-SNAPSHOT</version>
   <dependencies>
-     <dependency>
+    <dependency>
       <groupId>com.th3l4b.srm.codegen.java</groupId>
-      <artifactId>basic-runtime</artifactId>
+      <artifactId>basic</artifactId>
       <version>1.0-SNAPSHOT</version>
     </dependency>
     <dependency>
-		<groupId>com.th3l4b.types</groupId>
-		<artifactId>runtime</artifactId>
-		<version>1.0-SNAPSHOT</version>
+      <groupId>com.th3l4b.srm.codegen.java</groupId>
+      <artifactId>mongo-runtime</artifactId>
+      <version>1.0-SNAPSHOT</version>
     </dependency>
-	<dependency>
-		<groupId>com.th3l4b.types</groupId>
-		<artifactId>base</artifactId>
-		<version>1.0-SNAPSHOT</version>
-	</dependency>
+    <dependency>
+      <groupId>com.th3l4b.srm</groupId>
+      <artifactId>database</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.th3l4b.srm.codegen</groupId>
+      <artifactId>database</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
