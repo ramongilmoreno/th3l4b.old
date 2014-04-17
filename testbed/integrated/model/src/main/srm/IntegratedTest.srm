@@ -36,3 +36,10 @@ entity "Target of a relationship" {
 };
 
 relationship "Only has a relationship" "Target of a relationship" many-to-one;
+
+// String limit test
+entity "String limit test" {
+	field "Label" "label";
+	field "String" @string;
+	field "Text" "text";
+};

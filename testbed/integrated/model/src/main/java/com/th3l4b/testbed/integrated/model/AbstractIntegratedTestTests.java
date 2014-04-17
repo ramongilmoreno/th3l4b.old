@@ -8,6 +8,7 @@ import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.srm.runtime.IModelUtils;
 import com.th3l4b.srm.runtime.SRMContextUtils;
 import com.th3l4b.testbed.integrated.model.generated.IRegularEntity;
+import com.th3l4b.testbed.integrated.model.generated.IStringLimitTest;
 import com.th3l4b.testbed.integrated.model.generated.base.INameForIntegratedTestContext;
 
 public abstract class AbstractIntegratedTestTests {
@@ -113,7 +114,7 @@ public abstract class AbstractIntegratedTestTests {
 		}
 	}
 
-	public void testAll() throws Exception {
+	public void testGetAll() throws Exception {
 		INameForIntegratedTestContext context = getContext();
 		IModelUtils utils = context.getUtils();
 
@@ -144,10 +145,38 @@ public abstract class AbstractIntegratedTestTests {
 		}
 	}
 
+	public void testLimitStringTypes() throws Exception {
+		INameForIntegratedTestContext context = getContext();
+		IModelUtils utils = context.getUtils();
+
+		DefaultIdentifier id = new DefaultIdentifier(IStringLimitTest.class);
+		IStringLimitTest created = utils.create(IStringLimitTest.class);
+		created.coordinates().setIdentifier(id);
+
+		// Create a long string
+		int limit = 10000;
+		StringBuilder sb = new StringBuilder(limit);
+		for (int i = 0; i < limit; i++) {
+			sb.append("a");
+		}
+		String longString = sb.toString();
+		created.setLabel(longString);
+		created.setString(longString);
+		created.setText(longString);
+		context.update(SRMContextUtils.map(created));
+		IStringLimitTest found = context.getFinder().find(
+				IStringLimitTest.class, id);
+		String msg = "Long string expected to be different";
+		TestsUtils.assertDifferent(longString, found.getLabel(), msg);
+		TestsUtils.assertDifferent(longString, found.getString(), msg);
+		TestsUtils.assertDifferent(longString, found.getText(), msg);
+	}
+
 	public void everything() throws Exception {
 		testCommonActions();
-		testAll();
+		testGetAll();
 		testEmptyFields();
 		testUnknownItem();
+		testLimitStringTypes();
 	}
 }
