@@ -32,5 +32,6 @@ public class Main {
 			}
 		};
 		tests.everything();
+		System.out.println("Mongo test OK!");
 	}
 }

@@ -43,3 +43,24 @@ entity "String limit test" {
 	field "String" @string;
 	field "Text" "text";
 };
+
+// Mongo names test
+entity "Mongo names test" {
+	field "Property" @string
+		properties {
+			"com.th3l4b.srm.codegen.java.mongo.MongoNames.identifier" = "MongoProperty";
+		};
+}
+	properties {
+		"com.th3l4b.srm.codegen.java.mongo.MongoNames.identifier" = "MongoEntity";
+	};
+	
+entity "Mongo names test 2" {
+}
+	properties {
+		"com.th3l4b.srm.codegen.java.mongo.MongoNames.identifier" = "MongoEntity2";
+	};
+
+
+relationship "Mongo names test" "Mongo names test 2" many-to-one;
+relationship "Mongo names test 2" "Mongo names test" many-to-one;

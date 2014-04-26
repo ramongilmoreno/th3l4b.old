@@ -10,6 +10,9 @@ import com.th3l4b.srm.codegen.java.basic.JavaCodeGeneratorContext;
 
 public class MongoNames {
 
+	public static final String MONGO_NAME_PROPERTY = MongoNames.class.getName()
+			+ ".identifier";
+
 	private BaseNames _baseNames;
 
 	public MongoNames(BaseNames baseNames) {
@@ -47,20 +50,31 @@ public class MongoNames {
 	public String parserContext(INormalizedModel model) throws Exception {
 		return _baseNames.name(model) + "MongoParserContext";
 	}
-	
-	public String column(IField field) throws Exception {
-		return column(_baseNames.name(field), field);
+
+	public String collection(INormalizedEntity entity) throws Exception {
+		return mongoName(_baseNames.name(entity), entity);
 	}
 
-	public String column(INormalizedManyToOneRelationship relationship, INormalizedModel model) throws Exception {
-		return column(_baseNames.nameOfDirect(relationship, model),
+	public String column(IField field) throws Exception {
+		return mongoName(_baseNames.name(field), field);
+	}
+
+	public String column(INormalizedManyToOneRelationship relationship,
+			INormalizedModel model) throws Exception {
+		return mongoName(_baseNames.nameOfDirect(relationship, model),
 				relationship);
 	}
 
-	private String column(String name, IPropertied propertied)
+	private String mongoName(String name, IPropertied propertied)
 			throws Exception {
-		// Won't make use of properties here
-		return name;
+		if (propertied.getProperties().containsKey(MONGO_NAME_PROPERTY)) {
+			return propertied.getProperties().get(MONGO_NAME_PROPERTY);
+		} else {
+			return name;
+		}
 	}
 
+	public static void main(String[] args) {
+		System.out.println("a$b$d".replaceAll("\\$", ""));
+	}
 }

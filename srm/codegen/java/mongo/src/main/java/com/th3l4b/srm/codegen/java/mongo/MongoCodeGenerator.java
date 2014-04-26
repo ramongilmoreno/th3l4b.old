@@ -122,7 +122,6 @@ public class MongoCodeGenerator {
 		final BaseNames baseNames = context.getBaseNames();
 		final MongoNames mongoNames = context.getMongoNames();
 		final JavaNames javaNames = context.getJavaNames();
-		final SQLNames sqlNames = context.getSQLNames();
 		final String clazz = mongoNames.parserMongo(entity);
 		final String pkg = mongoNames.packageForMongoParsers(context);
 		FileUtils.java(context, pkg, clazz, new AbstractPrintable() {
@@ -138,6 +137,13 @@ public class MongoCodeGenerator {
 				out.println("public class " + clazz + " extends "
 						+ AbstractMongoEntityParser.class.getName() + "<"
 						+ entityInterface + "> {");
+
+				out.println();
+				iout.println("public static final String COLLECTION_NAME = \""
+						+ TextUtils.escapeJavaString(mongoNames
+								.collection(entity)) + "\";");
+				out.println();
+
 				for (IField field : entity.items()) {
 					iout.println("private "
 							+ IMongoRuntimeType.class.getName()
@@ -169,9 +175,7 @@ public class MongoCodeGenerator {
 
 				iout.println("public " + String.class.getName()
 						+ " table() throws " + Exception.class.getName()
-						+ " { return \""
-						+ TextUtils.escapeJavaString(sqlNames.table(entity))
-						+ "\"; }");
+						+ " { return COLLECTION_NAME; }");
 				iout.println("public " + String.class.getName()
 						+ " idColumn() throws " + Exception.class.getName()
 						+ " { return \""
@@ -341,7 +345,6 @@ public class MongoCodeGenerator {
 				PrintWriter iiout = IndentedWriter.get(iout);
 				PrintWriter iiiout = IndentedWriter.get(iiout);
 				PrintWriter iiiiout = IndentedWriter.get(iiiout);
-
 				iout.println("protected " + IModelUtils.class.getName()
 						+ " createUtils() throws " + Exception.class.getName()
 						+ " {");
