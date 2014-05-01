@@ -12,6 +12,9 @@ import com.th3l4b.srm.base.normalized.INormalizedModel;
 
 public class BaseNames {
 
+	public static final String BASE_NAME_PROPERTY = BaseNames.class.getName()
+			+ ".identifier";
+
 	public String valueOrProperty(String value, String property,
 			IPropertied propertied) throws Exception {
 		Map<String, String> map = propertied.getProperties();
@@ -22,10 +25,9 @@ public class BaseNames {
 		}
 	}
 
-	protected String valueOrProperty(String value, IPropertied propertied)
+	protected String baseName(String value, IPropertied propertied)
 			throws Exception {
-		return valueOrProperty(value,
-				BaseNames.class.getName() + ".identifier", propertied);
+		return valueOrProperty(value, BASE_NAME_PROPERTY, propertied);
 	}
 
 	/**
@@ -38,27 +40,27 @@ public class BaseNames {
 	}
 
 	public String name(INormalizedEntity entity) throws Exception {
-		return valueOrProperty(identifier(entity.getName()), entity);
+		return baseName(identifier(entity.getName()), entity);
 	}
 
 	public String name(IField field) throws Exception {
-		return valueOrProperty(identifier(field.getName()), field);
+		return baseName(identifier(field.getName()), field);
 	}
 
 	public String name(INormalizedModel model) throws Exception {
-		return valueOrProperty(identifier(model.getName()), model);
+		return baseName(identifier(model.getName()), model);
 	}
 
 	public String nameOfReverse(INormalizedManyToOneRelationship relationship,
 			INormalizedModel model) throws Exception {
 		INamed reverse = relationship.getReverse();
-		return valueOrProperty(identifier(reverse.getName()), reverse);
+		return baseName(identifier(reverse.getName()), reverse);
 	}
 
 	public String nameOfDirect(INormalizedManyToOneRelationship relationship,
 			INormalizedModel model) throws Exception {
 		INamed direct = relationship.getDirect();
-		return valueOrProperty(identifier(direct.getName()), direct);
+		return baseName(identifier(direct.getName()), direct);
 	}
 
 }

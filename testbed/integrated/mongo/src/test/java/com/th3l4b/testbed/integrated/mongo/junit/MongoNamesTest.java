@@ -13,6 +13,7 @@ public class MongoNamesTest {
 	@Test
 	public void testCollectionNames() {
 		Assert.assertEquals("MongoEntity", MongoNamesTestParser.COLLECTION_NAME);
+		Assert.assertEquals("MongoProperty", MongoNamesTestParser.COLUMNS[0]);
 		Assert.assertEquals("MongoEntity2",
 				MongoNamesTest2Parser.COLLECTION_NAME);
 	}

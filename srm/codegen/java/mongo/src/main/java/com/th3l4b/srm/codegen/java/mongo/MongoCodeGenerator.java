@@ -189,7 +189,7 @@ public class MongoCodeGenerator {
 						+ " create() { return new "
 						+ javaNames.fqnImpl(javaNames.nameImpl(entity), context)
 						+ "(); }");
-				iout.println("private static final String[] COLUMNS = {");
+				iout.println("public static final String[] COLUMNS = {");
 				boolean first = true;
 				// Fill attributes
 				for (IField field : entity.items()) {
