@@ -12,9 +12,12 @@ import com.th3l4b.testbed.integrated.model.generated.mongo.parsers.MongoNamesTes
 public class MongoNamesTest {
 	@Test
 	public void testCollectionNames() {
-		Assert.assertEquals("MongoEntity", MongoNamesTestParser.COLLECTION_NAME);
+		String mongoEntity1 = "MongoEntity";
+		String mongoEntity2 = "MongoEntity2";
+		Assert.assertEquals(mongoEntity1, MongoNamesTestParser.COLLECTION_NAME);
 		Assert.assertEquals("MongoProperty", MongoNamesTestParser.COLUMNS[0]);
-		Assert.assertEquals("MongoEntity2",
+		Assert.assertEquals(mongoEntity2, MongoNamesTestParser.COLUMNS[1]);
+		Assert.assertEquals(mongoEntity2,
 				MongoNamesTest2Parser.COLLECTION_NAME);
 	}
 }

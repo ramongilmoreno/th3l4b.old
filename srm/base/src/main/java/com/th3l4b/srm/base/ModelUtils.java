@@ -140,13 +140,13 @@ public class ModelUtils {
 					}
 				}
 
-				return "" + a + " " + b;
+				return "" + a + ", " + b;
 			}
 		} else {
 			INamed direct = relationship.getDirect();
 			return ""
 					+ relationship.getFrom()
-					+ " "
+					+ ", "
 					+ (direct != null ? direct.getName() : relationship.getTo());
 		}
 	}

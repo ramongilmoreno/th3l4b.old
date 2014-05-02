@@ -64,3 +64,6 @@ entity "Mongo names test 2" {
 
 relationship "Mongo names test" "Mongo names test 2" many-to-one;
 relationship "Mongo names test 2" "Mongo names test" many-to-one;
+
+relationship "Mongo names test" "Mongo names test 2" many-to-many
+	direct "Another mongo relationship" reverse "Yet another one";

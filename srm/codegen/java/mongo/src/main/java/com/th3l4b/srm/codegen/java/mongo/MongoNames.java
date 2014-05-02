@@ -1,5 +1,6 @@
 package com.th3l4b.srm.codegen.java.mongo;
 
+import com.th3l4b.common.data.nullsafe.NullSafe;
 import com.th3l4b.common.propertied.IPropertied;
 import com.th3l4b.srm.base.IField;
 import com.th3l4b.srm.base.normalized.INormalizedEntity;
@@ -61,6 +62,20 @@ public class MongoNames {
 
 	public String column(INormalizedManyToOneRelationship relationship,
 			INormalizedModel model) throws Exception {
+		// In this order
+		// 1. Mongo name of direct
+		// 2. If direct name is target's entity name, try to find the target's entity mongo name
+		// 3. BaseNames.nameOfDirect of relationship 
+		String name = mongoName(null, relationship.getDirect());
+		if (name != null) {
+			return name;
+		}
+		if (NullSafe.equals(relationship.getDirect().getName(), relationship.getTo())) {
+			name = mongoName(null, model.get(relationship.getTo()));
+			if (name != null) {
+				return name;
+			}
+		}
 		return mongoName(_baseNames.nameOfDirect(relationship, model),
 				relationship);
 	}
