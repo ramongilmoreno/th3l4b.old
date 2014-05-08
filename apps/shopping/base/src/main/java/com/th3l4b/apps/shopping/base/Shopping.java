@@ -195,7 +195,7 @@ public class Shopping implements IScreensConstants, IRenderingConstants {
 				{
 					INeed remove = utils.create(INeed.class);
 					remove.coordinates().setIdentifier(id);
-					remove.coordinates().setStatus(EntityStatus.Deleted);
+					remove.coordinates().setStatus(EntityStatus.Remove);
 					updates.put(id, remove);
 				}
 				tree.removeScreen(nameOfLater(idAsString));
@@ -466,7 +466,7 @@ public class Shopping implements IScreensConstants, IRenderingConstants {
 							for (INeed need : data.getFinder()
 									.findAllNeedFromItem(itemAsId)) {
 								need.coordinates().setStatus(
-										EntityStatus.Deleted);
+										EntityStatus.Remove);
 								updates.put(need.coordinates().getIdentifier(),
 										need);
 							}
@@ -570,7 +570,8 @@ public class Shopping implements IScreensConstants, IRenderingConstants {
 		DefaultTreeOfScreens tree = new DefaultTreeOfScreens();
 		DefaultScreensConfiguration screens = new DefaultScreensConfiguration(
 				tree, interactions);
-		IShoppingApplication application = setupShoppipngApplication(data, screens);
+		IShoppingApplication application = setupShoppipngApplication(data,
+				screens);
 		String root = name("Root");
 		screens.getTree().setRoot(root);
 		renderIndex(root, application);
