@@ -6,9 +6,10 @@ import com.th3l4b.srm.codegen.java.basicruntime.update.AbstractUpdateToolSRMCont
 import com.th3l4b.srm.codegen.java.basicruntime.update.IUpdateToolFinder;
 import com.th3l4b.srm.codegen.java.basicruntime.update.IUpdateToolUpdater;
 import com.th3l4b.srm.codegen.java.jdbcruntime.types.JDBCRuntimeTypesBasicSet;
+import com.th3l4b.srm.runtime.IFinder;
 import com.th3l4b.srm.runtime.IModelUtils;
 
-public abstract class AbstractJDBCSRMContext<FINDER>
+public abstract class AbstractJDBCSRMContext<FINDER extends IFinder>
 		extends
 		AbstractUpdateToolSRMContext<FINDER, IJDBCIdentifierParser, IJDBCStatusParser, IJDBCEntityParserContext, IJDBCRuntimeTypesContext> {
 

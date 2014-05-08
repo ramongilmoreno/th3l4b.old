@@ -2,7 +2,7 @@ package com.th3l4b.srm.runtime;
 
 import java.util.Map;
 
-public interface ISRMContext<FINDER> {
+public interface ISRMContext<FINDER extends IFinder> {
 	IModelUtils getUtils () throws Exception;
 	void setUtils (IModelUtils utils) throws Exception;
 	FINDER getFinder () throws Exception;

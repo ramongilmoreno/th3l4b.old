@@ -6,8 +6,9 @@ import com.th3l4b.android.srm.runtime.sqlite.types.AndroidSQLiteRuntimeTypesBasi
 import com.th3l4b.srm.codegen.java.basicruntime.update.AbstractUpdateToolSRMContext;
 import com.th3l4b.srm.codegen.java.basicruntime.update.IUpdateToolFinder;
 import com.th3l4b.srm.codegen.java.basicruntime.update.IUpdateToolUpdater;
+import com.th3l4b.srm.runtime.IFinder;
 
-public abstract class AbstractAndroidSQLiteSRMContext<FINDER>
+public abstract class AbstractAndroidSQLiteSRMContext<FINDER extends IFinder>
 		extends
 		AbstractUpdateToolSRMContext<FINDER, IAndroidSQLiteIdentifierParser, IAndroidSQLiteStatusParser, IAndroidSQLiteEntityParserContext, IAndroidSQLiteRuntimeTypesContext> {
 

@@ -5,8 +5,9 @@ import com.th3l4b.srm.codegen.java.basicruntime.update.AbstractUpdateToolSRMCont
 import com.th3l4b.srm.codegen.java.basicruntime.update.IUpdateToolFinder;
 import com.th3l4b.srm.codegen.java.basicruntime.update.IUpdateToolUpdater;
 import com.th3l4b.srm.codegen.java.mongoruntime.types.MongoRuntimeTypesBasicSet;
+import com.th3l4b.srm.runtime.IFinder;
 
-public abstract class AbstractMongoSRMContext<FINDER>
+public abstract class AbstractMongoSRMContext<FINDER extends IFinder>
 		extends
 		AbstractUpdateToolSRMContext<FINDER, IMongoIdentifierParser, IMongoStatusParser, IMongoEntityParserContext, IMongoRuntimeTypesContext> {
 

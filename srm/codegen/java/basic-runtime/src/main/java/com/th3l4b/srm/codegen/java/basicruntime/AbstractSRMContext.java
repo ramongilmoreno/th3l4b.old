@@ -5,12 +5,13 @@ import java.util.Map;
 import com.th3l4b.srm.codegen.java.basicruntime.update.IUpdateToolFinder;
 import com.th3l4b.srm.codegen.java.basicruntime.update.IUpdateToolUpdater;
 import com.th3l4b.srm.codegen.java.basicruntime.update.UpdateTool;
+import com.th3l4b.srm.runtime.IFinder;
 import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.srm.runtime.IModelUtils;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
 import com.th3l4b.srm.runtime.ISRMContext;
 
-public abstract class AbstractSRMContext<FINDER> implements ISRMContext<FINDER> {
+public abstract class AbstractSRMContext<FINDER extends IFinder> implements ISRMContext<FINDER> {
 
 	protected IModelUtils _utils;
 	private FINDER _finder;
