@@ -205,7 +205,7 @@ public class Shopping implements IScreensConstants, IRenderingConstants {
 				{
 					INeed remove = utils.create(INeed.class);
 					remove.coordinates().setIdentifier(id);
-					remove.coordinates().setStatus(EntityStatus.Modified);
+					remove.coordinates().setStatus(EntityStatus.Modify);
 					updates.put(id, remove);
 				}
 				addLaterAction(needName, needRow, application);

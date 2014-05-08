@@ -10,7 +10,7 @@ public abstract class AbstractRuntimeEntity<T extends IRuntimeEntity<T>>
 		implements IRuntimeEntity<T> {
 
 	protected IIdentifier __identifier = new DefaultIdentifier(clazz());
-	protected EntityStatus __status = EntityStatus.New;
+	protected EntityStatus __status = EntityStatus.Modify;
 	private ICoordinates _coordinates;
 
 	@Override

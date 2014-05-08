@@ -61,7 +61,7 @@ public abstract class AbstractModelUtils implements IModelUtils {
 			T entity) throws Exception {
 		ICoordinates coordinates = entity.coordinates();
 		coordinates.setIdentifier(new DefaultIdentifier(clazz));
-		coordinates.setStatus(EntityStatus.New);
+		coordinates.setStatus(EntityStatus.Modify);
 		return entity;
 	}
 

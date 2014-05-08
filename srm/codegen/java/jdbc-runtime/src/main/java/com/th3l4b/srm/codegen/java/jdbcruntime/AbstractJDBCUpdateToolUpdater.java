@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 
 import com.th3l4b.srm.codegen.java.basicruntime.update.AbstractUpdateToolUpdater;
-import com.th3l4b.srm.runtime.EntityStatus;
 import com.th3l4b.srm.runtime.IModelUtils;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
 
@@ -23,10 +22,6 @@ public abstract class AbstractJDBCUpdateToolUpdater extends
 	@Override
 	protected <T extends IRuntimeEntity<T>> void updateEntity(T entity,
 			T original, IModelUtils utils) throws Exception {
-		if (entity.coordinates().getStatus() != EntityStatus.Deleted) {
-			entity.coordinates().setStatus(EntityStatus.Persisted);
-		}
-
 		IJDBCEntityParser<T> parser = getParsers().getEntityParser(
 				entity.clazz());
 		if (original == null) {

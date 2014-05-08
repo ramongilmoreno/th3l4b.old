@@ -59,7 +59,7 @@ public abstract class AbstractToMapEntityParser<R extends IRuntimeEntity<R>>
 		if (statusParser.hasValue(status, map)) {
 			r.coordinates().setStatus(statusParser.parse(status, map));
 		} else {
-			r.coordinates().setStatus(EntityStatus.Unknown);
+			r.coordinates().setStatus(EntityStatus.Ignore);
 		}
 		String id = IDatabaseConstants.ID;
 		IToMapIdentifierParser identifierParser = getIdentifierParser();

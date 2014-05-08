@@ -28,8 +28,8 @@ public abstract class AbstractIntegratedTestTests {
 		created.setField1(value1);
 		created.setField2(value2);
 		context.update(SRMContextUtils.map(created));
-		TestsUtils.assertEquals(EntityStatus.New, created.coordinates()
-				.getStatus(), "Object created is in new status");
+		TestsUtils.assertEquals(EntityStatus.Modify, created.coordinates()
+				.getStatus(), "Object created is in modify status");
 
 		IRegularEntity found = context.getFinder().find(IRegularEntity.class,
 				id);
@@ -74,7 +74,7 @@ public abstract class AbstractIntegratedTestTests {
 
 			IRegularEntity updated = utils.create(IRegularEntity.class);
 			updated.coordinates().setIdentifier(id);
-			updated.coordinates().setStatus(EntityStatus.Modified);
+			updated.coordinates().setStatus(EntityStatus.Modify);
 			String value2 = "Good bye";
 			updated.setField2(value2);
 			context.update(SRMContextUtils.map(updated));
@@ -101,7 +101,7 @@ public abstract class AbstractIntegratedTestTests {
 
 			IRegularEntity updated = utils.create(IRegularEntity.class);
 			updated.coordinates().setIdentifier(id);
-			updated.coordinates().setStatus(EntityStatus.Modified);
+			updated.coordinates().setStatus(EntityStatus.Modify);
 			String value1 = "Hello";
 			updated.setField1(value1);
 			context.update(SRMContextUtils.map(updated));

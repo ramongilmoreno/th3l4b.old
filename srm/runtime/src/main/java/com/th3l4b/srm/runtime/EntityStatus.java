@@ -4,9 +4,24 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum EntityStatus {
-	Wild, New, Persisted, Modified, Deleted, Unknown;
+	
+	Modify(true), Remove(true), Ignore(true), Persisted, Deleted, Unknown;
+
+	boolean _transitional = false;
 
 	private static Map<String, EntityStatus> _reverse = null;
+
+	EntityStatus() {
+		this(false);
+	}
+
+	EntityStatus(boolean transitional) {
+		_transitional = transitional;
+	}
+	
+	public boolean isTransitional() {
+		return _transitional;
+	}
 
 	public String initial() {
 		return name().substring(0, 1);
@@ -24,7 +39,7 @@ public enum EntityStatus {
 	}
 
 	public static EntityStatus fromInitial(String initial) {
-		return fromInitial(initial, EntityStatus.Unknown);
+		return fromInitial(initial, EntityStatus.Ignore);
 	}
 
 	public static EntityStatus fromInitial(String initial, EntityStatus fallback) {

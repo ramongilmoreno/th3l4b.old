@@ -11,7 +11,7 @@ public class DefaultMongoStatusParser implements IMongoStatusParser {
 		if (status instanceof String) {
 			return EntityStatus.fromInitial((String) status);
 		} else {
-			return EntityStatus.Unknown;
+			return EntityStatus.Ignore;
 		}
 	}
 
