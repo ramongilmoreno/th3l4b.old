@@ -59,6 +59,7 @@ public class Main {
 			setupSchema(IRegularEntity.class, "NameForIntegratedTest.srm",
 					connection);
 			test.everything();
+			System.out.println("Derby test OK!");
 		} finally {
 			if (connection != null) {
 				connection.close();

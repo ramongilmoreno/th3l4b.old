@@ -3,26 +3,17 @@
 
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.th3l4b.srm</groupId>
-        <artifactId>codegen</artifactId>
+        <groupId>com.th3l4b.srm.codegen.java</groupId>
+        <artifactId>pom</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     
-    <groupId>com.th3l4b.srm.codegen.java</groupId>
+    <groupId>com.th3l4b.srm.codegen.java.sync</groupId>
     <artifactId>pom</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
     
-    <modules>
-    <module>basic</module>
-    <module>basic-runtime</module>
-    <module>jdbc</module>
-    <module>jdbc-runtime</module>
-    <module>web</module>
-    <module>mongo-runtime</module>
-    <module>mongo</module>
-    <module>mongo-mojo</module>
-    <module>sync</module>
+  <modules>
+    <module>runtime</module>
   </modules>
-
 </project>
