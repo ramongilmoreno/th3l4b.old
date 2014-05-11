@@ -3,14 +3,14 @@ package com.th3l4b.common.data;
 import com.th3l4b.common.data.nullsafe.NullSafe;
 
 public class Pair<A, B> {
-	
+
 	protected A _a;
 	protected B _b;
-	
-	public Pair () {
+
+	public Pair() {
 	}
-	
-	public Pair (A a, B b) {
+
+	public Pair(A a, B b) {
 		_a = a;
 		_b = b;
 	}
@@ -30,7 +30,7 @@ public class Pair<A, B> {
 	public void setB(B b) {
 		_b = b;
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof Pair<?, ?>) {
@@ -50,10 +50,15 @@ public class Pair<A, B> {
 			return false;
 		}
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return NullSafe.hashCode(getA()) ^ NullSafe.hashCode(getB());
+	}
+
+	@Override
+	public String toString() {
+		return "[" + getA() + ", " + getB() + "]";
 	}
 
 }
