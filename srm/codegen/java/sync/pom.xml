@@ -15,5 +15,6 @@
     
   <modules>
     <module>runtime</module>
+    <module>codegen</module>
   </modules>
 </project>

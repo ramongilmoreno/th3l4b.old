@@ -3,9 +3,9 @@ package com.th3l4b.srm.codegen.java.sync.runtime;
 import com.th3l4b.srm.runtime.DefaultPerEntityContext;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
 
-public class DefaultEntityDiffContext extends
+public class DefaultDiffContext extends
 		DefaultPerEntityContext<IEntityDiff<?>> implements
-		IEntityDiffContext {
+		IDiffContext {
 	
 	@SuppressWarnings("unchecked")
 	public <R extends IRuntimeEntity<R>> IEntityDiff<R> getEntityDiff(

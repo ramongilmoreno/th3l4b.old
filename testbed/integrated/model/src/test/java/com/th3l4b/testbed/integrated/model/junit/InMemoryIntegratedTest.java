@@ -1,4 +1,4 @@
-package com.th3l4b.testbed.integrated.model;
+package com.th3l4b.testbed.integrated.model.junit;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
+import com.th3l4b.testbed.integrated.model.AbstractIntegratedTestTests;
 import com.th3l4b.testbed.integrated.model.generated.base.INameForIntegratedTestContext;
 import com.th3l4b.testbed.integrated.model.generated.inmemory.AbstractNameForIntegratedTestInMemorySRMContext;
 

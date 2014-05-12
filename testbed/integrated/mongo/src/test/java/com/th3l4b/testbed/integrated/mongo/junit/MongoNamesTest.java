@@ -17,7 +17,6 @@ public class MongoNamesTest {
 		Assert.assertEquals(mongoEntity1, MongoNamesTestParser.COLLECTION_NAME);
 		Assert.assertEquals("MongoProperty", MongoNamesTestParser.COLUMNS[0]);
 		Assert.assertEquals(mongoEntity2, MongoNamesTestParser.COLUMNS[1]);
-		Assert.assertEquals(mongoEntity2,
-				MongoNamesTest2Parser.COLLECTION_NAME);
+		Assert.assertEquals(mongoEntity2, MongoNamesTest2Parser.COLLECTION_NAME);
 	}
 }

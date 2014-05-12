@@ -8,6 +8,16 @@ import com.th3l4b.srm.runtime.IRuntimeEntity;
 public abstract class AbstractEntityDiff<T extends IRuntimeEntity<T>>
 		implements IEntityDiff<T> {
 
+	protected boolean nullSafeEquals(Object a, Object b) {
+		if (a == b) {
+			return true;
+		} else if ((a == null) || (b == null)) {
+			return false;
+		} else {
+			return a.equals(b) && b.equals(a);
+		}
+	}
+
 	@Override
 	public boolean diff(T from, T to, T diff) throws Exception {
 		ICoordinates toCoordinates = to.coordinates();

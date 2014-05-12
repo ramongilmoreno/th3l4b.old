@@ -33,6 +33,8 @@ import com.th3l4b.srm.codegen.java.basic.tomap.ToMapCodeGenerator;
 import com.th3l4b.srm.codegen.java.basic.tomap.ToMapCodeGeneratorContext;
 import com.th3l4b.srm.codegen.java.jdbc.JDBCCodeGenerator;
 import com.th3l4b.srm.codegen.java.jdbc.JDBCCodeGeneratorContext;
+import com.th3l4b.srm.codegen.java.sync.SyncCodeGenerator;
+import com.th3l4b.srm.codegen.java.sync.SyncCodeGeneratorContext;
 
 /**
  * Generates all sources
@@ -163,6 +165,24 @@ public class AllMojo extends SRMAbstractMojo {
 		startProduct("Abstract in memory context", inMemoryContext);
 		inMemoryCodegen.abstractInMemoryContext(normalized, inMemoryContext);
 		endProduct(inMemoryContext);
+
+		// Sync
+		SyncCodeGenerator syncCodegen = new SyncCodeGenerator();
+		SyncCodeGeneratorContext syncContext = new SyncCodeGeneratorContext(
+				baseNames);
+		javaContext.copyTo(syncContext);
+		for (INormalizedEntity entity : normalized.items()) {
+			startProduct("Diff for entity: " + entity.getName(), syncContext);
+			syncCodegen.diff(entity, normalized, syncContext);
+			endProduct(syncContext);
+
+		}
+		startProduct("Diff context", syncContext);
+		syncCodegen.diffContext(normalized, syncContext);
+		endProduct(syncContext);
+		startProduct("Diff update filter", syncContext);
+		syncCodegen.abstractUpdateFilter(normalized, syncContext);
+		endProduct(syncContext);
 
 		// JDBC
 		JDBCCodeGenerator jdbcCodegen = new JDBCCodeGenerator();

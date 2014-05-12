@@ -13,7 +13,7 @@ public abstract class AbstractSyncTool<FINDER extends IFinder, CONTEXT extends I
 
 	protected abstract CONTEXT getContext() throws Exception;
 
-	protected abstract IEntityDiffContext getDiffContext() throws Exception;
+	protected abstract IDiffContext getDiffContext() throws Exception;
 
 	/**
 	 * Takes some entities changed elsewhere and computes the required changes
