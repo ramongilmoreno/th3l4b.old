@@ -19,9 +19,7 @@
     <module>jdbc</module>
     <module>jdbc-runtime</module>
     <module>web</module>
-    <module>mongo-runtime</module>
     <module>mongo</module>
-    <module>mongo-mojo</module>
     <module>sync</module>
   </modules>
 
