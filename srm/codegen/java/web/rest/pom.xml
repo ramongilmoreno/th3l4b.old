@@ -1,36 +1,21 @@
-<?xml version="1.0"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>com.th3l4b.srm.codegen.java</groupId>
-    <artifactId>web</artifactId>
-    <version>1.0-SNAPSHOT</version>
-  </parent>
-  <groupId>com.th3l4b.srm.codegen.java.web</groupId>
-  <artifactId>rest</artifactId>
-  <version>1.0-SNAPSHOT</version>
-  <dependencies>
-    <dependency>
-        <groupId>com.th3l4b.srm</groupId>
-        <artifactId>base</artifactId>
-        <version>1.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0     http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
         <groupId>com.th3l4b.srm.codegen.java.web</groupId>
-        <artifactId>rest-runtime</artifactId>
+        <artifactId>pom</artifactId>
         <version>1.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-        <groupId>com.th3l4b.srm.codegen</groupId>
-        <artifactId>base</artifactId>
-        <version>1.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.11</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+    </parent>
+   
+    <groupId>com.th3l4b.srm.codegen.java.web.rest</groupId> 
+    <artifactId>pom</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
+    
+    <modules>
+      <module>codegen</module>
+      <module>runtime</module>
+    </modules>
+
 </project>

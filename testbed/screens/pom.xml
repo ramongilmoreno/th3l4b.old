@@ -30,8 +30,8 @@
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>com.th3l4b.srm.codegen.java.web</groupId>
-			<artifactId>rest-runtime</artifactId>
+			<groupId>com.th3l4b.srm.codegen.java.web.rest</groupId>
+			<artifactId>runtime</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
