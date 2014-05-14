@@ -1,4 +1,4 @@
-package com.th3l4b.srm.codegne.mongo.mojo;
+package com.th3l4b.srm.codegen.mongo.mojo.junit;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

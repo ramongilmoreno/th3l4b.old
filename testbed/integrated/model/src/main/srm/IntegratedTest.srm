@@ -48,17 +48,17 @@ entity "String limit test" {
 entity "Mongo names test" {
 	field "Property" @string
 		properties {
-			"com.th3l4b.srm.codegen.java.mongo.MongoNames.identifier" = "MongoProperty";
+			"com.th3l4b.srm.codegen.java.mongo.codegen.MongoNames.identifier" = "MongoProperty";
 		};
 }
 	properties {
-		"com.th3l4b.srm.codegen.java.mongo.MongoNames.identifier" = "MongoEntity";
+		"com.th3l4b.srm.codegen.java.mongo.codegen.MongoNames.identifier" = "MongoEntity";
 	};
 	
 entity "Mongo names test 2" {
 }
 	properties {
-		"com.th3l4b.srm.codegen.java.mongo.MongoNames.identifier" = "MongoEntity2";
+		"com.th3l4b.srm.codegen.java.mongo.codegen.MongoNames.identifier" = "MongoEntity2";
 	};
 
 

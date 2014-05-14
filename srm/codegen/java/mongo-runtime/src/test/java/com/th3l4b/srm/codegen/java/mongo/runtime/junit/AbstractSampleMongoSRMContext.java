@@ -1,11 +1,11 @@
-package com.th3l4b.srm.codegen.java.mongoruntime.junit;
+package com.th3l4b.srm.codegen.java.mongo.runtime.junit;
 
 import com.mongodb.DB;
-import com.th3l4b.srm.codegen.java.mongoruntime.AbstractMongoSRMContext;
-import com.th3l4b.srm.codegen.java.mongoruntime.IMongoEntityParserContext;
-import com.th3l4b.srm.codegen.java.mongoruntime.IMongoIdentifierParser;
-import com.th3l4b.srm.codegen.java.mongoruntime.IMongoRuntimeTypesContext;
-import com.th3l4b.srm.codegen.java.mongoruntime.IMongoStatusParser;
+import com.th3l4b.srm.codegen.java.mongo.runtime.AbstractMongoSRMContext;
+import com.th3l4b.srm.codegen.java.mongo.runtime.IMongoEntityParserContext;
+import com.th3l4b.srm.codegen.java.mongo.runtime.IMongoIdentifierParser;
+import com.th3l4b.srm.codegen.java.mongo.runtime.IMongoRuntimeTypesContext;
+import com.th3l4b.srm.codegen.java.mongo.runtime.IMongoStatusParser;
 
 public abstract class AbstractSampleMongoSRMContext extends
 		AbstractMongoSRMContext<ISampleFinder> {

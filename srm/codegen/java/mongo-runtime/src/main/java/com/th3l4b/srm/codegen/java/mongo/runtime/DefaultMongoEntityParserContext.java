@@ -1,4 +1,4 @@
-package com.th3l4b.srm.codegen.java.mongoruntime;
+package com.th3l4b.srm.codegen.java.mongo.runtime;
 
 import com.th3l4b.srm.runtime.DefaultPerEntityContext;
 import com.th3l4b.srm.runtime.IRuntimeEntity;

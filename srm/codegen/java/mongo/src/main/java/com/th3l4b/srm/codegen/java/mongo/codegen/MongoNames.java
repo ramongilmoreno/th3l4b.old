@@ -1,4 +1,4 @@
-package com.th3l4b.srm.codegen.java.mongo;
+package com.th3l4b.srm.codegen.java.mongo.codegen;
 
 import com.th3l4b.common.data.nullsafe.NullSafe;
 import com.th3l4b.common.propertied.IPropertied;

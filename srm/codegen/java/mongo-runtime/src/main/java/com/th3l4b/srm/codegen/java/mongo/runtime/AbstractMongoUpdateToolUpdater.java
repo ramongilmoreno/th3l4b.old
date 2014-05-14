@@ -1,4 +1,4 @@
-package com.th3l4b.srm.codegen.java.mongoruntime;
+package com.th3l4b.srm.codegen.java.mongo.runtime;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;

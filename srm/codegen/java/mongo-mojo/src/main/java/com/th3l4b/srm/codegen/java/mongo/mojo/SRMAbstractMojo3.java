@@ -1,4 +1,4 @@
-package com.th3l4b.srm.codegne.mongomojo;
+package com.th3l4b.srm.codegen.java.mongo.mojo;
 
 import java.io.File;
 import java.io.FileInputStream;

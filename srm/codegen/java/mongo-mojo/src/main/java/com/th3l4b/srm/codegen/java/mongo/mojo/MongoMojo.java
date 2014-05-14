@@ -1,4 +1,4 @@
-package com.th3l4b.srm.codegne.mongomojo;
+package com.th3l4b.srm.codegen.java.mongo.mojo;
 
 import java.io.File;
 
@@ -9,8 +9,8 @@ import com.th3l4b.srm.base.normalized.INormalizedModel;
 import com.th3l4b.srm.base.original.IModel;
 import com.th3l4b.srm.codegen.base.CodeGeneratorContext;
 import com.th3l4b.srm.codegen.java.basic.JavaCodeGeneratorContext;
-import com.th3l4b.srm.codegen.java.mongo.MongoCodeGenerator;
-import com.th3l4b.srm.codegen.java.mongo.MongoCodeGeneratorContext;
+import com.th3l4b.srm.codegen.java.mongo.codegen.MongoCodeGenerator;
+import com.th3l4b.srm.codegen.java.mongo.codegen.MongoCodeGeneratorContext;
 
 /**
  * Generates all sources

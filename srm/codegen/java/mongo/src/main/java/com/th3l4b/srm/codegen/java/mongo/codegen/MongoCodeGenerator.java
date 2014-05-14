@@ -1,4 +1,4 @@
-package com.th3l4b.srm.codegen.java.mongo;
+package com.th3l4b.srm.codegen.java.mongo.codegen;
 
 import java.io.PrintWriter;
 
@@ -16,15 +16,15 @@ import com.th3l4b.srm.codegen.base.names.BaseNames;
 import com.th3l4b.srm.codegen.database.SQLNames;
 import com.th3l4b.srm.codegen.java.basic.JavaNames;
 import com.th3l4b.srm.codegen.java.basicruntime.DefaultIdentifier;
-import com.th3l4b.srm.codegen.java.mongoruntime.AbstractMongoEntityParser;
-import com.th3l4b.srm.codegen.java.mongoruntime.AbstractMongoFinder;
-import com.th3l4b.srm.codegen.java.mongoruntime.AbstractMongoSRMContext;
-import com.th3l4b.srm.codegen.java.mongoruntime.DefaultMongoEntityParserContext;
-import com.th3l4b.srm.codegen.java.mongoruntime.IMongoEntityParserContext;
-import com.th3l4b.srm.codegen.java.mongoruntime.IMongoIdentifierParser;
-import com.th3l4b.srm.codegen.java.mongoruntime.IMongoRuntimeType;
-import com.th3l4b.srm.codegen.java.mongoruntime.IMongoRuntimeTypesContext;
-import com.th3l4b.srm.codegen.java.mongoruntime.IMongoStatusParser;
+import com.th3l4b.srm.codegen.java.mongo.runtime.AbstractMongoEntityParser;
+import com.th3l4b.srm.codegen.java.mongo.runtime.AbstractMongoFinder;
+import com.th3l4b.srm.codegen.java.mongo.runtime.AbstractMongoSRMContext;
+import com.th3l4b.srm.codegen.java.mongo.runtime.DefaultMongoEntityParserContext;
+import com.th3l4b.srm.codegen.java.mongo.runtime.IMongoEntityParserContext;
+import com.th3l4b.srm.codegen.java.mongo.runtime.IMongoIdentifierParser;
+import com.th3l4b.srm.codegen.java.mongo.runtime.IMongoRuntimeType;
+import com.th3l4b.srm.codegen.java.mongo.runtime.IMongoRuntimeTypesContext;
+import com.th3l4b.srm.codegen.java.mongo.runtime.IMongoStatusParser;
 import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.srm.runtime.IModelUtils;
 import com.th3l4b.types.base.ITypesConstants;

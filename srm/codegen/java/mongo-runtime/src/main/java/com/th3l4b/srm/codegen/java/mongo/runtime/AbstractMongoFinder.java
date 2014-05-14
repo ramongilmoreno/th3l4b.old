@@ -1,4 +1,4 @@
-package com.th3l4b.srm.codegen.java.mongoruntime;
+package com.th3l4b.srm.codegen.java.mongo.runtime;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;

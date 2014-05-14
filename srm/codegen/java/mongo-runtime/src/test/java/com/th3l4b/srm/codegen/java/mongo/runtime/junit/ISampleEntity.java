@@ -1,4 +1,4 @@
-package com.th3l4b.srm.codegen.java.mongoruntime.junit;
+package com.th3l4b.srm.codegen.java.mongo.runtime.junit;
 
 import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.srm.runtime.IRuntimeEntity;

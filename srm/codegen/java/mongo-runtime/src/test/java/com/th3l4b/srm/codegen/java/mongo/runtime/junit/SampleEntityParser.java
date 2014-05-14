@@ -1,11 +1,11 @@
-package com.th3l4b.srm.codegen.java.mongoruntime.junit;
+package com.th3l4b.srm.codegen.java.mongo.runtime.junit;
 
 import com.mongodb.DBObject;
-import com.th3l4b.srm.codegen.java.mongoruntime.AbstractMongoEntityParser;
-import com.th3l4b.srm.codegen.java.mongoruntime.IMongoIdentifierParser;
-import com.th3l4b.srm.codegen.java.mongoruntime.IMongoRuntimeType;
-import com.th3l4b.srm.codegen.java.mongoruntime.IMongoRuntimeTypesContext;
-import com.th3l4b.srm.codegen.java.mongoruntime.IMongoStatusParser;
+import com.th3l4b.srm.codegen.java.mongo.runtime.AbstractMongoEntityParser;
+import com.th3l4b.srm.codegen.java.mongo.runtime.IMongoIdentifierParser;
+import com.th3l4b.srm.codegen.java.mongo.runtime.IMongoRuntimeType;
+import com.th3l4b.srm.codegen.java.mongo.runtime.IMongoRuntimeTypesContext;
+import com.th3l4b.srm.codegen.java.mongo.runtime.IMongoStatusParser;
 
 public class SampleEntityParser extends
 		AbstractMongoEntityParser<ISampleEntity> {

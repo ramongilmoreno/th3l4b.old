@@ -1,7 +1,7 @@
-package com.th3l4b.srm.codegen.java.mongoruntime.types;
+package com.th3l4b.srm.codegen.java.mongo.runtime.types;
 
 import com.mongodb.DBObject;
-import com.th3l4b.srm.codegen.java.mongoruntime.IMongoRuntimeType;
+import com.th3l4b.srm.codegen.java.mongo.runtime.IMongoRuntimeType;
 
 public class DefaultMongoRuntimeType<T> implements IMongoRuntimeType<T> {
 

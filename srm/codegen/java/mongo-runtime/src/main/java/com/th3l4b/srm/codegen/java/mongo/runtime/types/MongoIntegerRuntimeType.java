@@ -1,4 +1,4 @@
-package com.th3l4b.srm.codegen.java.mongoruntime.types;
+package com.th3l4b.srm.codegen.java.mongo.runtime.types;
 
 public class MongoIntegerRuntimeType extends DefaultMongoRuntimeType<Long> {
 

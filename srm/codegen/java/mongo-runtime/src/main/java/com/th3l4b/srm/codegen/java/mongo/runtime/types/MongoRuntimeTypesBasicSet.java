@@ -1,10 +1,10 @@
-package com.th3l4b.srm.codegen.java.mongoruntime.types;
+package com.th3l4b.srm.codegen.java.mongo.runtime.types;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.th3l4b.srm.codegen.java.mongoruntime.IMongoRuntimeType;
-import com.th3l4b.srm.codegen.java.mongoruntime.IMongoRuntimeTypesContext;
+import com.th3l4b.srm.codegen.java.mongo.runtime.IMongoRuntimeType;
+import com.th3l4b.srm.codegen.java.mongo.runtime.IMongoRuntimeTypesContext;
 import com.th3l4b.types.base.basicset.BasicSetTypesEnum;
 
 public class MongoRuntimeTypesBasicSet implements IMongoRuntimeTypesContext {

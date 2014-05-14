@@ -1,10 +1,10 @@
-package com.th3l4b.srm.codegen.java.mongoruntime;
+package com.th3l4b.srm.codegen.java.mongo.runtime;
 
 import com.mongodb.DB;
 import com.th3l4b.srm.codegen.java.basicruntime.update.AbstractUpdateToolSRMContext;
 import com.th3l4b.srm.codegen.java.basicruntime.update.IUpdateToolFinder;
 import com.th3l4b.srm.codegen.java.basicruntime.update.IUpdateToolUpdater;
-import com.th3l4b.srm.codegen.java.mongoruntime.types.MongoRuntimeTypesBasicSet;
+import com.th3l4b.srm.codegen.java.mongo.runtime.types.MongoRuntimeTypesBasicSet;
 import com.th3l4b.srm.runtime.IFinder;
 
 public abstract class AbstractMongoSRMContext<FINDER extends IFinder>
