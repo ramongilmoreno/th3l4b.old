@@ -31,8 +31,8 @@ import com.th3l4b.srm.codegen.java.basic.rest.RESTCodeGenerator;
 import com.th3l4b.srm.codegen.java.basic.rest.RESTCodeGeneratorContext;
 import com.th3l4b.srm.codegen.java.basic.tomap.ToMapCodeGenerator;
 import com.th3l4b.srm.codegen.java.basic.tomap.ToMapCodeGeneratorContext;
-import com.th3l4b.srm.codegen.java.jdbc.JDBCCodeGenerator;
-import com.th3l4b.srm.codegen.java.jdbc.JDBCCodeGeneratorContext;
+import com.th3l4b.srm.codegen.java.jdbc.codegen.JDBCCodeGenerator;
+import com.th3l4b.srm.codegen.java.jdbc.codegen.JDBCCodeGeneratorContext;
 import com.th3l4b.srm.codegen.java.sync.SyncCodeGenerator;
 import com.th3l4b.srm.codegen.java.sync.SyncCodeGeneratorContext;
 
