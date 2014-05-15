@@ -15,7 +15,6 @@
     
     <modules>
     <module>basic</module>
-    <module>basic-runtime</module>
     <module>jdbc</module>
     <module>web</module>
     <module>mongo</module>
