@@ -1,4 +1,4 @@
-package com.th3l4b.srm.codegen.java.basic.rest;
+package com.th3l4b.srm.codegen.java.web.rest.codegen;
 
 import com.th3l4b.srm.base.normalized.INormalizedEntity;
 import com.th3l4b.srm.base.normalized.INormalizedModel;
