@@ -3,7 +3,7 @@ package com.th3l4b.srm.codegen.java.mongo.runtime;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBObject;
-import com.th3l4b.srm.codegen.java.basicruntime.update.AbstractUpdateToolUpdater;
+import com.th3l4b.srm.codegen.java.basic.runtime.update.AbstractUpdateToolUpdater;
 import com.th3l4b.srm.runtime.IDatabaseConstants;
 import com.th3l4b.srm.runtime.IModelUtils;
 import com.th3l4b.srm.runtime.IRuntimeEntity;

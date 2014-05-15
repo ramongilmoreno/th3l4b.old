@@ -3,7 +3,7 @@ package com.th3l4b.android.srm.runtime.sqlite;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-import com.th3l4b.srm.codegen.java.basicruntime.DefaultIdentifier;
+import com.th3l4b.srm.codegen.java.basic.runtime.DefaultIdentifier;
 import com.th3l4b.srm.runtime.AbstractEntityParser;
 import com.th3l4b.srm.runtime.DatabaseUtils;
 import com.th3l4b.srm.runtime.ICoordinates;

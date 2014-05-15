@@ -2,9 +2,9 @@ package com.th3l4b.srm.codegen.java.jdbc.runtime;
 
 import java.sql.Connection;
 
-import com.th3l4b.srm.codegen.java.basicruntime.update.AbstractUpdateToolSRMContext;
-import com.th3l4b.srm.codegen.java.basicruntime.update.IUpdateToolFinder;
-import com.th3l4b.srm.codegen.java.basicruntime.update.IUpdateToolUpdater;
+import com.th3l4b.srm.codegen.java.basic.runtime.update.AbstractUpdateToolSRMContext;
+import com.th3l4b.srm.codegen.java.basic.runtime.update.IUpdateToolFinder;
+import com.th3l4b.srm.codegen.java.basic.runtime.update.IUpdateToolUpdater;
 import com.th3l4b.srm.codegen.java.jdbcruntime.types.JDBCRuntimeTypesBasicSet;
 import com.th3l4b.srm.runtime.IFinder;
 import com.th3l4b.srm.runtime.IModelUtils;

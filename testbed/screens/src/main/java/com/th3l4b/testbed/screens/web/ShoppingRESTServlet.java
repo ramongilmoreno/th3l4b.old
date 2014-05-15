@@ -5,11 +5,11 @@ import com.th3l4b.apps.shopping.base.codegen.srm.base.IShoppingContext;
 import com.th3l4b.apps.shopping.base.codegen.srm.base.IShoppingFinder;
 import com.th3l4b.apps.shopping.base.codegen.srm.rest.ShoppingRESTFinder;
 import com.th3l4b.apps.shopping.base.codegen.srm.tomap.ShoppingToMapParserContext;
-import com.th3l4b.srm.codegen.java.basicruntime.rest.IRESTFinder;
-import com.th3l4b.srm.codegen.java.basicruntime.tomap.DefaultToMapIdentifierParser;
-import com.th3l4b.srm.codegen.java.basicruntime.tomap.DefaultToMapStatusParser;
-import com.th3l4b.srm.codegen.java.web.rest.runtime.AbstractRESTServlet;
-import com.th3l4b.srm.codegen.java.web.rest.runtime.IRESTRequest;
+import com.th3l4b.srm.codegen.java.basic.runtime.tomap.DefaultToMapIdentifierParser;
+import com.th3l4b.srm.codegen.java.basic.runtime.tomap.DefaultToMapStatusParser;
+import com.th3l4b.srm.codegen.java.web.rest.runtime.IRESTFinder;
+import com.th3l4b.srm.codegen.java.web.rest.runtime.servlet.AbstractRESTServlet;
+import com.th3l4b.srm.codegen.java.web.rest.runtime.servlet.IRESTRequest;
 import com.th3l4b.srm.runtime.IToMapEntityParserContext;
 import com.th3l4b.types.runtime.basicset.JavaRuntimeTypesBasicSet;
 

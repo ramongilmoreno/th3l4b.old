@@ -19,7 +19,7 @@ import com.th3l4b.screens.base.utils.DefaultScreensConfiguration;
 import com.th3l4b.screens.base.utils.DefaultTreeOfScreens;
 import com.th3l4b.screens.base.utils.IScreensClientDescriptor;
 import com.th3l4b.screens.base.utils.IScreensConfiguration;
-import com.th3l4b.srm.codegen.java.basicruntime.DefaultIdentifier;
+import com.th3l4b.srm.codegen.java.basic.runtime.DefaultIdentifier;
 import com.th3l4b.srm.runtime.EntityStatus;
 import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.srm.runtime.IModelUtils;

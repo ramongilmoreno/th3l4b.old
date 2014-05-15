@@ -15,7 +15,7 @@ import com.th3l4b.srm.codegen.base.FileUtils;
 import com.th3l4b.srm.codegen.base.names.BaseNames;
 import com.th3l4b.srm.codegen.database.SQLNames;
 import com.th3l4b.srm.codegen.java.basic.JavaNames;
-import com.th3l4b.srm.codegen.java.basicruntime.DefaultIdentifier;
+import com.th3l4b.srm.codegen.java.basic.runtime.DefaultIdentifier;
 import com.th3l4b.srm.codegen.java.mongo.runtime.AbstractMongoEntityParser;
 import com.th3l4b.srm.codegen.java.mongo.runtime.AbstractMongoFinder;
 import com.th3l4b.srm.codegen.java.mongo.runtime.AbstractMongoSRMContext;

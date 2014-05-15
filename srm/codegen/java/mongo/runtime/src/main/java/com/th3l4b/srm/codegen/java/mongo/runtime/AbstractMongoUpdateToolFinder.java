@@ -6,7 +6,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
-import com.th3l4b.srm.codegen.java.basicruntime.update.AbstractUpdateToolFinder;
+import com.th3l4b.srm.codegen.java.basic.runtime.update.AbstractUpdateToolFinder;
 import com.th3l4b.srm.runtime.IDatabaseConstants;
 import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.srm.runtime.IModelUtils;

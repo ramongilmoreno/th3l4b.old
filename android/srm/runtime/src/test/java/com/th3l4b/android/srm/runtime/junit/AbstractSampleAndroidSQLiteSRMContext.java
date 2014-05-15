@@ -7,7 +7,7 @@ import com.th3l4b.android.srm.runtime.sqlite.IAndroidSQLiteEntityParserContext;
 import com.th3l4b.android.srm.runtime.sqlite.IAndroidSQLiteIdentifierParser;
 import com.th3l4b.android.srm.runtime.sqlite.IAndroidSQLiteRuntimeTypesContext;
 import com.th3l4b.android.srm.runtime.sqlite.IAndroidSQLiteStatusParser;
-import com.th3l4b.srm.codegen.java.basicruntime.AbstractModelUtils;
+import com.th3l4b.srm.codegen.java.basic.runtime.AbstractModelUtils;
 import com.th3l4b.srm.runtime.IModelUtils;
 
 public abstract class AbstractSampleAndroidSQLiteSRMContext extends

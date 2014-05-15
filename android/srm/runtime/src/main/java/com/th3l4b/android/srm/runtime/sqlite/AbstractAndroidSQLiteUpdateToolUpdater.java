@@ -3,7 +3,7 @@ package com.th3l4b.android.srm.runtime.sqlite;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.th3l4b.srm.codegen.java.basicruntime.update.AbstractUpdateToolUpdater;
+import com.th3l4b.srm.codegen.java.basic.runtime.update.AbstractUpdateToolUpdater;
 import com.th3l4b.srm.runtime.IModelUtils;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
 

@@ -1,7 +1,7 @@
 package com.th3l4b.android.srm.runtime.junit;
 
 import com.th3l4b.android.srm.runtime.sqlite.AbstractAndroidSQLiteFinder;
-import com.th3l4b.srm.codegen.java.basicruntime.inmemory.Pair;
+import com.th3l4b.srm.codegen.java.basic.runtime.inmemory.Pair;
 import com.th3l4b.srm.runtime.IIdentifier;
 
 public abstract class AbstractSampleAndroidSQLiteFinder extends

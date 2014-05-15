@@ -1,7 +1,7 @@
 package com.th3l4b.srm.codegen.java.mongo.runtime;
 
 import com.mongodb.DBObject;
-import com.th3l4b.srm.codegen.java.basicruntime.DefaultIdentifier;
+import com.th3l4b.srm.codegen.java.basic.runtime.DefaultIdentifier;
 import com.th3l4b.srm.runtime.IIdentifier;
 
 

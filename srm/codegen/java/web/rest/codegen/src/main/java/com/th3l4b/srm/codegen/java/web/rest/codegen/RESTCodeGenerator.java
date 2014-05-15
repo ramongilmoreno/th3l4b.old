@@ -11,11 +11,11 @@ import com.th3l4b.srm.base.normalized.INormalizedModel;
 import com.th3l4b.srm.codegen.base.FileUtils;
 import com.th3l4b.srm.codegen.base.names.BaseNames;
 import com.th3l4b.srm.codegen.java.basic.JavaNames;
-import com.th3l4b.srm.codegen.java.basicruntime.DefaultIdentifier;
-import com.th3l4b.srm.codegen.java.basicruntime.rest.DefaultRESTFinder;
-import com.th3l4b.srm.codegen.java.basicruntime.rest.IFindAllForRESTFinder;
-import com.th3l4b.srm.codegen.java.basicruntime.rest.IFindManyForRESTFinder;
-import com.th3l4b.srm.codegen.java.basicruntime.rest.IFindOneForRESTFinder;
+import com.th3l4b.srm.codegen.java.basic.runtime.DefaultIdentifier;
+import com.th3l4b.srm.codegen.java.web.rest.runtime.DefaultRESTFinder;
+import com.th3l4b.srm.codegen.java.web.rest.runtime.IFindAllForRESTFinder;
+import com.th3l4b.srm.codegen.java.web.rest.runtime.IFindManyForRESTFinder;
+import com.th3l4b.srm.codegen.java.web.rest.runtime.IFindOneForRESTFinder;
 
 public class RESTCodeGenerator {
 

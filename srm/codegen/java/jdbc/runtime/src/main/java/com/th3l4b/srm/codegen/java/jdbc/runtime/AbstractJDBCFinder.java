@@ -7,8 +7,8 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 
-import com.th3l4b.srm.codegen.java.basicruntime.DefaultIdentifier;
-import com.th3l4b.srm.codegen.java.basicruntime.inmemory.Pair;
+import com.th3l4b.srm.codegen.java.basic.runtime.DefaultIdentifier;
+import com.th3l4b.srm.codegen.java.basic.runtime.inmemory.Pair;
 import com.th3l4b.srm.runtime.EntityStatus;
 import com.th3l4b.srm.runtime.ICoordinates;
 import com.th3l4b.srm.runtime.IIdentifier;

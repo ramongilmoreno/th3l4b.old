@@ -5,7 +5,7 @@ import java.util.HashMap;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.th3l4b.srm.codegen.java.basicruntime.update.AbstractUpdateToolFinder;
+import com.th3l4b.srm.codegen.java.basic.runtime.update.AbstractUpdateToolFinder;
 import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.srm.runtime.IModelUtils;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
