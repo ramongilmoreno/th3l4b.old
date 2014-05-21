@@ -5,7 +5,7 @@ This project uses symbolic links in the repository. Windows platforms support is
 
 Set these environment variables:
 
-	export MAVEN_HOME=/home/rgil/Ramon/aplicaciones/apache-maven-3.0.4
+	export MAVEN_HOME=/home/rgil/Ramon/aplicaciones/apache-maven-3.2.1
 	export MAVEN_OPTS="-Xmx512m -XX:MaxPermSize=256m"
 	export ANT_HOME=/home/rgil/Ramon/aplicaciones/apache-ant-1.8.4
 	export JAVA_HOME=/home/rgil/Ramon/aplicaciones/jdk1.7.0_11
