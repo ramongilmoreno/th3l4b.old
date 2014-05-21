@@ -1,0 +1,8 @@
+language: android
+android:
+    components:
+        - android-8
+        - android-18
+jdk:
+    - oraclejdk7
+    - openjdk7
