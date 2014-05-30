@@ -1,0 +1,6 @@
+name: helloworld
+version: 0.1.2
+description: No description
+
+dependencies:
+  browser: any

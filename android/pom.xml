@@ -12,6 +12,7 @@
 		<module>srm</module>
 		<module>helloworld</module>
 		<module>screens</module>
+		<module>dart</module>
 	</modules>
 
       <properties>
