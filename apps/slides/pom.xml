@@ -10,8 +10,6 @@
   <groupId>com.th3l4b.apps</groupId>
   <artifactId>slides</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <name>slides</name>
-  <url>http://maven.apache.org</url>
   <dependencies>
     <dependency>
       <groupId>com.th3l4b</groupId>

@@ -10,11 +10,6 @@
   <groupId>com.th3l4b.screens</groupId>
   <artifactId>base</artifactId>
   <version>0.1pa</version>
-  <name>base</name>
-  <url>http://maven.apache.org</url>
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
   <dependencies>
      <dependency>
       <groupId>com.th3l4b</groupId>

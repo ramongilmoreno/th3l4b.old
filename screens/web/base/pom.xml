@@ -11,8 +11,6 @@
 	<groupId>com.th3l4b.screens.web</groupId>
 	<artifactId>base</artifactId>
 	<version>0.1pa</version>
-	<name>base</name>
-	<url>http://maven.apache.org</url>
 	<dependencies>
 		<dependency>
 			<groupId>com.th3l4b.screens</groupId>
