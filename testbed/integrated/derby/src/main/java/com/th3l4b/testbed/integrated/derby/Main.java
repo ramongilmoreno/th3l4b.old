@@ -29,44 +29,6 @@ import com.th3l4b.types.base.basicset.BasicSetTypesContext;
 
 public class Main {
 
-	public static void main(String[] args) throws Exception {
-		int i = 0;
-		String driver = args[i++];
-		String url = args[i++];
-		String user = args[i++];
-		String password = args[i++];
-
-		// https://db.apache.org/derby/docs/10.7/devguide/cdevdvlpinmemdb.html
-		Class.forName(driver);
-		final Connection connection = DriverManager.getConnection(url, user,
-				password);
-		try {
-			// Try tests
-			final AbstractNameForIntegratedTestJDBCContext context = new AbstractNameForIntegratedTestJDBCContext() {
-				@Override
-				protected Connection getConnection() throws Exception {
-					return connection;
-				}
-			};
-
-			AbstractIntegratedTestTests test = new AbstractIntegratedTestTests() {
-				@Override
-				protected INameForIntegratedTestContext getContext()
-						throws Exception {
-					return context;
-				}
-			};
-			setupSchema(IRegularEntity.class, "NameForIntegratedTest.srm",
-					connection);
-			test.everything();
-			System.out.println("Derby test OK!");
-		} finally {
-			if (connection != null) {
-				connection.close();
-			}
-		}
-	}
-
 	public static PrintStream setupSchema(Class<?> root, String srm,
 			final Connection connection) throws Exception, IOException,
 			SQLException {
@@ -109,5 +71,43 @@ public class Main {
 		}
 		out.println("*********");
 		return out;
+	}
+
+	public static void main(String[] args) throws Exception {
+		int i = 0;
+		String driver = args[i++];
+		String url = args[i++];
+		String user = args[i++];
+		String password = args[i++];
+
+		// https://db.apache.org/derby/docs/10.7/devguide/cdevdvlpinmemdb.html
+		Class.forName(driver);
+		final Connection connection = DriverManager.getConnection(url, user,
+				password);
+		try {
+			// Try tests
+			final AbstractNameForIntegratedTestJDBCContext context = new AbstractNameForIntegratedTestJDBCContext() {
+				@Override
+				protected Connection getConnection() throws Exception {
+					return connection;
+				}
+			};
+
+			AbstractIntegratedTestTests test = new AbstractIntegratedTestTests() {
+				@Override
+				protected INameForIntegratedTestContext getContext()
+						throws Exception {
+					return context;
+				}
+			};
+			setupSchema(IRegularEntity.class, "NameForIntegratedTest.srm",
+					connection);
+			test.everything();
+			System.out.println("Derby test OK!");
+		} finally {
+			if (connection != null) {
+				connection.close();
+			}
+		}
 	}
 }

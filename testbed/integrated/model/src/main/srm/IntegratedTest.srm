@@ -28,14 +28,27 @@ entity "Regular entity" {
 	field "Field 2" @string;
 };
 
+entity "Target of a relationship" {
+};
+
+relationship "Regular entity" "Target of a relationship" many-to-one;
+
+/*
+// Many to many
+entity "Many to many left" { };
+entity "Many to many right" { };
+relationship "Many to many left" "Many to many right" many-to-many;
+
+entity "Many to many middle" { };
+relationship "Many to many left" "Many to many right" many-to-many "Many to many middle";
+*/
+
 // Single relationship entity
 entity "Only has a relationship" {
 };
 
-entity "Target of a relationship" {
-};
-
 relationship "Only has a relationship" "Target of a relationship" many-to-one;
+
 
 // String limit test
 entity "String limit test" {

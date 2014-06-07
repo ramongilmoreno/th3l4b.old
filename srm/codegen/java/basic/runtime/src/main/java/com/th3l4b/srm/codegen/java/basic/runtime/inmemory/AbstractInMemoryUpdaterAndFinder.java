@@ -39,6 +39,7 @@ public abstract class AbstractInMemoryUpdaterAndFinder implements
 				r = utils.create(entity.clazz());
 			}
 			utils.copy(entity, r, entity.clazz());
+			utils.unSetNullValues(r);
 			getEntities().put(id, r);
 		}
 	};

@@ -5,7 +5,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-import com.th3l4b.common.data.nullsafe.NullSafe;
 import com.th3l4b.common.text.AbstractPrintable;
 import com.th3l4b.common.text.IndentedWriter;
 import com.th3l4b.common.text.TextUtils;
@@ -27,7 +26,6 @@ import com.th3l4b.srm.codegen.java.jdbc.runtime.IJDBCIdentifierParser;
 import com.th3l4b.srm.codegen.java.jdbc.runtime.IJDBCRuntimeType;
 import com.th3l4b.srm.codegen.java.jdbc.runtime.IJDBCRuntimeTypesContext;
 import com.th3l4b.srm.codegen.java.jdbc.runtime.IJDBCStatusParser;
-import com.th3l4b.srm.runtime.DatabaseUtils;
 import com.th3l4b.srm.runtime.IDatabaseConstants;
 import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.srm.runtime.IModelUtils;
@@ -106,7 +104,7 @@ public class JDBCCodeGenerator {
 								+ ".class);");
 						iiout.println("return find(" + clazzMany
 								+ ".class, from, \""
-								+ sqlNames.column(rel, true, model) + "\");");
+								+ sqlNames.column(rel, model) + "\");");
 						iout.println("}");
 					}
 				}
@@ -143,17 +141,6 @@ public class JDBCCodeGenerator {
 				out.println("public class " + clazz + " extends "
 						+ AbstractJDBCEntityParser.class.getName() + "<"
 						+ entityInterface + "> {");
-				boolean needsIsSet = false;
-				if (entity.items().iterator().hasNext()
-						|| entity.relationships().items().iterator().hasNext()) {
-					needsIsSet = true;
-				}
-
-				if (needsIsSet) {
-					out.println();
-					iout.println("private " + IJDBCRuntimeType.class.getName()
-							+ "<" + Boolean.class.getName() + "> _isSet;");
-				}
 				for (IField field : entity.items()) {
 					iout.println("private "
 							+ IJDBCRuntimeType.class.getName()
@@ -170,12 +157,6 @@ public class JDBCCodeGenerator {
 						+ IJDBCRuntimeTypesContext.class.getName()
 						+ " types) {");
 				iiout.println("super(ids, status);");
-				if (needsIsSet) {
-					iiout.println("_isSet = types.get(\""
-							+ TextUtils
-									.escapeJavaString(IDatabaseConstants.BOOLEAN_TYPE)
-							+ "\", " + Boolean.class.getName() + ".class);");
-				}
 				for (IField field : entity.items()) {
 					iiout.println(fieldName(field, baseNames)
 							+ " = types.get(\""
@@ -199,15 +180,15 @@ public class JDBCCodeGenerator {
 						+ " idColumn() throws "
 						+ Exception.class.getName()
 						+ " { return \""
-						+ TextUtils.escapeJavaString(DatabaseUtils.column(
-								SQLNames.ID, true)) + "\"; }");
+						+ TextUtils.escapeJavaString(sqlNames.column(
+								IDatabaseConstants.ID, null)) + "\"; }");
 				iout.println("public "
 						+ String.class.getName()
 						+ " statusColumn() throws "
 						+ Exception.class.getName()
 						+ " { return \""
-						+ TextUtils.escapeJavaString(DatabaseUtils.column(
-								SQLNames.STATUS, true)) + "\"; }");
+						+ TextUtils.escapeJavaString(sqlNames.column(
+								IDatabaseConstants.STATUS, null)) + "\"; }");
 				iout.println("public "
 						+ entityInterface
 						+ " create() { return new "
@@ -222,12 +203,9 @@ public class JDBCCodeGenerator {
 					} else {
 						iiout.println(",");
 					}
-					iiout.println("\""
-							+ TextUtils.escapeJavaString(sqlNames.column(field,
-									false)) + "\",");
 					iiout.print("\""
-							+ TextUtils.escapeJavaString(sqlNames.column(field,
-									true)) + "\"");
+							+ TextUtils.escapeJavaString(sqlNames.column(field))
+							+ "\"");
 				}
 
 				// Fill relationships
@@ -238,12 +216,9 @@ public class JDBCCodeGenerator {
 					} else {
 						iiout.println(",");
 					}
-					iiout.println("\""
-							+ TextUtils.escapeJavaString(sqlNames.column(rel,
-									false, model)) + "\",");
 					iiout.print("\""
 							+ TextUtils.escapeJavaString(sqlNames.column(rel,
-									true, model)) + "\"");
+									model)) + "\"");
 				}
 				if (!first) {
 					iiout.println();
@@ -256,31 +231,24 @@ public class JDBCCodeGenerator {
 						+ " entity, int index, " + ResultSet.class.getName()
 						+ " result) throws " + Exception.class.getName() + " {");
 				for (IField field : entity.items()) {
-					iiout.println("if (" + NullSafe.class.getName()
-							+ ".equals(_isSet.parse(index++, result), "
-							+ Boolean.class.getName() + ".TRUE)) {");
-					iiiout.println("entity.set" + baseNames.name(field) + "("
+					iiout.println("{");
+					iiiout.println(context.getTypes().get(field.getType())
+							.getProperties()
+							.get(ITypesConstants.PROPERTY_JAVA_CLASS)
+							+ " v = "
 							+ fieldName(field, baseNames)
-							+ ".parse(index++, result));");
-					iiout.println("} else {");
-					iiiout.println("index++;");
+							+ ".parse(index++, result);");
+					iiiout.println("if (!result.wasNull()) { entity.set"
+							+ baseNames.name(field) + "(v); }");
 					iiout.println("}");
 				}
 				for (INormalizedManyToOneRelationship rel : entity
 						.relationships().items()) {
-					String relName = baseNames.nameOfDirect(rel, model);
-					iiout.println("if (" + NullSafe.class.getName()
-							+ ".equals(_isSet.parse(index++, result), "
-							+ Boolean.class.getName() + ".TRUE)) {");
-					iiiout.println("entity.set"
-							+ relName
-							+ "("
-							+ DefaultIdentifier.class.getName()
-							+ ".setIdentifierType(getIdsParser().parse(index++, result), "
-							+ javaNames.fqn(javaNames.nameInterface(model
-									.get(rel.getTo())), context) + ".class));");
-					iiout.println("} else {");
-					iiiout.println("index++;");
+					iiout.println("{");
+					iiiout.println(IIdentifier.class.getName()
+							+ " v = getIdsParser().parse(index++, result);");
+					iiiout.println("if (!result.wasNull()) { entity.set"
+							+ baseNames.nameOfDirect(rel, model) + "(v); }");
 					iiout.println("}");
 				}
 
@@ -292,19 +260,13 @@ public class JDBCCodeGenerator {
 						+ " {");
 				for (IField field : entity.items()) {
 					String name = baseNames.name(field);
-					iiout.println("_isSet.set(" + Boolean.class.getName()
-							+ ".valueOf(entity.isSet" + name
-							+ "()), index++, statement);");
-					iiout.println("" + fieldName(field, baseNames)
+					iiout.println(fieldName(field, baseNames)
 							+ ".set(entity.get" + name
 							+ "(), index++, statement);");
 				}
 				for (INormalizedManyToOneRelationship rel : entity
 						.relationships().items()) {
 					String name = baseNames.nameOfDirect(rel, model);
-					iiout.println("_isSet.set(" + Boolean.class.getName()
-							+ ".valueOf(entity.isSet" + name
-							+ "()), index++, statement);");
 					iiout.println("getIdsParser().set(entity.get" + name
 							+ "(), index++, statement);");
 				}

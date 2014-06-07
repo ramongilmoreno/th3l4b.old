@@ -19,7 +19,6 @@ import com.th3l4b.android.srm.runtime.sqlite.IAndroidSQLiteIdentifierParser;
 import com.th3l4b.android.srm.runtime.sqlite.IAndroidSQLiteRuntimeType;
 import com.th3l4b.android.srm.runtime.sqlite.IAndroidSQLiteRuntimeTypesContext;
 import com.th3l4b.android.srm.runtime.sqlite.IAndroidSQLiteStatusParser;
-import com.th3l4b.common.data.nullsafe.NullSafe;
 import com.th3l4b.common.text.AbstractPrintable;
 import com.th3l4b.common.text.IndentedWriter;
 import com.th3l4b.common.text.TextUtils;
@@ -37,10 +36,10 @@ import com.th3l4b.srm.codegen.java.basic.runtime.DefaultIdentifier;
 import com.th3l4b.srm.codegen.java.basic.runtime.inmemory.Pair;
 import com.th3l4b.srm.database.BasicSetDatabaseTypesContext;
 import com.th3l4b.srm.database.IDatabaseType;
-import com.th3l4b.srm.runtime.DatabaseUtils;
 import com.th3l4b.srm.runtime.IDatabaseConstants;
 import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.srm.runtime.IModelUtils;
+import com.th3l4b.srm.runtime.IRuntimeEntity;
 import com.th3l4b.types.base.ITypesConstants;
 
 public class AndroidSQLiteCodeGenerator {
@@ -130,13 +129,12 @@ public class AndroidSQLiteCodeGenerator {
 				out.println();
 				String entityInterface = javaNames.fqn(
 						javaNames.nameInterface(entity), context);
-				out.println("public class " + clazz + " extends "
-						+ AbstractAndroidSQLiteEntityParser.class.getName()
-						+ "<" + entityInterface + "> {");
-				out.println();
-				iout.println("private "
-						+ IAndroidSQLiteRuntimeType.class.getName() + "<"
-						+ Boolean.class.getName() + "> _isSet;");
+				out.println("public class "
+						+ clazz
+						+ " extends "
+						+ asqlNames.fqnSQLite(
+								asqlNames.abstractParser(model, context),
+								context) + "<" + entityInterface + "> {");
 				for (IField field : entity.items()) {
 					iout.println("private "
 							+ IAndroidSQLiteRuntimeType.class.getName()
@@ -152,11 +150,8 @@ public class AndroidSQLiteCodeGenerator {
 						+ " ids, " + IAndroidSQLiteStatusParser.class.getName()
 						+ " status, "
 						+ IAndroidSQLiteRuntimeTypesContext.class.getName()
-						+ " types) {");
+						+ " types) throws " + Exception.class.getName() + " {");
 				iiout.println("super(ids, status);");
-				iiout.println("_isSet = types.get(\""
-						+ IDatabaseConstants.BOOLEAN_TYPE + "\", "
-						+ Boolean.class.getName() + ".class);");
 				for (IField field : entity.items()) {
 					iiout.println(fieldName(field, baseNames)
 							+ " = types.get(\""
@@ -176,20 +171,6 @@ public class AndroidSQLiteCodeGenerator {
 						+ TextUtils.escapeJavaString(sqlNames.table(entity))
 						+ "\"; }");
 				iout.println("public "
-						+ String.class.getName()
-						+ " idColumn() throws "
-						+ Exception.class.getName()
-						+ " { return \""
-						+ TextUtils.escapeJavaString(DatabaseUtils.column(
-								SQLNames.ID, true)) + "\"; }");
-				iout.println("public "
-						+ String.class.getName()
-						+ " statusColumn() throws "
-						+ Exception.class.getName()
-						+ " { return \""
-						+ TextUtils.escapeJavaString(DatabaseUtils.column(
-								SQLNames.STATUS, true)) + "\"; }");
-				iout.println("public "
 						+ entityInterface
 						+ " create() { return new "
 						+ javaNames.fqnImpl(javaNames.nameImpl(entity), context)
@@ -203,12 +184,9 @@ public class AndroidSQLiteCodeGenerator {
 					} else {
 						iiout.println(",");
 					}
-					iiout.println("\""
-							+ TextUtils.escapeJavaString(sqlNames.column(field,
-									false)) + "\",");
 					iiout.print("\""
-							+ TextUtils.escapeJavaString(sqlNames.column(field,
-									true)) + "\"");
+							+ TextUtils.escapeJavaString(sqlNames.column(field))
+							+ "\"");
 				}
 
 				// Fill relationships
@@ -219,12 +197,9 @@ public class AndroidSQLiteCodeGenerator {
 					} else {
 						iiout.println(",");
 					}
-					iiout.println("\""
-							+ TextUtils.escapeJavaString(sqlNames.column(rel,
-									false, model)) + "\",");
 					iiout.print("\""
 							+ TextUtils.escapeJavaString(sqlNames.column(rel,
-									true, model)) + "\"");
+									model)) + "\"");
 				}
 				if (!first) {
 					iiout.println();
@@ -237,9 +212,7 @@ public class AndroidSQLiteCodeGenerator {
 						+ " entity, int index, " + Cursor.class.getName()
 						+ " result) throws " + Exception.class.getName() + " {");
 				for (IField field : entity.items()) {
-					iiout.println("if (" + NullSafe.class.getName()
-							+ ".equals(_isSet.parse(index++, result), "
-							+ Boolean.class.getName() + ".TRUE)) {");
+					iiout.println("if (!result.isNull(index)) {");
 					iiiout.println("entity.set" + baseNames.name(field) + "("
 							+ fieldName(field, baseNames)
 							+ ".parse(index++, result));");
@@ -247,10 +220,7 @@ public class AndroidSQLiteCodeGenerator {
 				}
 				for (INormalizedManyToOneRelationship rel : entity
 						.relationships().items()) {
-					iiout.println("if (" + NullSafe.class.getName()
-							+ ".equals(_isSet.parse(index++, result), "
-							+ Boolean.class.getName() + ".TRUE)) {");
-
+					iiout.println("if (!result.isNull(index)) {");
 					String relName = baseNames.nameOfDirect(rel, model);
 					iiiout.println("entity.set"
 							+ relName
@@ -269,34 +239,24 @@ public class AndroidSQLiteCodeGenerator {
 				for (IField field : entity.items()) {
 					String name = baseNames.name(field);
 					iiout.println("if (entity.isSet" + name + "()) {");
-					iiiout.println("_isSet.set(entity.isSet"
-							+ name
-							+ "(), \""
-							+ TextUtils.escapeJavaString(sqlNames.column(field,
-									false)) + "\", values);");
 					iiiout.println(""
 							+ fieldName(field, baseNames)
 							+ ".set(entity.get"
 							+ name
 							+ "(), \""
-							+ TextUtils.escapeJavaString(sqlNames.column(field,
-									true)) + "\", values);");
+							+ TextUtils.escapeJavaString(sqlNames.column(field))
+							+ "\", values);");
 					iiout.println("}");
 				}
 				for (INormalizedManyToOneRelationship rel : entity
 						.relationships().items()) {
 					String name = baseNames.nameOfDirect(rel, model);
 					iiout.println("if (entity.isSet" + name + "()) {");
-					iiiout.println("_isSet.set(entity.isSet"
-							+ name
-							+ "(), \""
-							+ TextUtils.escapeJavaString(sqlNames.column(rel,
-									false, model)) + "\", values);");
 					iiiout.println("getIdsParser().set(entity.get"
 							+ name
 							+ "(), \""
 							+ TextUtils.escapeJavaString(sqlNames.column(rel,
-									true, model)) + "\", values);");
+									model)) + "\", values);");
 					iiout.println("}");
 				}
 
@@ -352,7 +312,7 @@ public class AndroidSQLiteCodeGenerator {
 								+ name
 								+ "\"), \""
 								+ TextUtils.escapeJavaString(sqlNames.column(
-										rel, true, model)) + "\");");
+										rel, model)) + "\");");
 					}
 				}
 				iout.println("}");
@@ -554,4 +514,48 @@ public class AndroidSQLiteCodeGenerator {
 		});
 	}
 
+	public void abstractParser(final INormalizedModel model,
+			final AndroidSQLiteCodeGeneratorContext context) throws Exception {
+		final AndroidSQLiteNames anames = context.getSQLiteNames();
+		final SQLNames sqlNames = context.getSQLNames();
+		final String pkg = anames.packageForSQLite(context);
+		final String clazz = anames.abstractParser(model, context);
+		FileUtils.java(context, pkg, clazz, new AbstractPrintable() {
+			@Override
+			protected void printWithException(PrintWriter out) throws Exception {
+				PrintWriter iout = IndentedWriter.get(out);
+				PrintWriter iiout = IndentedWriter.get(iout);
+				out.println("package " + pkg + ";");
+				out.println();
+				out.println("public abstract class " + clazz + "<R extends "
+						+ IRuntimeEntity.class.getName() + "<R>> extends "
+						+ AbstractAndroidSQLiteEntityParser.class.getName()
+						+ "<R> {");
+				out.println();
+				iout.println("public " + clazz + "("
+						+ IAndroidSQLiteIdentifierParser.class.getName()
+						+ " idsParser, "
+						+ IAndroidSQLiteStatusParser.class.getName()
+						+ " statusParser) throws " + Exception.class.getName()
+						+ " {");
+				iiout.println("super(idsParser, statusParser);");
+				iout.println("}");
+				iout.println();
+				iout.println("public String idColumn() throws Exception {");
+				iiout.println("return \""
+						+ TextUtils.escapeJavaString(sqlNames.column(
+								IDatabaseConstants.ID, null)) + "\";");
+				iout.println("}");
+				iout.println();
+				iout.println("public String statusColumn() throws Exception {");
+				iiout.println("return \""
+						+ TextUtils.escapeJavaString(sqlNames.column(
+								IDatabaseConstants.STATUS, null)) + "\";");
+				iout.println("}");
+				out.println("}");
+				iiout.flush();
+				iout.flush();
+			}
+		});
+	}
 }

@@ -23,11 +23,11 @@ public abstract class AbstractMongoUpdateToolUpdater extends
 			T original, IModelUtils utils) throws Exception {
 		IMongoEntityParser<T> parser = getParsers().getEntityParser(
 				entity.clazz());
-		DBObject n = new BasicDBObject();
-		parser.set(entity, null, n);
+		DBObject set = new BasicDBObject();
+		parser.set(entity, null, set);
 		if (original == null) {
 			// Insert
-			getDB().getCollection(parser.table()).insert(n);
+			getDB().getCollection(parser.table()).insert(set);
 		} else {
 			// Update
 			// http://www.mkyong.com/mongodb/java-mongodb-update-document/
@@ -35,7 +35,12 @@ public abstract class AbstractMongoUpdateToolUpdater extends
 			getIdentifierParser().set(entity.coordinates().getIdentifier(),
 					IDatabaseConstants.ID, q);
 			BasicDBObject u2 = new BasicDBObject();
-			u2.append("$set", n);
+			u2.append("$set", set);
+
+			DBObject unSet = new BasicDBObject();
+			parser.unSetRest(entity, unSet);
+			u2.append("$unset", unSet);
+
 			getDB().getCollection(parser.table()).update(q, u2);
 		}
 	}

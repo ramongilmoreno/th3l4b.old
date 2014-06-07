@@ -48,16 +48,43 @@ public class SampleEntityParser extends
 	@Override
 	protected void parseRest(ISampleEntity entity, DBObject result)
 			throws Exception {
-		if (result.containsField("Field1")) { entity.setField1(_field_Field1.parse("Field1", result)); }
-		if (result.containsField("Relation")) { entity.setRelation(getIdsParser().parse("Relation", result)); }
+		if (result.containsField("Field1")) {
+			entity.setField1(_field_Field1.parse("Field1", result));
+		}
+		if (result.containsField("Relation")) {
+			entity.setRelation(getIdsParser().parse("Relation", result));
+		}
 
 	}
 
 	@Override
 	protected void setRest(ISampleEntity entity, DBObject statement)
 			throws Exception {
-		if (entity.isSetField1()) { _field_Field1.set(entity.getField1(), "Field1", statement); }
-		if (entity.isSetRelation()) { getIdsParser().set(entity.getRelation(), "Relation", statement); }
+		if (entity.isSetField1()) {
+			if (entity.getField1() != null) {
+				_field_Field1.set(entity.getField1(), "Field1", statement);
+			}
+		}
+		if (entity.isSetRelation()) {
+			if (entity.getRelation() != null) {
+				getIdsParser().set(entity.getRelation(), "Relation", statement);
+			}
+		}
+	}
+
+	@Override
+	public void unSetRest(ISampleEntity entity, DBObject statement)
+			throws Exception {
+		if (entity.isSetField1()) {
+			if (entity.getField1() == null) {
+				_field_Field1.set(entity.getField1(), "Field1", statement);
+			}
+		}
+		if (entity.isSetRelation()) {
+			if (entity.getRelation() == null) {
+				getIdsParser().set(entity.getRelation(), "Relation", statement);
+			}
+		}
 	}
 
 }

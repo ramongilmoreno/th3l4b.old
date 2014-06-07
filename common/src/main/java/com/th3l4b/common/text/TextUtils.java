@@ -221,6 +221,10 @@ public class TextUtils {
 	 * the original.
 	 */
 	public static String limit(String input, int limit) throws Exception {
+		if (input == null) {
+			return null;
+		}
+
 		int count = 0;
 		StringWriter out = new StringWriter();
 		for (Integer i : unicodeIterable(input)) {

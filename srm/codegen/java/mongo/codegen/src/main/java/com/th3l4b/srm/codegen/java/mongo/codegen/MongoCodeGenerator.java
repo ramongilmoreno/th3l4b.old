@@ -230,10 +230,16 @@ public class MongoCodeGenerator {
 					String cname = "\""
 							+ TextUtils.escapeJavaString(mongoNames
 									.column(field)) + "\"";
-					iiout.println("if (result.containsField(" + cname
-							+ ")) { entity.set" + fname + "("
-							+ fieldName(field, baseNames) + ".parse(" + cname
-							+ ", result)); }");
+					iiout.println("if (result.containsField(" + cname + ")) {");
+					iiiout.println(""
+							+ context.getTypes().get(field.getType())
+									.getProperties()
+									.get(ITypesConstants.PROPERTY_JAVA_CLASS)
+							+ " v = " + fieldName(field, baseNames) + ".parse("
+							+ cname + ", result);");
+					iiiout.println("if (v != null) { entity.set" + fname
+							+ "(v); }");
+					iiout.println("}");
 				}
 				for (INormalizedManyToOneRelationship rel : entity
 						.relationships().items()) {
@@ -241,10 +247,14 @@ public class MongoCodeGenerator {
 					String cname = "\""
 							+ TextUtils.escapeJavaString(mongoNames.column(rel,
 									model)) + "\"";
-					iiout.println("if (result.containsField(" + cname
-							+ ")) { entity.set" + rname
-							+ "(getIdsParser().parse(" + cname
-							+ ", result)); }");
+					iiout.println("if (result.containsField(" + cname + ")) {");
+					iiiout.println("" + IIdentifier.class.getName()
+							+ " v = getIdsParser().parse(" + cname
+							+ ", result);");
+					iiiout.println("if (v != null) { entity.set" + rname
+							+ "(v); }");
+					iiout.println("}");
+
 				}
 
 				iout.println("}");
@@ -257,7 +267,8 @@ public class MongoCodeGenerator {
 					String cname = "\""
 							+ TextUtils.escapeJavaString(mongoNames
 									.column(field)) + "\"";
-					iiout.println("if (entity.isSet" + fname + "()) { "
+					iiout.println("if (entity.isSet" + fname
+							+ "() && (entity.get" + fname + "() != null)) { "
 							+ fieldName(field, baseNames) + ".set(entity.get"
 							+ fname + "(), " + cname + ", statement); }");
 				}
@@ -268,11 +279,42 @@ public class MongoCodeGenerator {
 							+ TextUtils.escapeJavaString(mongoNames.column(rel,
 									model)) + "\"";
 					iiout.println("if (entity.isSet" + rname
-							+ "()) { getIdsParser().set(entity.get" + rname
-							+ "(), " + cname + ", statement); }");
+							+ "() && (entity.get" + rname
+							+ "() != null)) { getIdsParser().set(entity.get"
+							+ rname + "(), " + cname + ", statement); }");
 				}
 
 				iout.println("}");
+				iout.println();
+
+				iout.println("public void unSetRest(" + entityInterface
+						+ " entity, " + DBObject.class.getName()
+						+ " statement) throws " + Exception.class.getName()
+						+ " {");
+				for (IField field : entity.items()) {
+					String fname = baseNames.name(field);
+					String cname = "\""
+							+ TextUtils.escapeJavaString(mongoNames
+									.column(field)) + "\"";
+					iiout.println("if (entity.isSet" + fname
+							+ "() && (entity.get" + fname + "() == null)) { "
+							+ fieldName(field, baseNames) + ".set(entity.get"
+							+ fname + "(), " + cname + ", statement); }");
+				}
+				for (INormalizedManyToOneRelationship rel : entity
+						.relationships().items()) {
+					String rname = baseNames.nameOfDirect(rel, model);
+					String cname = "\""
+							+ TextUtils.escapeJavaString(mongoNames.column(rel,
+									model)) + "\"";
+					iiout.println("if (entity.isSet" + rname
+							+ "() && (entity.get" + rname
+							+ "() == null)) { getIdsParser().set(entity.get"
+							+ rname + "(), " + cname + ", statement); }");
+				}
+
+				iout.println("}");
+
 				out.println("}");
 				iiiout.flush();
 				iiout.flush();

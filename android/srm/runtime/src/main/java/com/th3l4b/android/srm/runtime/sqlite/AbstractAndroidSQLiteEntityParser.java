@@ -5,9 +5,7 @@ import android.database.Cursor;
 
 import com.th3l4b.srm.codegen.java.basic.runtime.DefaultIdentifier;
 import com.th3l4b.srm.runtime.AbstractEntityParser;
-import com.th3l4b.srm.runtime.DatabaseUtils;
 import com.th3l4b.srm.runtime.ICoordinates;
-import com.th3l4b.srm.runtime.IDatabaseConstants;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
 
 public abstract class AbstractAndroidSQLiteEntityParser<R extends IRuntimeEntity<R>>
@@ -40,10 +38,8 @@ public abstract class AbstractAndroidSQLiteEntityParser<R extends IRuntimeEntity
 	@Override
 	public void set(R entity, Void arg, ContentValues values) throws Exception {
 		ICoordinates coordinates = entity.coordinates();
-		getIdsParser().set(coordinates.getIdentifier(),
-				DatabaseUtils.column(IDatabaseConstants.ID, true), values);
-		getStatusParser().set(coordinates.getStatus(),
-				DatabaseUtils.column(IDatabaseConstants.STATUS, true), values);
+		getIdsParser().set(coordinates.getIdentifier(), idColumn(), values);
+		getStatusParser().set(coordinates.getStatus(), statusColumn(), values);
 		setRest(entity, arg, values);
 	}
 

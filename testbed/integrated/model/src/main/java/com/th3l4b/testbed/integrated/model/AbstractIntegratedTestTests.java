@@ -45,6 +45,40 @@ public abstract class AbstractIntegratedTestTests {
 				"Field 2 match original");
 	}
 
+	public void testUndefinedValues() throws Exception {
+		INameForIntegratedTestContext context = getContext();
+		IModelUtils utils = context.getUtils();
+
+		DefaultIdentifier id = new DefaultIdentifier(IRegularEntity.class);
+		IRegularEntity created = utils.create(IRegularEntity.class);
+		created.coordinates().setIdentifier(id);
+		String value1 = "Hello";
+		String value2 = "Good bye";
+		created.setField1(value1);
+		created.setField2(value2);
+		String fieldNotSet = "Field not marked as set";
+		TestsUtils.assertTrue(created.isSetField1(), fieldNotSet);
+		TestsUtils.assertTrue(created.isSetField2(), fieldNotSet);
+		context.update(SRMContextUtils.map(created));
+		
+		IRegularEntity found = context.getFinder().find(IRegularEntity.class,
+				id);
+		TestsUtils.assertTrue(found.isSetField1(), fieldNotSet);
+		TestsUtils.assertTrue(found.isSetField2(), fieldNotSet);
+		
+		IRegularEntity update = utils.create(IRegularEntity.class);
+		update.coordinates().setIdentifier(id);
+		update.setField2(null);
+		TestsUtils.assertFalse(update.isSetField1(), fieldNotSet);
+		TestsUtils.assertTrue(update.isSetField2(), fieldNotSet);
+		context.update(SRMContextUtils.map(update));
+		
+		found = context.getFinder().find(IRegularEntity.class,
+				id);
+		TestsUtils.assertTrue(found.isSetField1(), fieldNotSet);
+		TestsUtils.assertFalse(found.isSetField2(), fieldNotSet);
+	}
+	
 	public void testUnknownItem() throws Exception {
 		DefaultIdentifier id = new DefaultIdentifier(IRegularEntity.class);
 		IRegularEntity unknown = getContext().getFinder().find(
@@ -174,6 +208,7 @@ public abstract class AbstractIntegratedTestTests {
 
 	public void everything() throws Exception {
 		testCommonActions();
+		testUndefinedValues();
 		testGetAll();
 		testEmptyFields();
 		testUnknownItem();

@@ -8,7 +8,8 @@ import com.th3l4b.android.srm.runtime.sqlite.IAndroidSQLiteIdentifierParser;
 import com.th3l4b.android.srm.runtime.sqlite.IAndroidSQLiteRuntimeType;
 import com.th3l4b.android.srm.runtime.sqlite.IAndroidSQLiteStatusParser;
 
-public class SampleAndroidSQLiteEntityParser extends AbstractAndroidSQLiteEntityParser<ISampleEntity>{
+public class SampleAndroidSQLiteEntityParser extends
+		AbstractAndroidSQLiteEntityParser<ISampleEntity> {
 
 	public SampleAndroidSQLiteEntityParser(
 			IAndroidSQLiteIdentifierParser idsParser,
@@ -35,16 +36,14 @@ public class SampleAndroidSQLiteEntityParser extends AbstractAndroidSQLiteEntity
 	public String statusColumn() throws Exception {
 		return "STATUS";
 	}
-	
-	private String [] COLUMNS = {
-		"A", "B"	
-	};
+
+	private String[] COLUMNS = { "A", "B" };
 
 	@Override
 	public String[] fieldsColumns() throws Exception {
 		return COLUMNS;
 	}
-	
+
 	IAndroidSQLiteRuntimeType<String> _parser_Field1;
 
 	@Override

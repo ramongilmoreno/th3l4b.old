@@ -55,6 +55,8 @@ public class JavaCodeGenerator {
 									+ " value) throws Exception;");
 							iout.println("boolean isSet" + name
 									+ "() throws Exception;");
+							iout.println("void unSet" + name
+									+ "() throws Exception;");
 						}
 
 						// Fill relationships
@@ -88,7 +90,7 @@ public class JavaCodeGenerator {
 									+ Exception.class.getName() + ";");
 							iout.println("boolean isSet" + name
 									+ "() throws Exception;");
-							iout.println("void reset" + name
+							iout.println("void unSet" + name
 									+ "() throws Exception;");
 						}
 
@@ -163,6 +165,9 @@ public class JavaCodeGenerator {
 					iout.println("public boolean isSet" + name
 							+ "() throws Exception { return _isSet_" + name
 							+ "; }");
+					iout.println("public void unSet" + name
+							+ "() throws Exception { _isSet_" + name
+							+ " = false; }");
 				}
 
 				// Fill relationships
@@ -208,7 +213,7 @@ public class JavaCodeGenerator {
 					iout.println("public boolean isSet" + name
 							+ "() throws Exception { return _isSet_" + name
 							+ "; }");
-					iout.println("public void reset" + name
+					iout.println("public void unSet" + name
 							+ "() throws Exception { _isSet_" + name
 							+ " = false; }");
 				}
@@ -378,20 +383,24 @@ public class JavaCodeGenerator {
 					iiiout.println("target.coordinates().setIdentifier(source.coordinates().getIdentifier());");
 					iiiout.println("target.coordinates().setStatus(source.coordinates().getStatus());");
 					iiout.println("}});");
-					iiout.println("_resetters.put(" + fqn
+					iiout.println("_unsetters.put(" + fqn
 							+ ".class.getName(), new "
 							+ AbstractModelUtils.class.getName()
-							+ ".ForeignKeysClearer<" + fqn + ">() {");
+							+ ".NullValuesUnsetter<" + fqn + ">() {");
 					iiiout.println("@Override");
 					iiiout.println("protected void clearEntity(" + fqn
 							+ " obj) throws Exception {");
-					// Clear relationships
+
+					for (IField field : ne.items()) {
+						String name = baseNames.name(field);
+						iiiiout.println("if (obj.get" + name
+								+ "() == null) { obj.unSet" + name + "(); }");
+					}
 					for (INormalizedManyToOneRelationship rel : ne
 							.relationships().items()) {
 						String name = baseNames.nameOfDirect(rel, model);
-						iiiiout.println("obj.set" + name + "(("
-								+ IIdentifier.class.getName() + ") null);");
-						iiiiout.println("obj.reset" + name + "();");
+						iiiiout.println("if (obj.get" + name
+								+ "() == null) { obj.unSet" + name + "(); }");
 					}
 					iiiout.println("}");
 					iiout.println("});");

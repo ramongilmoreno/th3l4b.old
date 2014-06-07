@@ -12,7 +12,6 @@ import com.th3l4b.srm.base.normalized.INormalizedModel;
 import com.th3l4b.srm.codegen.base.FileUtils;
 import com.th3l4b.srm.codegen.base.names.BaseNames;
 import com.th3l4b.srm.database.IDatabaseType;
-import com.th3l4b.srm.runtime.DatabaseUtils;
 import com.th3l4b.srm.runtime.IDatabaseConstants;
 
 public class SQLCodeGenerator {
@@ -23,41 +22,27 @@ public class SQLCodeGenerator {
 	public void createTable(INormalizedEntity entity, INormalizedModel model,
 			IDatabaseType database, SQLCodeGeneratorContext context,
 			PrintWriter out) throws Exception {
-		SQLNames names = context.getSQLNames();
+		SQLNames sqlNames = context.getSQLNames();
 		PrintWriter iout = IndentedWriter.get(out);
-		out.println("CREATE TABLE " + names.table(entity) + " (");
-		String idType = names.type(context.getIdentifierType(), database);
-		iout.println("" + DatabaseUtils.column(SQLNames.ID, true) + " "
+		out.println("CREATE TABLE " + sqlNames.table(entity) + " (");
+		String idType = sqlNames.type(context.getIdentifierType(), database);
+		iout.println("" + sqlNames.column(IDatabaseConstants.ID, null) + " "
 				+ idType + " NOT NULL PRIMARY KEY,");
-		String statusType = names.type(context.getStatusType(), database);
-		iout.print("" + DatabaseUtils.column(SQLNames.STATUS, true) + " "
+		String statusType = sqlNames.type(context.getStatusType(), database);
+		iout.print("" + sqlNames.column(IDatabaseConstants.STATUS, null) + " "
 				+ statusType + " NOT NULL");
 		for (IField field : entity.items()) {
 			iout.println(",");
-			iout.println(""
-					+ names.column(field, false)
-					+ " "
-					+ names.type(
-							context.getTypes().get(
-									IDatabaseConstants.BOOLEAN_TYPE), database)
-					+ ",");
 			iout.print(""
-					+ names.column(field, true)
+					+ sqlNames.column(field)
 					+ " "
-					+ names.type(context.getTypes().get(field.getType()),
+					+ sqlNames.type(context.getTypes().get(field.getType()),
 							database));
 		}
 		for (INormalizedManyToOneRelationship rel : entity.relationships()
 				.items()) {
 			iout.println(",");
-			iout.println(""
-					+ names.column(rel, false, model)
-					+ " "
-					+ names.type(
-							context.getTypes().get(
-									IDatabaseConstants.BOOLEAN_TYPE), database)
-					+ ",");
-			iout.print("" + names.column(rel, true, model) + " " + idType);
+			iout.print("" + sqlNames.column(rel, model) + " " + idType);
 
 		}
 		iout.flush();
@@ -101,10 +86,11 @@ public class SQLCodeGenerator {
 		final SQLNames sqlNames = context.getSQLNames();
 		for (INormalizedManyToOneRelationship rel : entity.relationships()
 				.items()) {
-			out.println("CREATE INDEX " + sqlNames.index(rel, database, model)
-					+ " ON " + sqlNames.table(entity)
+			out.println("CREATE INDEX "
+					+ sqlNames.index(entity, rel, database, model) + " ON "
+					+ sqlNames.table(entity)
 
-					+ " (" + sqlNames.column(rel, true, model) + ")/");
+					+ " (" + sqlNames.column(rel, model) + ")/");
 			out.println();
 		}
 	}

@@ -31,20 +31,23 @@ public class AndroidMojo extends SRMAbstractMojo2 {
 			CodeGeneratorContext context) throws Exception {
 
 		// Prepare Java context
-		JavaCodeGeneratorContext javaContext = new JavaCodeGeneratorContext(context.getBaseNames());
+		JavaCodeGeneratorContext javaContext = new JavaCodeGeneratorContext(
+				context.getBaseNames());
 		context.copyTo(javaContext);
 		javaContext.setOutput(new File(context.getOutput(), "java"));
 		javaContext.setPackage(getPackage());
 
 		// Android SQLite
 		AndroidSQLiteCodeGenerator androidSQLiteCodegen = new AndroidSQLiteCodeGenerator();
-		AndroidSQLiteCodeGeneratorContext androidSQLiteContext = new AndroidSQLiteCodeGeneratorContext(context.getBaseNames());
+		AndroidSQLiteCodeGeneratorContext androidSQLiteContext = new AndroidSQLiteCodeGeneratorContext(
+				context.getBaseNames());
 		javaContext.copyTo(androidSQLiteContext);
 		startProduct("Android SQLite files", androidSQLiteContext);
 		androidSQLiteCodegen.helper(normalized, androidSQLiteContext);
 		androidSQLiteCodegen.finder(normalized, androidSQLiteContext);
 		androidSQLiteCodegen.context(normalized, androidSQLiteContext);
 		androidSQLiteCodegen.parserContext(normalized, androidSQLiteContext);
+		androidSQLiteCodegen.abstractParser(normalized, androidSQLiteContext);
 		endProduct(androidSQLiteContext);
 
 		for (INormalizedEntity entity : normalized.items()) {

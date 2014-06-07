@@ -9,7 +9,6 @@ import com.th3l4b.srm.base.normalized.INormalizedManyToOneRelationship;
 import com.th3l4b.srm.base.normalized.INormalizedModel;
 import com.th3l4b.srm.codegen.base.names.BaseNames;
 import com.th3l4b.srm.database.IDatabaseType;
-import com.th3l4b.srm.runtime.DatabaseUtils;
 import com.th3l4b.srm.runtime.IDatabaseConstants;
 import com.th3l4b.types.base.IType;
 
@@ -18,9 +17,7 @@ public class SQLNames implements IDatabaseConstants {
 	private static final String PREFIX = SQLNames.class.getPackage().getName();
 	public static final String MODEL = PREFIX + ".model";
 	public static final String TABLE = PREFIX + ".table";
-	private static final String COLUMN_PREFIX = PREFIX + ".column";
-	public static final String COLUMN_VALUE = COLUMN_PREFIX + ".value";
-	public static final String COLUMN_ISSET = COLUMN_PREFIX + ".isset";
+	public static final String COLUMN = PREFIX + ".column";
 	public static final String TYPE = PREFIX + ".type";
 	public static final String INDEX = PREFIX + ".index";
 
@@ -36,23 +33,40 @@ public class SQLNames implements IDatabaseConstants {
 
 	public String table(INormalizedEntity entity) throws Exception {
 		return _baseNames.valueOrProperty(
-				_baseNames.identifier(entity.getName()), TABLE, entity);
+				sql92Name(_baseNames.identifier(entity.getName()), "t"), TABLE,
+				entity);
 	}
 
-	public String column(IField field, boolean forField) throws Exception {
-		return column(_baseNames.name(field), forField, field);
+	public String column(IField field) throws Exception {
+		return column(_baseNames.name(field), field);
 	}
 
 	public String column(INormalizedManyToOneRelationship relationship,
-			boolean forField, INormalizedModel model) throws Exception {
-		return column(_baseNames.nameOfDirect(relationship, model), forField,
+			INormalizedModel model) throws Exception {
+		return column(_baseNames.nameOfDirect(relationship, model),
 				relationship);
 	}
 
-	private String column(String name, boolean forField, IPropertied propertied)
-			throws Exception {
-		return _baseNames.valueOrProperty(DatabaseUtils.column(name, forField),
-				forField ? COLUMN_VALUE : COLUMN_ISSET, propertied);
+	/**
+	 * @param propertied
+	 *            May be null
+	 */
+	public String column(String name, IPropertied propertied) throws Exception {
+		String r = sql92Name(name, "c");
+		if (propertied == null) {
+			return r;
+		} else {
+			return _baseNames.valueOrProperty(r, COLUMN, propertied);
+		}
+	}
+
+	private String sql92Name(String name, String prefix) throws Exception {
+		// SQL names start with letter
+		// http://db.apache.org/derby/docs/10.1/ref/crefsqlj1003454.html
+		if (name.matches("[A-Za-z].*"))
+			return name;
+		else
+			return prefix + name;
 	}
 
 	public String type(IType type, IDatabaseType database) throws Exception {
@@ -66,12 +80,12 @@ public class SQLNames implements IDatabaseConstants {
 		}
 	}
 
-	public String index(INormalizedManyToOneRelationship rel,
-			IDatabaseType database, INormalizedModel model) throws Exception {
+	public String index(INormalizedEntity e,
+			INormalizedManyToOneRelationship rel, IDatabaseType database,
+			INormalizedModel model) throws Exception {
 		String r = property(rel.getDirect(), INDEX, database);
 		if (r == null) {
-			return "Idx" + table(model.get(rel.getTo()))
-					+ column(rel, true, model);
+			return "Idx" + table(e) + column(rel, model);
 		}
 		return r;
 	}

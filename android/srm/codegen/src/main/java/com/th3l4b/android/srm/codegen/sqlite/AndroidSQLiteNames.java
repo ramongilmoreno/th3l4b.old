@@ -42,6 +42,13 @@ public class AndroidSQLiteNames {
 				+ "AndroidSQLiteParserContext";
 	}
 
+	public String abstractParser(INormalizedModel model,
+			AndroidSQLiteCodeGeneratorContext context) throws Exception {
+		return "Abstract" + _baseNames.name(model)
+				+ "AndroidSQLiteEntityParser";
+	}
+
+
 	public String packageForSQLiteParsers(
 			AndroidSQLiteCodeGeneratorContext context) {
 		return packageForSQLite(context) + ".parsers";
