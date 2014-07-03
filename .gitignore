@@ -5,3 +5,4 @@ workspace/
 .externalToolBuilders/
 maven-eclipse.xml
 derby.log
+.gradle

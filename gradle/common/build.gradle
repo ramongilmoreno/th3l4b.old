@@ -1,0 +1,9 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'maven'
+
+version = '0.1pa'
+
+dependencies {
+	testCompile 'junit:junit:4.+'
+}

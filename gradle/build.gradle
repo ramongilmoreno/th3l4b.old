@@ -1,0 +1,9 @@
+allprojects {
+	repositories {
+		mavenCentral()
+	}
+}
+
+subprojects {
+	group = 'com.th3l4b'
+}
