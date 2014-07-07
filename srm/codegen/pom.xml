@@ -20,6 +20,7 @@
     <module>java</module>
     <module>mojo</module>
     <module>testbed</module>
+    <module>ant</module>
   </modules>
 
 </project>

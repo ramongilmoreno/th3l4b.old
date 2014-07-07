@@ -1,0 +1,17 @@
+apply plugin: 'java'
+
+configurations {
+	antsrm
+}
+
+dependencies {
+	antsrm group: 'com.th3l4b.srm.codegen', name: 'ant', version: '1.0-SNAPSHOT'
+}
+
+task srmCodeGeneration {
+	ant.taskdef(name: 'srm', classname: 'com.th3l4b.srm.codegen.ant.AllSRMTask', classpath: configurations.antsrm.asPath)
+	ant.srm(input: '../../srm/codegen/testbed/src/test/srm/Input.srm', output: 'build/codegen', package: 'com.th3l4b.gradle.testit.codegen')
+}
+
+// http://forums.gradle.org/gradle/topics/source_code_generation
+compileJava.dependsOn srmCodeGeneration
