@@ -3,8 +3,6 @@ android:
     components:
         - android-8
         - android-18
-    licenses:
-        - android-sdk-license-5be876d5
 jdk:
     - oraclejdk7
     - openjdk7
