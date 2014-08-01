@@ -19,8 +19,7 @@ Set these environment variables:
 
 Ensure these API levels are found in Android SDK:
 
-	4.3 (API 18)
-	2.2 (API 8)
+	2.2 (API 8) - Trying to keep Android requirements to a minimum
 
 Sample 1: build an .srm file from scratch (no ANDROID_HOME needed) to inspect products:
 

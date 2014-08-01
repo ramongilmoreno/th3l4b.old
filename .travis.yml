@@ -2,10 +2,7 @@ language: android
 android:
     components:
         - android-8
-        - android-18
 jdk:
     - oraclejdk7
     - openjdk7
 
-# New version to force the Travis rebuild after this issue was closed on July 30th 2014:
-# https://github.com/travis-ci/travis-ci/issues/2466
