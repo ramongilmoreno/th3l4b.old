@@ -37,9 +37,12 @@ public abstract class AbstractMongoUpdateToolUpdater extends
 			BasicDBObject u2 = new BasicDBObject();
 			u2.append("$set", set);
 
+			// Detect unsets
 			DBObject unSet = new BasicDBObject();
 			parser.unSetRest(entity, unSet);
-			u2.append("$unset", unSet);
+			if (!unSet.keySet().isEmpty()) {
+				u2.append("$unset", unSet);
+			}
 
 			getDB().getCollection(parser.table()).update(q, u2);
 		}
