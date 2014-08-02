@@ -5,7 +5,6 @@ import java.util.Map;
 
 import com.th3l4b.apps.shopping.base.codegen.srm.IItem;
 import com.th3l4b.apps.shopping.base.codegen.srm.INeed;
-import com.th3l4b.apps.shopping.base.codegen.srm.IStore;
 import com.th3l4b.apps.shopping.base.codegen.srm.base.IShoppingContext;
 import com.th3l4b.apps.shopping.base.codegen.srm.inmemory.AbstractShoppingInMemorySRMContext;
 import com.th3l4b.srm.runtime.IIdentifier;
@@ -37,15 +36,6 @@ public class ShoppingSample {
 				INeed need = context.getUtils().create(INeed.class);
 				need.setItem(item);
 				updates.put(need.coordinates().getIdentifier(), need);
-			}
-		}
-		{
-			String[] values = { "Mercadona", "Carrefour",
-					"El Corte Ingl\u00e9s", "Ultramarinos Gil" };
-			for (String i : values) {
-				IStore store = context.getUtils().create(IStore.class);
-				store.setName(i);
-				updates.put(store.coordinates().getIdentifier(), store);
 			}
 		}
 

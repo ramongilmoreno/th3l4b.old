@@ -124,26 +124,6 @@ public class Shopping implements IScreensConstants, IRenderingConstants {
 						}
 					});
 		}
-		{
-			String text = "Stores";
-			String name = name(text);
-			tree.addScreen(name, root);
-			tree.setProperty(name, ORDER_INDEX, "2");
-			tree.setProperty(name, LABEL, localizedLabel(text, context));
-			tree.setProperty(name, TYPE, TYPE_ACTION);
-			tree.setProperty(name, INTERACTION, "true");
-			tree.setProperty(name, INTERACTION_JAVA, name);
-			context.getScreens().getInteractions()
-					.put(name, new IInteractionListener() {
-						@Override
-						public void handleInteraction(String screen,
-								IScreensConfiguration context,
-								IScreensClientDescriptor client)
-								throws Exception {
-
-						}
-					});
-		}
 	}
 
 	enum Status {
