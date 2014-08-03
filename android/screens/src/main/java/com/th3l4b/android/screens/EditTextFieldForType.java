@@ -16,7 +16,7 @@ public class EditTextFieldForType<T> extends AbstractUITypeEditorSupport<T> {
 	private EditText _editText;
 
 	public EditTextFieldForType(String screen, IJavaRuntimeType<T> type,
-			IAndroidScreensClientDescriptor client) throws Exception {
+			final IAndroidScreensClientDescriptor client) throws Exception {
 		super(screen);
 		_type = type;
 		_editText = new EditText(client.getActivity());
@@ -46,15 +46,6 @@ public class EditTextFieldForType<T> extends AbstractUITypeEditorSupport<T> {
 			}
 
 		});
-//		_editText
-//				.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-//					@Override
-//					public boolean onEditorAction(TextView arg0, int arg1,
-//							KeyEvent arg2) {
-//						runnable.run();
-//						return true;
-//					}
-//				});
 		client.getViewGroup().addView(_editText);
 	}
 

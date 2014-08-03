@@ -32,7 +32,7 @@ public abstract class AbstractAndroidFacade {
 		// Create client
 		DefaultAndroidScreensClientDescriptor client = new DefaultAndroidScreensClientDescriptor();
 		client.setActivity(activity);
-		client.setView(main);
+		client.setViewGroup(main);
 		render(createScreensConfiguration(client), client);
 	}
 

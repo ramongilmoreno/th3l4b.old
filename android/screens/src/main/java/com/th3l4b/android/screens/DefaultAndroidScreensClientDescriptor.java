@@ -18,7 +18,7 @@ public class DefaultAndroidScreensClientDescriptor extends
 	}
 
 	@Override
-	public void setView(ViewGroup viewGroup) throws Exception {
+	public void setViewGroup(ViewGroup viewGroup) throws Exception {
 		_viewGroup = viewGroup;
 	}
 

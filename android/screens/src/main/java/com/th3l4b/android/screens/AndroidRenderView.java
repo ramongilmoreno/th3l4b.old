@@ -2,10 +2,13 @@ package com.th3l4b.android.screens;
 
 import java.util.HashMap;
 
+import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -20,7 +23,8 @@ import com.th3l4b.screens.base.utils.IScreensConfiguration;
 import com.th3l4b.types.runtime.basicset.StringType;
 import com.th3l4b.types.runtime.ui.IEditorListener;
 
-public class AndroidRenderView implements IScreensConstants, IRenderingConstants {
+public class AndroidRenderView implements IScreensConstants,
+		IRenderingConstants {
 	public String getLabel(String item, IScreensConfiguration context)
 			throws Exception {
 		String r = context.getTree().getProperty(item, LABEL);
@@ -98,6 +102,28 @@ public class AndroidRenderView implements IScreensConstants, IRenderingConstants
 			if (layout != null) {
 				button.setLayoutParams(layout);
 			}
+
+			// On click on an action, remove on screen keyboard
+			// http://stackoverflow.com/questions/4165414/how-to-hide-soft-keyboard-on-android-after-clicking-outside-edittext
+			button.setOnTouchListener(new View.OnTouchListener() {
+				@Override
+				public boolean onTouch(View arg0, MotionEvent arg1) {
+					try {
+						Activity activity = client.getActivity();
+						InputMethodManager imm = (InputMethodManager) activity
+								.getSystemService(Activity.INPUT_METHOD_SERVICE);
+						View current = activity.getCurrentFocus();
+						if (current != null) {
+							imm.hideSoftInputFromWindow(
+									current.getWindowToken(), 0);
+						}
+					} catch (Exception e) {
+						throw new RuntimeException(e);
+					}
+					return false;
+				}
+			});
+
 			group.addView(button);
 		} else if (NullSafe.equals(
 				configuration.getTree().getProperty(screen, CONTAINER),
