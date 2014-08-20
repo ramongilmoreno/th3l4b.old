@@ -5,7 +5,7 @@ import java.util.Map;
 
 public enum EntityStatus {
 	
-	Modify(true), Remove(true), Ignore(true), Persisted, Deleted, Unknown;
+	Modify(true), Remove(true), Persisted, Deleted, Unknown;
 
 	boolean _transitional = false;
 
@@ -39,7 +39,7 @@ public enum EntityStatus {
 	}
 
 	public static EntityStatus fromInitial(String initial) {
-		return fromInitial(initial, EntityStatus.Ignore);
+		return fromInitial(initial, EntityStatus.Unknown);
 	}
 
 	public static EntityStatus fromInitial(String initial, EntityStatus fallback) {

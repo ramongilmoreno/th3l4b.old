@@ -20,7 +20,7 @@ public class UpdateTool {
 		for (IRuntimeEntity<?> e : entities.values()) {
 			EntityStatus status = e.coordinates().getStatus();
 			if (status.isTransitional()
-					&& !NullSafe.equals(status, EntityStatus.Ignore)) {
+					|| NullSafe.equals(EntityStatus.Unknown, status)) {
 				IRuntimeEntity<?> clone = utils.clone(e);
 				EntityStatus newStatus = null;
 				// Change the status accordingly
@@ -31,10 +31,11 @@ public class UpdateTool {
 				case Remove:
 					newStatus = EntityStatus.Deleted;
 					break;
+				case Unknown:
+					newStatus = EntityStatus.Unknown;
+					break;
 				case Deleted:
 				case Persisted:
-				case Unknown:
-				case Ignore:
 					throw new IllegalStateException(
 							"Unsupported status in this phase: " + status);
 				}
@@ -47,6 +48,21 @@ public class UpdateTool {
 		Map<IIdentifier, IRuntimeEntity<?>> originals = finder.find(filtered,
 				utils);
 
+		// Modify the unknown statuses
+		for (IRuntimeEntity<?> e : filtered.values()) {
+			EntityStatus status = e.coordinates().getStatus();
+			if (NullSafe.equals(EntityStatus.Unknown, status)) {
+				IRuntimeEntity<?> found = originals.get(e.coordinates()
+						.getIdentifier());
+				EntityStatus newStatus = EntityStatus.Persisted;
+				if (found != null) {
+					newStatus = found.coordinates().getStatus();
+					e.coordinates().setStatus(newStatus);
+				}
+				e.coordinates().setStatus(newStatus);
+
+			}
+		}
 		// Proceed with update
 		updater.update(filtered, originals, utils);
 	}
