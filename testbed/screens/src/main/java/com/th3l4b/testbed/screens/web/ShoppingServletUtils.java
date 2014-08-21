@@ -1,5 +1,7 @@
 package com.th3l4b.testbed.screens.web;
 
+import javax.servlet.http.HttpSession;
+
 import com.th3l4b.apps.shopping.base.Shopping;
 import com.th3l4b.apps.shopping.base.ShoppingSample;
 import com.th3l4b.apps.shopping.base.codegen.srm.base.IShoppingContext;
@@ -15,6 +17,16 @@ public class ShoppingServletUtils {
 	public static final String SCREENS = PREFIX + ".screens";
 	public static final String CONTEXT = PREFIX + ".context";
 
+	public static IShoppingContext getShoppingContext(HttpSession session)
+			throws Exception {
+		IShoppingContext found = (IShoppingContext) session.getAttribute(CONTEXT);
+		if (found == null) {
+			found = ShoppingSample.getSampleContext();
+			session.setAttribute(CONTEXT, found);
+		}
+		return found;
+	}
+	
 	public static IShoppingContext getShoppingContext(IPropertied propertied)
 			throws Exception {
 		return PropertiedUtils.defaultAttribute(CONTEXT, propertied,

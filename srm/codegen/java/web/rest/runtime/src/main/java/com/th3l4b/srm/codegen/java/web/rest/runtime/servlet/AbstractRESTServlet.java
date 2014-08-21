@@ -1,8 +1,6 @@
 package com.th3l4b.srm.codegen.java.web.rest.runtime.servlet;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -12,12 +10,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
 import com.th3l4b.common.data.Pair;
 import com.th3l4b.common.text.ITextConstants;
 import com.th3l4b.srm.codegen.java.web.rest.runtime.IRESTFinder;
-import com.th3l4b.srm.runtime.IDatabaseConstants;
+import com.th3l4b.srm.codegen.java.web.runtime.JSONEntitiesParser;
+import com.th3l4b.srm.codegen.java.web.runtime.JSONEntitiesParserContext;
 import com.th3l4b.srm.runtime.IFinder;
 import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
@@ -33,7 +30,7 @@ public abstract class AbstractRESTServlet<CONTEXT extends ISRMContext<FINDER>, F
 	private IRESTFinder<FINDER> _finder;
 	private IToMapEntityParserContext _tomap;
 
-	protected abstract CONTEXT getContext(IRESTRequest request)
+	protected abstract CONTEXT getContext(HttpServletRequest request)
 			throws Exception;
 
 	protected abstract IRESTFinder<FINDER> createRESTFinder() throws Exception;
@@ -56,10 +53,10 @@ public abstract class AbstractRESTServlet<CONTEXT extends ISRMContext<FINDER>, F
 		return _tomap;
 	}
 
-	protected String[] split(IRESTRequest request) throws Exception {
+	protected String[] split(HttpServletRequest request) throws Exception {
 		// Returns up to 3 strings with this format:
 		// http://stackoverflow.com/questions/4278083/how-to-get-request-uri-without-context-path
-		String pathInfo = request.getHttpServletRequest().getPathInfo();
+		String pathInfo = request.getPathInfo();
 		if (pathInfo == null) {
 			return new String[0];
 		} else {
@@ -70,134 +67,11 @@ public abstract class AbstractRESTServlet<CONTEXT extends ISRMContext<FINDER>, F
 		}
 	}
 
-	protected Pair<IRuntimeEntity<?>, Iterable<IRuntimeEntity<?>>> parseEntities(
-			IRESTRequest request, boolean acceptOne, boolean acceptMany)
-			throws Exception {
-		Pair<IRuntimeEntity<?>, Iterable<IRuntimeEntity<?>>> r = new Pair<IRuntimeEntity<?>, Iterable<IRuntimeEntity<?>>>();
-		HashSet<IRuntimeEntity<?>> many = new HashSet<IRuntimeEntity<?>>();
-		if (acceptMany) {
-			r.setB(many);
-		}
-
-		// http://www.studytrails.com/java/json/java-jackson-json-streaming.jsp
-		JsonFactory factory = new JsonFactory();
-		JsonParser parser = factory.createParser(request
-				.getHttpServletRequest().getReader());
-		Map<String, String> map = new LinkedHashMap<String, String>();
-
-		while (!parser.isClosed()) {
-			JsonToken token = parser.nextToken();
-			if (token == null) {
-				// EOF
-				break;
-			} else if (JsonToken.START_ARRAY.equals(token)) {
-				if (!acceptMany) {
-					throw new IllegalArgumentException(
-							"JSON Array input was not expected");
-				}
-				while ((token = parser.nextToken()) != null) {
-					if (JsonToken.START_OBJECT.equals(token)) {
-						many.add(createEntity(request, parser, map));
-					} else if (JsonToken.END_ARRAY.equals(token)) {
-						parser.close();
-						break;
-					} else {
-						throw new IllegalArgumentException(
-								"JSON Array end was expected");
-					}
-				}
-			} else if (JsonToken.START_OBJECT.equals(token)) {
-				if (!acceptOne) {
-					throw new IllegalArgumentException(
-							"JSON Object input was not expected");
-				}
-				r.setA(createEntity(request, parser, map));
-				parser.close();
-			} else {
-				throw new IllegalArgumentException("Unexpected JSON token: "
-						+ token);
-			}
-		}
-		return r;
-	}
-
-	public IRuntimeEntity<?> createEntity(IRESTRequest request,
-			JsonParser parser, Map<String, String> map) throws Exception {
-		map.clear();
-		parseFields(parser, map);
-		String[] context = split(request);
-		if (context.length > 0) {
-			map.put(IDatabaseConstants.TYPE, context[0]);
-		}
-		if (context.length > 1) {
-			map.put(IDatabaseConstants.ID, context[1]);
-		}
-
-		// Find parser and create entity.
-		Class<? extends IRuntimeEntity<?>> clazz = getContext(request)
-				.getUtils().classFromName(map.get(IDatabaseConstants.TYPE));
-		IRuntimeEntity<?> entity = getToMapEntityParserContext().getParser(
-				clazz).parse(null, map);
-		return entity;
-	}
-
-	private void parseFields(JsonParser parser, Map<String, String> map)
-			throws Exception {
-		while (true) {
-			JsonToken field = parser.nextToken();
-			String f = parser.getText();
-			if ((field == null) || JsonToken.END_OBJECT.equals(field)) {
-				break;
-			} else if (JsonToken.FIELD_NAME.equals(field)) {
-				// Load value
-				JsonToken value = parser.nextToken();
-				if ((value == null) || !JsonToken.VALUE_STRING.equals(value)) {
-					// Throw an exception if value not found
-					throw new IllegalStateException(
-							"Could not find string field value. Instead found token: "
-									+ field);
-				} else {
-					map.put(f, parser.getText());
-				}
-
-			} else {
-				throw new IllegalStateException(
-						"Could not find field name. Instead found token: "
-								+ field);
-			}
-		}
-
-	}
-
-	protected void serialize(IRuntimeEntity<?> one, IRESTRequest request)
-			throws Exception {
-		if (one != null) {
-			JsonGenerator generator = setupJSONResponse(request);
-			Map<String, String> map = new LinkedHashMap<String, String>();
-			generator.writeStartObject();
-			fillMapForEntity(one, one.clazz(), map);
-			for (Map.Entry<String, String> e : map.entrySet()) {
-				generator.writeFieldName(e.getKey());
-				generator.writeString(e.getValue());
-			}
-			generator.writeEndObject();
-			generator.close();
-		} else {
-			throw new IllegalArgumentException(
-					"Cannot serialized an unique object that is null");
-		}
-	}
-
-	public JsonGenerator setupJSONResponse(IRESTRequest request)
+	public void setupJSONResponse(HttpServletResponse response)
 			throws Exception, IOException {
-		// http://www.studytrails.com/java/json/java-jackson-json-streaming.jsp
-		JsonFactory factory = new JsonFactory();
-		HttpServletResponse response = request.getHttpServletResponse();
 		response.setCharacterEncoding(ITextConstants.UTF_8);
 		// http://stackoverflow.com/questions/477816/what-is-the-correct-json-content-type
 		response.setContentType("application/json");
-		JsonGenerator generator = factory.createGenerator(response.getWriter());
-		return generator;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -209,31 +83,12 @@ public abstract class AbstractRESTServlet<CONTEXT extends ISRMContext<FINDER>, F
 		parser.set((T) one, null, map);
 	}
 
-	protected void serialize(Iterable<? extends IRuntimeEntity<?>> many,
-			IRESTRequest request) throws Exception {
-		JsonGenerator generator = setupJSONResponse(request);
-		generator.writeStartArray();
-		Map<String, String> map = new LinkedHashMap<String, String>();
-		for (IRuntimeEntity<?> entity : many) {
-			generator.writeStartObject();
-			fillMapForEntity(entity, entity.clazz(), map);
-			for (Map.Entry<String, String> e : map.entrySet()) {
-				generator.writeFieldName(e.getKey());
-				generator.writeString(e.getValue());
-			}
-			generator.writeEndObject();
-		}
-		generator.writeEndArray();
-		generator.close();
-	}
-
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		try {
-			IRESTRequest request = new DefaultRESTRequest(req, resp);
-			CONTEXT context = getContext(request);
-			String[] coordinates = split(request);
+			CONTEXT context = getContext(req);
+			String[] coordinates = split(req);
 			IRuntimeEntity<?> one = null;
 			boolean isOne = false;
 			Iterable<? extends IRuntimeEntity<?>> many = null;
@@ -260,10 +115,15 @@ public abstract class AbstractRESTServlet<CONTEXT extends ISRMContext<FINDER>, F
 			}
 
 			// Return
+			JSONEntitiesParserContext jsonContext = new JSONEntitiesParserContext(
+					resp.getWriter(), context, getToMapEntityParserContext());
+			JSONEntitiesParser json = new JSONEntitiesParser();
+			setupJSONResponse(resp);
+
 			if (isOne) {
-				serialize(one, request);
+				json.serialize(one, jsonContext);
 			} else if (isMany) {
-				serialize(many, request);
+				json.serialize(many, jsonContext);
 			} else {
 				throw new IllegalStateException(
 						"Could not decide if result is one or many");
@@ -277,9 +137,8 @@ public abstract class AbstractRESTServlet<CONTEXT extends ISRMContext<FINDER>, F
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		try {
-			IRESTRequest request = new DefaultRESTRequest(req, resp);
-			CONTEXT context = getContext(request);
-			String[] coordinates = split(request);
+			CONTEXT context = getContext(req);
+			String[] coordinates = split(req);
 			boolean isMany = false;
 			switch (coordinates.length) {
 			case 0:
@@ -295,8 +154,11 @@ public abstract class AbstractRESTServlet<CONTEXT extends ISRMContext<FINDER>, F
 								+ coordinates.length);
 			}
 
-			Pair<IRuntimeEntity<?>, Iterable<IRuntimeEntity<?>>> r = parseEntities(
-					request, true, isMany);
+			JSONEntitiesParserContext jsonContext = new JSONEntitiesParserContext(
+					req.getReader(), context, getToMapEntityParserContext());
+			JSONEntitiesParser json = new JSONEntitiesParser();
+			Pair<IRuntimeEntity<?>, Iterable<IRuntimeEntity<?>>> r = json
+					.parseEntities(true, isMany, jsonContext);
 
 			if (isMany) {
 				// Check if one was read
@@ -312,12 +174,15 @@ public abstract class AbstractRESTServlet<CONTEXT extends ISRMContext<FINDER>, F
 			}
 
 			// If everthing was OK up to this moment, return true
-			JsonGenerator generator = setupJSONResponse(request);
+			setupJSONResponse(resp);
+
+			// http://www.studytrails.com/java/json/java-jackson-json-streaming.jsp
+			JsonFactory factory = new JsonFactory();
+			JsonGenerator generator = factory.createGenerator(resp.getWriter());
 			generator.writeBoolean(true);
 			generator.close();
 		} catch (Exception e) {
 			throw new ServletException(e);
 		}
-		// parseEntities
 	}
 }

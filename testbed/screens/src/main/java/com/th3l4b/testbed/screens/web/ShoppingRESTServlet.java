@@ -1,5 +1,7 @@
 package com.th3l4b.testbed.screens.web;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.th3l4b.apps.shopping.base.codegen.srm.base.DefaultShoppingModelUtils;
 import com.th3l4b.apps.shopping.base.codegen.srm.base.IShoppingContext;
 import com.th3l4b.apps.shopping.base.codegen.srm.base.IShoppingFinder;
@@ -9,7 +11,6 @@ import com.th3l4b.srm.codegen.java.basic.runtime.tomap.DefaultToMapIdentifierPar
 import com.th3l4b.srm.codegen.java.basic.runtime.tomap.DefaultToMapStatusParser;
 import com.th3l4b.srm.codegen.java.web.rest.runtime.IRESTFinder;
 import com.th3l4b.srm.codegen.java.web.rest.runtime.servlet.AbstractRESTServlet;
-import com.th3l4b.srm.codegen.java.web.rest.runtime.servlet.IRESTRequest;
 import com.th3l4b.srm.runtime.IToMapEntityParserContext;
 import com.th3l4b.types.runtime.basicset.JavaRuntimeTypesBasicSet;
 
@@ -18,9 +19,10 @@ public class ShoppingRESTServlet extends
 		AbstractRESTServlet<IShoppingContext, IShoppingFinder> {
 
 	@Override
-	protected IShoppingContext getContext(IRESTRequest request)
+	protected IShoppingContext getContext(HttpServletRequest request)
 			throws Exception {
-		return ShoppingServletUtils.getShoppingContext(request);
+		return ShoppingServletUtils
+				.getShoppingContext(request.getSession(true));
 	}
 
 	@Override

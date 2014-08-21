@@ -15,6 +15,7 @@
 
   <modules>
     <module>rest</module>
+    <module>runtime</module>
   </modules>
 </project>
 
