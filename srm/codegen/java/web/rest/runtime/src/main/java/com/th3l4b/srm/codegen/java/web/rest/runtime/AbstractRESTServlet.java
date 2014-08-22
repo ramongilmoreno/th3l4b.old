@@ -1,4 +1,4 @@
-package com.th3l4b.srm.codegen.java.web.rest.runtime.servlet;
+package com.th3l4b.srm.codegen.java.web.rest.runtime;
 
 import java.io.IOException;
 import java.util.Map;
@@ -12,9 +12,7 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.th3l4b.common.data.Pair;
 import com.th3l4b.common.text.ITextConstants;
-import com.th3l4b.srm.codegen.java.web.rest.runtime.IRESTFinder;
 import com.th3l4b.srm.codegen.java.web.runtime.JSONEntitiesParser;
-import com.th3l4b.srm.codegen.java.web.runtime.JSONEntitiesParserContext;
 import com.th3l4b.srm.runtime.IFinder;
 import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
@@ -115,15 +113,14 @@ public abstract class AbstractRESTServlet<CONTEXT extends ISRMContext<FINDER>, F
 			}
 
 			// Return
-			JSONEntitiesParserContext jsonContext = new JSONEntitiesParserContext(
-					resp.getWriter(), context, getToMapEntityParserContext());
-			JSONEntitiesParser json = new JSONEntitiesParser();
 			setupJSONResponse(resp);
+			JSONEntitiesParser json = new JSONEntitiesParser();
+			IToMapEntityParserContext toMap = getToMapEntityParserContext();
 
 			if (isOne) {
-				json.serialize(one, jsonContext);
+				json.serialize(one, resp.getWriter(), context, toMap);
 			} else if (isMany) {
-				json.serialize(many, jsonContext);
+				json.serialize(many, resp.getWriter(), context, toMap);
 			} else {
 				throw new IllegalStateException(
 						"Could not decide if result is one or many");
@@ -154,11 +151,9 @@ public abstract class AbstractRESTServlet<CONTEXT extends ISRMContext<FINDER>, F
 								+ coordinates.length);
 			}
 
-			JSONEntitiesParserContext jsonContext = new JSONEntitiesParserContext(
-					req.getReader(), context, getToMapEntityParserContext());
-			JSONEntitiesParser json = new JSONEntitiesParser();
-			Pair<IRuntimeEntity<?>, Iterable<IRuntimeEntity<?>>> r = json
-					.parseEntities(true, isMany, jsonContext);
+			Pair<IRuntimeEntity<?>, Iterable<IRuntimeEntity<?>>> r = new JSONEntitiesParser()
+					.parse(true, isMany, req.getReader(), context,
+							getToMapEntityParserContext());
 
 			if (isMany) {
 				// Check if one was read

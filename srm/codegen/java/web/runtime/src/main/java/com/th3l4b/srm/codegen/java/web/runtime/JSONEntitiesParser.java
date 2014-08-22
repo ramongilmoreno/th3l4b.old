@@ -1,5 +1,7 @@
 package com.th3l4b.srm.codegen.java.web.runtime;
 
+import java.io.Reader;
+import java.io.Writer;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -11,13 +13,23 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.th3l4b.common.data.Pair;
 import com.th3l4b.srm.runtime.IDatabaseConstants;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
+import com.th3l4b.srm.runtime.ISRMContext;
 import com.th3l4b.srm.runtime.IToMapEntityParser;
+import com.th3l4b.srm.runtime.IToMapEntityParserContext;
 
 public class JSONEntitiesParser {
 
-	public Pair<IRuntimeEntity<?>, Iterable<IRuntimeEntity<?>>> parseEntities(
-			boolean acceptOne, boolean acceptMany, JSONEntitiesParserContext context)
+	public Pair<IRuntimeEntity<?>, Iterable<IRuntimeEntity<?>>> parse(
+			boolean acceptOne, boolean acceptMany, Reader reader,
+			ISRMContext<?> context, IToMapEntityParserContext toMap)
 			throws Exception {
+		return parse(acceptOne, acceptMany, new JSONEntitiesParserContext(
+				reader, context, toMap));
+	}
+
+	public Pair<IRuntimeEntity<?>, Iterable<IRuntimeEntity<?>>> parse(
+			boolean acceptOne, boolean acceptMany,
+			JSONEntitiesParserContext context) throws Exception {
 		Pair<IRuntimeEntity<?>, Iterable<IRuntimeEntity<?>>> r = new Pair<IRuntimeEntity<?>, Iterable<IRuntimeEntity<?>>>();
 		HashSet<IRuntimeEntity<?>> many = new HashSet<IRuntimeEntity<?>>();
 		if (acceptMany) {
@@ -107,8 +119,14 @@ public class JSONEntitiesParser {
 
 	}
 
-	public void serialize(IRuntimeEntity<?> one, JSONEntitiesParserContext context)
+	public void serialize(IRuntimeEntity<?> one, Writer writer,
+			ISRMContext<?> context, IToMapEntityParserContext toMap)
 			throws Exception {
+		serialize(one, new JSONEntitiesParserContext(writer, context, toMap));
+	}
+
+	public void serialize(IRuntimeEntity<?> one,
+			JSONEntitiesParserContext context) throws Exception {
 		if (one != null) {
 			// http://www.studytrails.com/java/json/java-jackson-json-streaming.jsp
 			JsonFactory factory = new JsonFactory();
@@ -139,11 +157,16 @@ public class JSONEntitiesParser {
 	}
 
 	public void serialize(Iterable<? extends IRuntimeEntity<?>> many,
+			Writer writer, ISRMContext<?> context,
+			IToMapEntityParserContext toMap) throws Exception {
+		serialize(many, new JSONEntitiesParserContext(writer, context, toMap));
+	}
+
+	public void serialize(Iterable<? extends IRuntimeEntity<?>> many,
 			JSONEntitiesParserContext context) throws Exception {
 		// http://www.studytrails.com/java/json/java-jackson-json-streaming.jsp
 		JsonFactory factory = new JsonFactory();
-		JsonGenerator generator = factory.createGenerator(context
-				.getWriter());
+		JsonGenerator generator = factory.createGenerator(context.getWriter());
 		generator.writeStartArray();
 		Map<String, String> map = new LinkedHashMap<String, String>();
 		for (IRuntimeEntity<?> entity : many) {

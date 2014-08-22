@@ -9,8 +9,8 @@ import com.th3l4b.apps.shopping.base.codegen.srm.rest.ShoppingRESTFinder;
 import com.th3l4b.apps.shopping.base.codegen.srm.tomap.ShoppingToMapParserContext;
 import com.th3l4b.srm.codegen.java.basic.runtime.tomap.DefaultToMapIdentifierParser;
 import com.th3l4b.srm.codegen.java.basic.runtime.tomap.DefaultToMapStatusParser;
+import com.th3l4b.srm.codegen.java.web.rest.runtime.AbstractRESTServlet;
 import com.th3l4b.srm.codegen.java.web.rest.runtime.IRESTFinder;
-import com.th3l4b.srm.codegen.java.web.rest.runtime.servlet.AbstractRESTServlet;
 import com.th3l4b.srm.runtime.IToMapEntityParserContext;
 import com.th3l4b.types.runtime.basicset.JavaRuntimeTypesBasicSet;
 
