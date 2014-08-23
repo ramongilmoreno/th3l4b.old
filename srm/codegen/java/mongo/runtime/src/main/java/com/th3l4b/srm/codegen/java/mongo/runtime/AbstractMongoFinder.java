@@ -1,5 +1,6 @@
 package com.th3l4b.srm.codegen.java.mongo.runtime;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -104,5 +105,21 @@ public abstract class AbstractMongoFinder {
 		} finally {
 			cursor.close();
 		}
+	}
+
+	public Iterable<IRuntimeEntity<?>> backup() throws Exception {
+		ArrayList<IRuntimeEntity<?>> r = new ArrayList<IRuntimeEntity<?>>();
+		for (IMongoEntityParser<?> parser : getParsers().all()) {
+			DBCursor cursor = getDB().getCollection(parser.table()).find();
+			try {
+				while (cursor.hasNext()) {
+					DBObject next = cursor.next();
+					r.add((IRuntimeEntity<?>) parser.parse(null, next));
+				}
+			} finally {
+				cursor.close();
+			}
+		}
+		return r;
 	}
 }

@@ -106,4 +106,8 @@ public abstract class AbstractInMemoryFinder {
 		};
 	}
 
+	public Iterable<IRuntimeEntity<?>> backup() throws Exception {
+		return getEntities().values();
+	}
+
 }

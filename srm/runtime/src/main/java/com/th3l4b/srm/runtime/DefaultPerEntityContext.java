@@ -20,6 +20,9 @@ public class DefaultPerEntityContext<T> implements IPerEntityContext<T> {
 		_items.put(key(clazz), t);
 	}
 
-	
+	@Override
+	public Iterable<T> all() throws Exception {
+		return _items.values();
+	}
 
 }

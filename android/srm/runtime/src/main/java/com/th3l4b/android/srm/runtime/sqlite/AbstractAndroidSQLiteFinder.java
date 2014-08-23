@@ -1,5 +1,6 @@
 package com.th3l4b.android.srm.runtime.sqlite;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -94,7 +95,7 @@ public abstract class AbstractAndroidSQLiteFinder {
 			cursor.moveToNext();
 		}
 		cursor.close();
-		
+
 		if (r == null) {
 			r = parser.create();
 			ICoordinates coordinates = r.coordinates();
@@ -126,6 +127,27 @@ public abstract class AbstractAndroidSQLiteFinder {
 			cursor.moveToNext();
 		}
 		cursor.close();
+		return r;
+	}
+
+	public Iterable<IRuntimeEntity<?>> backup() throws Exception {
+		ArrayList<IRuntimeEntity<?>> r = new ArrayList<IRuntimeEntity<?>>();
+		for (IAndroidSQLiteEntityParser<?> parser : getParsers().all()) {
+			StringBuffer query = new StringBuffer("select ");
+			AndroidSQLiteUtils.columnsAndFrom(parser, query);
+
+			Cursor cursor = getDatabase().rawQuery(query.toString(),
+					new String[] {});
+			cursor.moveToFirst();
+			while (!cursor.isAfterLast()) {
+				IRuntimeEntity<?> entity = (IRuntimeEntity<?>) parser.parse(0,
+						cursor);
+				r.add(entity);
+				cursor.moveToNext();
+			}
+			cursor.close();
+		}
+
 		return r;
 	}
 }

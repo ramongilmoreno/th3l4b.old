@@ -2,10 +2,12 @@ package com.th3l4b.testbed.integrated.model;
 
 import java.util.LinkedHashSet;
 
+import com.th3l4b.common.data.nullsafe.NullSafe;
 import com.th3l4b.srm.codegen.java.basic.runtime.DefaultIdentifier;
 import com.th3l4b.srm.runtime.EntityStatus;
 import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.srm.runtime.IModelUtils;
+import com.th3l4b.srm.runtime.IRuntimeEntity;
 import com.th3l4b.srm.runtime.SRMContextUtils;
 import com.th3l4b.testbed.integrated.model.generated.IRegularEntity;
 import com.th3l4b.testbed.integrated.model.generated.IStringLimitTest;
@@ -232,6 +234,60 @@ public abstract class AbstractIntegratedTestTests {
 		TestsUtils.assertDifferent(longString, found.getText(), msg);
 	}
 
+	public void testBackup() throws Exception {
+		INameForIntegratedTestContext context = getContext();
+		IModelUtils utils = context.getUtils();
+
+		// Create two entities
+		DefaultIdentifier id1 = new DefaultIdentifier(IRegularEntity.class);
+		String value = "Hello";
+		{
+			IRegularEntity created = utils.create(IRegularEntity.class);
+			created.coordinates().setIdentifier(id1);
+			created.setField1(value);
+			context.update(SRMContextUtils.map(created));
+		}
+		DefaultIdentifier id2 = new DefaultIdentifier(IRegularEntity.class);
+		{
+			IRegularEntity created = utils.create(IRegularEntity.class);
+			created.coordinates().setIdentifier(id2);
+			created.setField1("Bye");
+			context.update(SRMContextUtils.map(created));
+		}
+
+		// Delete one of them
+		{
+			IRegularEntity created = utils.create(IRegularEntity.class);
+			created.coordinates().setIdentifier(id1);
+			created.coordinates().setStatus(EntityStatus.Remove);
+			context.update(SRMContextUtils.map(created));
+		}
+
+		// Check both found in backup
+		IRegularEntity found1 = null, found2 = null;
+		for (IRuntimeEntity<?> entity : context.getFinder().backup()) {
+			if ((found1 == null)
+					&& NullSafe.equals(entity.coordinates().getIdentifier(),
+							id1)) {
+				found1 = (IRegularEntity) entity;
+			} else if ((found2 == null)
+					&& NullSafe.equals(entity.coordinates().getIdentifier(),
+							id2)) {
+				found2 = (IRegularEntity) entity;
+			}
+
+			if ((found1 != null) && (found2 != null)) {
+				break;
+			}
+		}
+
+		TestsUtils.assertNotNull(found1, "Deleted entity not found in backup");
+		TestsUtils.assertEquals(value, found1.getField1(),
+				"Deleted entity value does not match the original");
+		TestsUtils.assertNotNull(found2,
+				"Non deleted entity not found in backup");
+	}
+	
 	public void everything() throws Exception {
 		testCommonActions();
 		testUndefinedValues();
@@ -239,5 +295,6 @@ public abstract class AbstractIntegratedTestTests {
 		testEmptyFields();
 		testUnknownItem();
 		testLimitStringTypes();
+		testBackup();
 	}
 }

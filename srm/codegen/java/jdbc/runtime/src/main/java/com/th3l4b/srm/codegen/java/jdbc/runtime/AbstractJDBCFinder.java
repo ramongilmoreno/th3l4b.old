@@ -3,6 +3,7 @@ package com.th3l4b.srm.codegen.java.jdbc.runtime;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -118,6 +119,27 @@ public abstract class AbstractJDBCFinder {
 		}
 		result.close();
 		statement.close();
+		return r;
+	}
+
+	public Iterable<IRuntimeEntity<?>> backup() throws Exception {
+		ArrayList<IRuntimeEntity<?>> r = new ArrayList<IRuntimeEntity<?>>();
+		for (IJDBCEntityParser<?> parser : getParsers().all()) {
+			StringBuffer query = new StringBuffer("select ");
+			JDBCUtils.columnsAndFrom(parser, query);
+
+			PreparedStatement statement = getConnection().prepareStatement(
+					query.toString());
+			ResultSet result = statement.executeQuery();
+
+			while (result.next()) {
+				IRuntimeEntity<?> entity = (IRuntimeEntity<?>) parser.parse(1,
+						result);
+				r.add(entity);
+			}
+			result.close();
+			statement.close();
+		}
 		return r;
 	}
 }
