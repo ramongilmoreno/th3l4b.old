@@ -12,6 +12,7 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.th3l4b.common.data.Pair;
 import com.th3l4b.common.text.ITextConstants;
+import com.th3l4b.srm.codegen.java.web.runtime.AbstractJSONEntitiesServlet;
 import com.th3l4b.srm.codegen.java.web.runtime.JSONEntitiesParser;
 import com.th3l4b.srm.runtime.IFinder;
 import com.th3l4b.srm.runtime.IIdentifier;
@@ -69,7 +70,7 @@ public abstract class AbstractRESTServlet<CONTEXT extends ISRMContext<FINDER>, F
 			throws Exception, IOException {
 		response.setCharacterEncoding(ITextConstants.UTF_8);
 		// http://stackoverflow.com/questions/477816/what-is-the-correct-json-content-type
-		response.setContentType("application/json");
+		response.setContentType(AbstractJSONEntitiesServlet.JSON_CONTENT_TYPE);
 	}
 
 	@SuppressWarnings("unchecked")

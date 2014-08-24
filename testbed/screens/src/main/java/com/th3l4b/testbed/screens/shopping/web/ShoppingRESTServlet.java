@@ -1,4 +1,4 @@
-package com.th3l4b.testbed.screens.web;
+package com.th3l4b.testbed.screens.shopping.web;
 
 import javax.servlet.http.HttpServletRequest;
 

@@ -7,12 +7,17 @@
 
     <servlet>
         <servlet-name>ShoppingScreensServlet</servlet-name>
-        <servlet-class>com.th3l4b.testbed.screens.web.ShoppingScreensServlet</servlet-class>
+        <servlet-class>com.th3l4b.testbed.screens.shopping.web.ShoppingScreensServlet</servlet-class>
     </servlet>
 
     <servlet>
         <servlet-name>ShoppingRESTServlet</servlet-name>
-        <servlet-class>com.th3l4b.testbed.screens.web.ShoppingRESTServlet</servlet-class>
+        <servlet-class>com.th3l4b.testbed.screens.shopping.web.ShoppingRESTServlet</servlet-class>
+    </servlet>
+    
+    <servlet>
+        <servlet-name>ShoppingSyncServlet</servlet-name>
+        <servlet-class>com.th3l4b.testbed.screens.shopping.web.ShoppingSyncServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -23,6 +28,11 @@
     <servlet-mapping>
         <servlet-name>ShoppingRESTServlet</servlet-name>
         <url-pattern>/ShoppingRESTServlet/*</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>ShoppingSyncServlet</servlet-name>
+        <url-pattern>/ShoppingSyncServlet/*</url-pattern>
     </servlet-mapping>
 
 </web-app> 

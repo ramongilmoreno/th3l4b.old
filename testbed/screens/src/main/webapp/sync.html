@@ -1,0 +1,56 @@
+<html>
+<head>
+<script type="text/javascript">
+	var time = (new Date().getTime());
+	var index = 1;
+
+	function id() {
+		return "id-" + time + "-" + index++;
+	}
+
+	function log (msg) {
+		var p = document.createElement("li");
+		var t = document.createTextNode(msg);
+		p.appendChild(t);
+		document.getElementById("here").appendChild(p);
+	} 
+
+	
+	function sendSync(data) {
+		// http://stackoverflow.com/questions/1255948/post-data-in-json-format-with-javascript
+		console.log("About to send", data);
+
+		// construct an HTTP request
+		var xhr = new XMLHttpRequest();
+		xhr.open("POST", "ShoppingSyncServlet", true);
+		xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+		xhr.send(JSON.stringify(data));
+		xhr.onloadend = function() {
+			console.log("Done!");
+		};
+	};
+
+	function sync() {
+		var data = [];
+		for ( var j = 0; j < 3; j++) {
+			var i = id();
+			data.push({
+				"_Id": i,
+				"_Type": "Item",
+				"Name": "Sync of " + i
+			});
+		}
+		sendSync(data);
+		log("Sync many items!");
+	};
+</script>
+</head>
+<body>
+	<p>Action:</p>
+	<ul>
+		<li><a href="javascript:sync()">Sync</a></li>
+	</ul>
+	<p>Log:</p>
+	<ol id="here"/>
+</body>
+</html>
