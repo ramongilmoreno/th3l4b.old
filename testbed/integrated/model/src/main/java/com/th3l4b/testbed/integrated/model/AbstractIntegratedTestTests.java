@@ -1,6 +1,8 @@
 package com.th3l4b.testbed.integrated.model;
 
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 
 import com.th3l4b.common.data.nullsafe.NullSafe;
 import com.th3l4b.srm.codegen.java.basic.runtime.DefaultIdentifier;
@@ -11,7 +13,9 @@ import com.th3l4b.srm.runtime.IRuntimeEntity;
 import com.th3l4b.srm.runtime.SRMContextUtils;
 import com.th3l4b.testbed.integrated.model.generated.IRegularEntity;
 import com.th3l4b.testbed.integrated.model.generated.IStringLimitTest;
+import com.th3l4b.testbed.integrated.model.generated.ITargetOfARelationship;
 import com.th3l4b.testbed.integrated.model.generated.base.INameForIntegratedTestContext;
+import com.th3l4b.testbed.integrated.model.generated.base.INameForIntegratedTestFinder;
 
 public abstract class AbstractIntegratedTestTests {
 
@@ -72,6 +76,58 @@ public abstract class AbstractIntegratedTestTests {
 		TestsUtils.assertEquals(value3, found.getField1(),
 				"Unknown status entity did not cause a modification");
 
+	}
+
+	public void testRelationships() throws Exception {
+		INameForIntegratedTestContext context = getContext();
+		INameForIntegratedTestFinder finder = context.getFinder();
+		IModelUtils utils = context.getUtils();
+
+		IRegularEntity entity = null;
+		{
+			DefaultIdentifier id = new DefaultIdentifier(IRegularEntity.class);
+			entity = utils.create(IRegularEntity.class);
+			entity.coordinates().setIdentifier(id);
+		}
+
+		ITargetOfARelationship target = null;
+		{
+			DefaultIdentifier id = new DefaultIdentifier(
+					ITargetOfARelationship.class);
+			target = utils.create(ITargetOfARelationship.class);
+			target.coordinates().setIdentifier(id);
+		}
+		entity.setTargetOfARelationship(target);
+
+		Map<IIdentifier, IRuntimeEntity<?>> entities = new LinkedHashMap<IIdentifier, IRuntimeEntity<?>>();
+		entities.put(entity.coordinates().getIdentifier(), entity);
+		entities.put(target.coordinates().getIdentifier(), target);
+		context.update(entities);
+
+		// Find source regular entity
+		IRegularEntity found = finder.find(IRegularEntity.class, entity
+				.coordinates().getIdentifier());
+		TestsUtils.assertNotNull(found,
+				"Not found object source of relationship");
+		ITargetOfARelationship foundTarget = found
+				.getTargetOfARelationship(finder);
+		TestsUtils.assertNotNull(foundTarget,
+				"Not found object target of relationship");
+		TestsUtils.assertEquals(target.coordinates().getIdentifier(),
+				foundTarget.coordinates().getIdentifier(),
+				"Target of relationship not the expected result");
+
+		IRegularEntity reverseFound = null;
+		for (IRegularEntity e : finder
+				.findAllRegularEntityFromTargetOfARelationship(foundTarget)) {
+			if (NullSafe.equals(e.coordinates().getIdentifier(), entity
+					.coordinates().getIdentifier())) {
+				reverseFound = e;
+			}
+		}
+
+		TestsUtils.assertNotNull(reverseFound,
+				"Source of relationship not found in reverse finder method");
 	}
 
 	public void testUndefinedValues() throws Exception {
@@ -287,9 +343,10 @@ public abstract class AbstractIntegratedTestTests {
 		TestsUtils.assertNotNull(found2,
 				"Non deleted entity not found in backup");
 	}
-	
+
 	public void everything() throws Exception {
 		testCommonActions();
+		testRelationships();
 		testUndefinedValues();
 		testGetAll();
 		testEmptyFields();

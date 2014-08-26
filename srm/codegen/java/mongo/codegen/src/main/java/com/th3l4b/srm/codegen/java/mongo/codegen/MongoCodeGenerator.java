@@ -251,8 +251,14 @@ public class MongoCodeGenerator {
 					iiiout.println("" + IIdentifier.class.getName()
 							+ " v = getIdsParser().parse(" + cname
 							+ ", result);");
-					iiiout.println("if (v != null) { entity.set" + rname
-							+ "(v); }");
+					iiiout.println("if (v != null) { entity.set"
+							+ rname
+							+ "("
+							+ DefaultIdentifier.class.getName()
+							+ ".setIdentifierType(v, "
+							+ javaNames.fqn(javaNames.nameInterface(model
+									.get(rel.getTo())), context)
+							+ ".class)); }");
 					iiout.println("}");
 
 				}

@@ -248,7 +248,13 @@ public class JDBCCodeGenerator {
 					iiiout.println(IIdentifier.class.getName()
 							+ " v = getIdsParser().parse(index++, result);");
 					iiiout.println("if (!result.wasNull()) { entity.set"
-							+ baseNames.nameOfDirect(rel, model) + "(v); }");
+							+ baseNames.nameOfDirect(rel, model)
+							+ "("
+							+ DefaultIdentifier.class.getName()
+							+ ".setIdentifierType(v, "
+							+ javaNames.fqn(javaNames.nameInterface(model
+									.get(rel.getTo())), context)
+							+ ".class)); }");
 					iiout.println("}");
 				}
 
