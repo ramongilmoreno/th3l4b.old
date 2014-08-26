@@ -7,6 +7,10 @@
     <uses-sdk android:minSdkVersion="15" android:targetSdkVersion="15" />
 -->
     <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="8" />
+
+    <!-- http://stackoverflow.com/questions/2169294/how-to-add-manifest-permission-to-android-application -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application android:label="Screens testbed">
         <activity android:name="Testbed">
             <intent-filter>

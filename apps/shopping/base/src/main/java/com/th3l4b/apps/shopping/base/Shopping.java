@@ -1,15 +1,26 @@
 package com.th3l4b.apps.shopping.base;
 
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.StringRequestEntity;
+
 import com.th3l4b.apps.shopping.base.codegen.srm.IItem;
 import com.th3l4b.apps.shopping.base.codegen.srm.INeed;
+import com.th3l4b.apps.shopping.base.codegen.srm.base.DefaultShoppingModelUtils;
 import com.th3l4b.apps.shopping.base.codegen.srm.base.IShoppingContext;
 import com.th3l4b.apps.shopping.base.codegen.srm.base.IShoppingFinder;
+import com.th3l4b.apps.shopping.base.codegen.srm.sync.ShoppingDiffContext;
+import com.th3l4b.apps.shopping.base.codegen.srm.tomap.ShoppingToMapParserContext;
+import com.th3l4b.common.data.Pair;
 import com.th3l4b.common.data.nullsafe.NullSafe;
 import com.th3l4b.common.data.predicate.IPredicate;
 import com.th3l4b.common.data.predicate.PredicateUtils;
+import com.th3l4b.common.text.ITextConstants;
 import com.th3l4b.screens.base.IRenderingConstants;
 import com.th3l4b.screens.base.IScreensConstants;
 import com.th3l4b.screens.base.ITreeOfScreens;
@@ -20,11 +31,19 @@ import com.th3l4b.screens.base.utils.DefaultTreeOfScreens;
 import com.th3l4b.screens.base.utils.IScreensClientDescriptor;
 import com.th3l4b.screens.base.utils.IScreensConfiguration;
 import com.th3l4b.srm.codegen.java.basic.runtime.DefaultIdentifier;
+import com.th3l4b.srm.codegen.java.basic.runtime.tomap.DefaultToMapIdentifierParser;
+import com.th3l4b.srm.codegen.java.basic.runtime.tomap.DefaultToMapStatusParser;
+import com.th3l4b.srm.codegen.java.sync.runtime.AbstractSyncTool;
+import com.th3l4b.srm.codegen.java.sync.runtime.IDiffContext;
+import com.th3l4b.srm.codegen.java.web.runtime.AbstractJSONEntitiesServlet;
+import com.th3l4b.srm.codegen.java.web.runtime.JSONEntitiesParser;
 import com.th3l4b.srm.runtime.EntityStatus;
 import com.th3l4b.srm.runtime.ICoordinates;
 import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.srm.runtime.IModelUtils;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
+import com.th3l4b.srm.runtime.SRMContextUtils;
+import com.th3l4b.types.runtime.basicset.JavaRuntimeTypesBasicSet;
 
 public class Shopping implements IScreensConstants, IRenderingConstants {
 
@@ -133,6 +152,87 @@ public class Shopping implements IScreensConstants, IRenderingConstants {
 								IScreensClientDescriptor client)
 								throws Exception {
 							renderItems(root, getShoppingApplication(context));
+						}
+					});
+		}
+		{
+			String text = "Sync";
+			String name = name(text);
+			tree.addScreen(name, root);
+			tree.setProperty(name, ORDER_INDEX, "3");
+			tree.setProperty(name, LABEL, localizedLabel(text, application));
+			tree.setProperty(name, TYPE, TYPE_ACTION);
+			tree.setProperty(name, INTERACTION, "true");
+			tree.setProperty(name, INTERACTION_JAVA, name);
+			application.getScreens().getInteractions()
+					.put(name, new IInteractionListener() {
+						@Override
+						public void handleInteraction(String screen,
+								IScreensConfiguration context,
+								IScreensClientDescriptor client)
+								throws Exception {
+
+							HttpClient http = new HttpClient();
+							PostMethod post = new PostMethod(
+									"http://sample-ramongilmoreno.rhcloud.com/web/SyncServlet");
+							IShoppingApplication application = getShoppingApplication(context);
+							final IShoppingContext srm = application.getData();
+							Iterable<IRuntimeEntity<?>> backup = srm
+									.getFinder().backup();
+							StringWriter writer = new StringWriter();
+							JSONEntitiesParser parser = new JSONEntitiesParser();
+							ShoppingToMapParserContext toMap = new ShoppingToMapParserContext(
+									new DefaultToMapIdentifierParser(),
+									new DefaultToMapStatusParser(),
+									new JavaRuntimeTypesBasicSet(),
+									new DefaultShoppingModelUtils());
+							parser.serialize(backup, writer, srm, toMap);
+							writer.flush();
+							post.setRequestEntity(new StringRequestEntity(
+									writer.getBuffer().toString(),
+									AbstractJSONEntitiesServlet.JSON_CONTENT_TYPE,
+									ITextConstants.UTF_8));
+
+							int result = http.executeMethod(post);
+							String msg;
+							if (result == 200) {
+								msg = "OK - 200";
+
+								StringReader reader = new StringReader(post
+										.getResponseBodyAsString());
+								Pair<IRuntimeEntity<?>, Iterable<IRuntimeEntity<?>>> parsed = parser
+										.parse(false, true, reader, srm, toMap);
+								AbstractSyncTool<IShoppingFinder, IShoppingContext> sync = new AbstractSyncTool<IShoppingFinder, IShoppingContext>() {
+									@Override
+									protected IShoppingContext getContext()
+											throws Exception {
+										return srm;
+									}
+
+									@Override
+									protected IDiffContext getDiffContext()
+											throws Exception {
+										return new ShoppingDiffContext();
+									}
+								};
+								srm.update(sync.sync(SRMContextUtils.map(parsed
+										.getB())));
+								msg = "OK";
+							} else {
+								System.out.println("HTTP Error: " + result);
+								msg = "KO";
+							}
+							{
+								ITreeOfScreens tree = application.getScreens()
+										.getTree();
+								String text = msg;
+								String name = name(text);
+								tree.addScreen(name, root);
+								tree.setProperty(name, ORDER_INDEX, "5");
+								tree.setProperty(name, LABEL,
+										localizedLabel(text, application));
+							}
+
 						}
 					});
 		}

@@ -19,7 +19,8 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
-			<version>2.3.1</version>
+			<!-- Version 2.1.5 is JDK 1.5 compatible, suitable of Android 2.2 support http://wiki.fasterxml.com/JacksonFAQ#Platform -->
+			<version>2.1.5</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
