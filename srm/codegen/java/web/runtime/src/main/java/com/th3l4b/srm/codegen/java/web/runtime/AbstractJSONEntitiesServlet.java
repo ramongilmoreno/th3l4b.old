@@ -57,7 +57,6 @@ public abstract class AbstractJSONEntitiesServlet<CONTEXT extends ISRMContext<FI
 			response.setContentType(JSON_CONTENT_TYPE);
 
 			String accepts = request.getHeader("Accept-Encoding");
-			System.out.println("ACCEPTS: " + accepts);
 			if (applyCompression() && (accepts != null)
 					&& (accepts.indexOf("gzip") != -1)) {
 				response.setHeader("Content-Encoding", "gzip");

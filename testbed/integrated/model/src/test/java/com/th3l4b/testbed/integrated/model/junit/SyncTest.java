@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import com.th3l4b.srm.codegen.java.sync.runtime.AbstractSyncTool;
 import com.th3l4b.srm.codegen.java.sync.runtime.IDiffContext;
+import com.th3l4b.srm.runtime.EntityStatus;
 import com.th3l4b.srm.runtime.IIdentifier;
 import com.th3l4b.srm.runtime.IRuntimeEntity;
 import com.th3l4b.srm.runtime.SRMContextUtils;
@@ -21,7 +22,7 @@ import com.th3l4b.testbed.integrated.model.generated.sync.NameForIntegratedTestD
 
 public class SyncTest {
 
-	public void test(INameForIntegratedTestContext left,
+	public void test(final INameForIntegratedTestContext left,
 			final INameForIntegratedTestContext right) throws Exception {
 		final HashSet<IIdentifier> leftUpdates = new HashSet<IIdentifier>();
 		final AbstractNameForIntegratedTestUpdateFilter leftContext = new AbstractNameForIntegratedTestUpdateFilter(
@@ -55,8 +56,8 @@ public class SyncTest {
 		}
 
 		// Create target context
-		final NameForIntegratedTestDiffContext diffContext = new NameForIntegratedTestDiffContext();
-		AbstractSyncTool<INameForIntegratedTestFinder, INameForIntegratedTestContext> sync = new AbstractSyncTool<INameForIntegratedTestFinder, INameForIntegratedTestContext>() {
+		final NameForIntegratedTestDiffContext rightDiffContext = new NameForIntegratedTestDiffContext();
+		AbstractSyncTool<INameForIntegratedTestFinder, INameForIntegratedTestContext> rightSync = new AbstractSyncTool<INameForIntegratedTestFinder, INameForIntegratedTestContext>() {
 			@Override
 			protected INameForIntegratedTestContext getContext()
 					throws Exception {
@@ -65,10 +66,10 @@ public class SyncTest {
 
 			@Override
 			protected IDiffContext getDiffContext() throws Exception {
-				return diffContext;
+				return rightDiffContext;
 			}
 		};
-		right.update(sync.sync(changes));
+		right.update(rightSync.sync(changes));
 
 		// Find item in right context
 		ISyncEntity find = right.getFinder().find(ISyncEntity.class,
@@ -76,7 +77,38 @@ public class SyncTest {
 		Assert.assertNotNull("Synchronized item not found", find);
 		Assert.assertEquals("Synchronized item attribute incorrect", valueA,
 				find.getA());
+		Assert.assertEquals("Synchronized item status not correct",
+				EntityStatus.Persisted, find.coordinates().getStatus());
 
+		// Delete item in right context
+		ISyncEntity deleteInRight = right.getUtils().create(ISyncEntity.class);
+		deleteInRight.coordinates().setIdentifier(
+				find.coordinates().getIdentifier());
+		deleteInRight.coordinates().setStatus(EntityStatus.Remove);
+		right.update(SRMContextUtils.map(deleteInRight));
+
+		// Apply to left
+		final NameForIntegratedTestDiffContext leftDiffContext = new NameForIntegratedTestDiffContext();
+		AbstractSyncTool<INameForIntegratedTestFinder, INameForIntegratedTestContext> leftSync = new AbstractSyncTool<INameForIntegratedTestFinder, INameForIntegratedTestContext>() {
+			@Override
+			protected INameForIntegratedTestContext getContext()
+					throws Exception {
+				return left;
+			}
+
+			@Override
+			protected IDiffContext getDiffContext() throws Exception {
+				return leftDiffContext;
+			}
+		};
+		left.update(leftSync.sync(SRMContextUtils.map(right.getFinder()
+				.backup())));
+
+		// Ensure deleted in left
+		ISyncEntity deletedInLeft = left.getFinder().getSyncEntity(
+				deleteInRight.coordinates().getIdentifier());
+		Assert.assertEquals("Synchronized item status in left not correct",
+				EntityStatus.Deleted, deletedInLeft.coordinates().getStatus());
 	}
 
 	@Test

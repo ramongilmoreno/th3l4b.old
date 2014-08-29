@@ -34,7 +34,7 @@ public abstract class AbstractEntityDiff<T extends IRuntimeEntity<T>>
 		boolean valuesChanged = diffRest(from, to, diff);
 
 		// Tell if any change is required: both in data or in status
-		return NullSafe.equals(from.coordinates().getStatus(), toStatus)
+		return !NullSafe.equals(from.coordinates().getStatus(), toStatus)
 				|| valuesChanged;
 	}
 
